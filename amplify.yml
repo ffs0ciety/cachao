@@ -5,10 +5,18 @@ applications:
       phases:
         preBuild:
           commands:
+            - echo "Starting preBuild..."
+            - node --version
+            - npm --version
             - npm install
+            - echo "preBuild complete"
         build:
           commands:
+            - echo "Starting build phase..."
+            - echo "Running npm run generate..."
             - npm run generate
+            - echo "Build complete"
+            - ls -la dist || echo "No dist folder found"
       artifacts:
         baseDirectory: dist
         files:
