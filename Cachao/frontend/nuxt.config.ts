@@ -14,8 +14,8 @@ export default defineNuxtConfig({
     
     // Public keys (exposed to client-side)
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com',
-      apiBasePath: process.env.NUXT_PUBLIC_API_BASE_PATH || '/Prod',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'https://api.pro.cachao.io',
+      apiBasePath: process.env.NUXT_PUBLIC_API_BASE_PATH || '',
       /** Full app URL for QR codes (e.g. https://yourapp.com). If unset, uses window.location.origin in the browser. */
       appUrl: process.env.NUXT_PUBLIC_APP_URL || '',
       cognitoUserPoolId: process.env.NUXT_PUBLIC_COGNITO_USER_POOL_ID || 'eu-west-1_y1FDQpQ9b',
