@@ -1,13 +1,15 @@
 version: 1
 applications:
-  - appRoot: frontend
+  - appRoot: Cachao/frontend
     frontend:
       phases:
         preBuild:
           commands:
-            # Clean native modules to avoid architecture mismatch
-            - rm -rf node_modules package-lock.json
-            - npm install
+            # Use Node 20 LTS
+            - nvm use 20
+            # Clean and reinstall for Linux
+            - rm -rf node_modules package-lock.json .nuxt .output
+            - npm install --platform=linux --arch=x64
         build:
           commands:
             - echo "NUXT_PUBLIC_API_URL=$NUXT_PUBLIC_API_URL" >> .env
