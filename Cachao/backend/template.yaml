@@ -78,7 +78,7 @@ Resources:
   CachaoVideosBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub 'cachao-videos-${AWS::AccountId}'
+      BucketName: !Sub 'cachao-videos-${Environment}-${AWS::AccountId}'
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true

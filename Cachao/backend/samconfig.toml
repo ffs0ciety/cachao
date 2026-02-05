@@ -31,3 +31,48 @@ port = 3001
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
 container_env_var_file = ".env.local"
+
+# ============================================
+# PRODUCTION ENVIRONMENT
+# Usage: sam deploy --config-env prod
+# ============================================
+[prod.global.parameters]
+stack_name = "Cachao-prod"
+
+[prod.build.parameters]
+cached = true
+parallel = true
+
+[prod.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-west-1"
+profile = "personal"
+# IMPORTANT: Update these values with your actual production settings
+parameter_overrides = "Environment=prod DatabaseHost=YOUR_PROD_RDS_ENDPOINT DatabaseUser=YOUR_PROD_DB_USER DatabasePassword=YOUR_PROD_DB_PASSWORD StripeSecretKey=YOUR_PROD_STRIPE_KEY StripeWebhookSecret=YOUR_PROD_WEBHOOK_SECRET"
+
+[prod.package.parameters]
+resolve_s3 = true
+
+# ============================================
+# STAGING ENVIRONMENT (optional)
+# Usage: sam deploy --config-env staging
+# ============================================
+[staging.global.parameters]
+stack_name = "Cachao-staging"
+
+[staging.build.parameters]
+cached = true
+parallel = true
+
+[staging.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-west-1"
+profile = "personal"
+parameter_overrides = "Environment=staging DatabaseHost=YOUR_STAGING_RDS_ENDPOINT DatabaseUser=YOUR_STAGING_DB_USER DatabasePassword=YOUR_STAGING_DB_PASSWORD"
+
+[staging.package.parameters]
+resolve_s3 = true

@@ -1,6 +1,7 @@
 version: 1
 applications:
-  - frontend:
+  - appRoot: frontend
+    frontend:
       phases:
         preBuild:
           commands:
@@ -13,13 +14,11 @@ applications:
             - echo "NUXT_PUBLIC_COGNITO_USER_POOL_ID=$NUXT_PUBLIC_COGNITO_USER_POOL_ID" >> .env
             - echo "NUXT_PUBLIC_COGNITO_CLIENT_ID=$NUXT_PUBLIC_COGNITO_CLIENT_ID" >> .env
             - echo "NUXT_PUBLIC_COGNITO_REGION=$NUXT_PUBLIC_COGNITO_REGION" >> .env
-            - npm run build
+            - npm run generate
       artifacts:
-        baseDirectory: .output/public
+        baseDirectory: dist
         files:
           - '**/*'
       cache:
         paths:
           - node_modules/**/*
-          - .nuxt/**/*
-    appRoot: frontend
