@@ -1,0 +1,26 @@
+{
+  "name": "events_function",
+  "version": "1.0.0",
+  "description": "Lambda function to fetch events from MariaDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.946.0",
+    "@aws-sdk/client-lambda": "^3.946.0",
+    "@aws-sdk/client-s3": "^3.490.0",
+    "@aws-sdk/lib-storage": "^3.943.0",
+    "@aws-sdk/s3-request-presigner": "^3.943.0",
+    "busboy": "^1.6.0",
+    "mariadb": "^3.2.2",
+    "axios": "^1.6.0",
+    "stripe": "^14.21.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.11.0",
+    "esbuild": "^0.19.0",
+    "typescript": "^5.3.3"
+  }
+}

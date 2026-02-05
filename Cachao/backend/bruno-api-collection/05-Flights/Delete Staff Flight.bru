@@ -1,0 +1,15 @@
+meta {
+  name: Delete Staff Flight
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/staff/{{staff_id}}/flights/{{flight_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

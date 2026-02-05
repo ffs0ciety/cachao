@@ -1,0 +1,26 @@
+{
+  "name": "cachao-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cachao monorepo - AWS SAM backend and Nuxt 3 frontend",
+  "workspaces": [
+    "backend/hello-world",
+    "frontend"
+  ],
+  "scripts": {
+    "backend:build": "cd backend && sam build",
+    "backend:dev": "cd backend && sam local start-api",
+    "backend:deploy": "cd backend && sam deploy",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:preview": "cd frontend && npm run preview"
+  },
+  "license": "ISC"
+}
+
+
+
+
+
+
+

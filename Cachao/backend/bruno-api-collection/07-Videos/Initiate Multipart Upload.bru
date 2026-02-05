@@ -1,0 +1,24 @@
+meta {
+  name: Initiate Multipart Upload
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/videos/multipart/init
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "file_name": "large-video.mp4",
+    "content_type": "video/mp4",
+    "file_size": 52428800
+  }
+}

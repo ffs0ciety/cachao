@@ -1,0 +1,18 @@
+{
+  "name": "migrate-add-thumbnail",
+  "version": "1.0.0",
+  "description": "Lambda function to add thumbnail_url column to videos table",
+  "main": "migrate-add-thumbnail.ts",
+  "dependencies": {
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.11.0"
+  }
+}
+
+
+
+
+

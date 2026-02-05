@@ -1,0 +1,19 @@
+{
+  "name": "migrate-allow-multiple-accommodations",
+  "version": "1.0.0",
+  "description": "Migration to allow multiple accommodations per staff member",
+  "main": "migrate-allow-multiple-accommodations.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130"
+  }
+}
+
+
+
+

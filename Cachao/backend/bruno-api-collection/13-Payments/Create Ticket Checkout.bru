@@ -1,0 +1,27 @@
+meta {
+  name: Create Ticket Checkout
+  type: http
+  seq: 1
+}
+
+note {
+  Simulates a ticket purchase: creates order + Stripe Checkout session.
+  Response includes checkout_url — open in browser to complete payment (test card: 4242 4242 4242 4242).
+  Requires: event_id, ticket_id in env; email is required in body.
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}/checkout
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  "quantity": 2,
+  "email": "test@example.com",
+  "discount_code": "SUMMER2024"
+}

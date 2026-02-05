@@ -1,0 +1,26 @@
+meta {
+  name: Get My Event Info
+  type: http
+  seq: 6
+}
+
+note {
+  # Get My Event Info
+  
+  Returns the current user's staff/artist information for a specific event, including:
+  - Personal information (name, role, email, phone, notes, subcategories, image)
+  - Flights assigned to the user
+  - Accommodations assigned to the user
+  
+  Requires authentication. Returns 404 if user is not registered as staff/artist for the event.
+}
+
+get {
+  url: {{api_url}}/events/{{event_id}}/my-info
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

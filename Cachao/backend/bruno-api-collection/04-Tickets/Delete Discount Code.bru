@@ -1,0 +1,15 @@
+meta {
+  name: Delete Discount Code
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/discount-codes/{{discount_code_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

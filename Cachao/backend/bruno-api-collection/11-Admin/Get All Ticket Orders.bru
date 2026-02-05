@@ -1,0 +1,15 @@
+meta {
+  name: Get All Ticket Orders
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/admin/ticket-orders
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

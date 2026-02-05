@@ -1,0 +1,15 @@
+meta {
+  name: Get Event Staff
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/events/{{event_id}}/staff
+  body: none
+  auth: none
+}
+
+params:query {
+  public_only: false
+}

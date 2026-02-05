@@ -1,0 +1,127 @@
+{
+  "clientName": "Cachao API",
+  "collectionName": "Cachao API Tests",
+  "folders": [],
+  "requests": [
+    {
+      "name": "Health Check",
+      "method": "GET",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/health",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "Get All Events",
+      "method": "GET",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/events",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "Get Single Event",
+      "method": "GET",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/events/1",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "Get Event Tickets",
+      "method": "GET",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/events/1/tickets",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ]
+    },
+    {
+      "name": "Create Ticket Checkout",
+      "method": "POST",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/events/1/tickets/1/checkout",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Origin",
+          "value": "http://localhost:3000"
+        }
+      ],
+      "body": {
+        "email": "test@example.com",
+        "quantity": 1,
+        "discount_code": ""
+      }
+    },
+    {
+      "name": "Create Ticket Checkout with Discount",
+      "method": "POST",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/events/1/tickets/1/checkout",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Origin",
+          "value": "http://localhost:3000"
+        }
+      ],
+      "body": {
+        "email": "test@example.com",
+        "quantity": 2,
+        "discount_code": "DISCOUNT10"
+      }
+    },
+    {
+      "name": "Get Event Staff",
+      "method": "GET",
+      "url": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod/events/1/staff",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "name": "Production",
+      "data": [
+        {
+          "name": "baseUrl",
+          "value": "https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com/Prod"
+        },
+        {
+          "name": "authToken",
+          "value": "YOUR_TOKEN_HERE"
+        }
+      ]
+    }
+  ]
+}
+
+

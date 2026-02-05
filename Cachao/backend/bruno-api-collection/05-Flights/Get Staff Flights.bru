@@ -1,0 +1,11 @@
+meta {
+  name: Get Staff Flights
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/events/{{event_id}}/staff/{{staff_id}}/flights
+  body: none
+  auth: none
+}

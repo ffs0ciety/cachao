@@ -1,0 +1,29 @@
+meta {
+  name: Stripe Webhook
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/webhooks/stripe
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Stripe-Signature: your-stripe-signature
+}
+
+body:json {
+  {
+    "id": "evt_1234567890",
+    "type": "checkout.session.completed",
+    "data": {
+      "object": {
+        "id": "cs_test_1234567890",
+        "client_reference_id": "event-1-ticket-1"
+      }
+    }
+  }
+}

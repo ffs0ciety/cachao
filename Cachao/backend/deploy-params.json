@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "DatabaseUser",
+    "ParameterValue": "REPLACE_WITH_DB_USER"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": "REPLACE_WITH_DB_PASSWORD"
+  }
+]

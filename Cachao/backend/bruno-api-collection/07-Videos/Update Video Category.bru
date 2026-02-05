@@ -1,0 +1,22 @@
+meta {
+  name: Update Video Category
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{api_url}}/videos/{{video_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "category": "highlight"
+  }
+}

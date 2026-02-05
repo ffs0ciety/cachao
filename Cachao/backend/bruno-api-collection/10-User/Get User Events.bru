@@ -1,0 +1,25 @@
+meta {
+  name: Get User Events
+  type: http
+  seq: 4
+}
+
+note {
+  # Get User Events
+  
+  Returns all events where the user is involved:
+  - Events owned by the user (user_role: "owner")
+  - Events where the user is working as staff/artist/media/videographer (user_role: their role)
+  
+  Each event includes a `user_role` field indicating the user's relationship to the event.
+}
+
+get {
+  url: {{api_url}}/user/events
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

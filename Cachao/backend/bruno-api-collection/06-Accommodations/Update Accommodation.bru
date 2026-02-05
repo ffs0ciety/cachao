@@ -1,0 +1,23 @@
+meta {
+  name: Update Accommodation
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{api_url}}/events/{{event_id}}/accommodations/{{accommodation_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "name": "Hotel Room Updated",
+    "capacity": 3
+  }
+}

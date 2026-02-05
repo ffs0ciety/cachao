@@ -1,0 +1,91 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "raulmsanchez7@gmail.com",
+    "password": "qaxvaw-femtoq-3puGzo"
+  }
+}
+
+docs {
+  # Login Endpoint
+  
+  Authenticates a user with email and password using AWS Cognito.
+  
+  ## Request Body
+  - `email` (string, required): User's email address
+  - `password` (string, required): User's password
+  
+  ## Success Response (200)
+  ```json
+  {
+    "success": true,
+    "tokens": {
+      "idToken": "eyJraWQiOiJ...",
+      "accessToken": "eyJraWQiOiJ...",
+      "refreshToken": "eyJjdHkiOiJ...",
+      "expiresIn": 3600,
+      "tokenType": "Bearer"
+    },
+    "message": "Login successful"
+  }
+  ```
+  
+  ## Error Responses
+  
+  ### 400 - Bad Request
+  ```json
+  {
+    "success": false,
+    "error": "Email and password are required"
+  }
+  ```
+  
+  ### 401 - Unauthorized
+  ```json
+  {
+    "success": false,
+    "error": "Incorrect email or password",
+    "code": "NotAuthorizedException"
+  }
+  ```
+  
+  ### 403 - Forbidden
+  ```json
+  {
+    "success": false,
+    "error": "User account is not confirmed. Please verify your email.",
+    "code": "UserNotConfirmedException"
+  }
+  ```
+  
+  ## Usage
+  
+  After successful login, use the **`idToken`** in the Authorization header for authenticated requests:
+  
+  ```
+  Authorization: Bearer <idToken>
+  ```
+  
+  **Important:** Use the `idToken`, not the `accessToken`. The `idToken` contains user identity information and is what API Gateway's Cognito authorizer expects.
+  
+  - **`idToken`** ✅ - Use this for API requests (contains user claims)
+  - **`accessToken`** - Used for AWS service calls (not for API Gateway)
+  - **`refreshToken`** - Use this to get new tokens when they expire
+  
+  The token expires after the `expiresIn` seconds (typically 3600 seconds = 1 hour). When it expires, use the `refreshToken` to get a new `idToken`.
+}

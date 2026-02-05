@@ -1,0 +1,23 @@
+meta {
+  name: Update Video Thumbnail
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{api_url}}/videos/update-thumbnail
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "video_id": 1,
+    "thumbnail_url": "https://example.com/thumbnail.jpg"
+  }
+}

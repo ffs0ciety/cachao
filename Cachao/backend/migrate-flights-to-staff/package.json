@@ -1,0 +1,21 @@
+{
+  "name": "migrate-flights-to-staff",
+  "version": "1.0.0",
+  "description": "Migration to link flights to staff/artists instead of events",
+  "main": "migrate-flights-to-staff.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}
+
+
+
+

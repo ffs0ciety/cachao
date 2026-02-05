@@ -1,0 +1,15 @@
+meta {
+  name: Delete Ticket
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

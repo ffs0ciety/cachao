@@ -1,0 +1,1505 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Cachao
+
+  Sample SAM Template for Cachao
+  
+Globals:
+  Function:
+    Timeout: 60
+
+Resources:
+  CachaoApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes:
+        - multipart/form-data
+        - '*/*'
+      MinimumCompressionSize: 0
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS,PATCH'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Accept,Origin,X-Requested-With'"
+        AllowOrigin: "'*'"
+        MaxAge: "'86400'"
+        AllowCredentials: false
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt CachaoUserPool.Arn
+            IdentitySource: method.request.header.Authorization
+
+  CachaoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-user-pool'
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: name
+          AttributeDataType: String
+          Required: false
+          Mutable: true
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+      MfaConfiguration: "OFF"
+      # Email configuration - uses Cognito default email (limited to 50 emails/day)
+      # For production, configure SES and set EmailConfiguration
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      LambdaConfig:
+        PostConfirmation: !GetAtt PostConfirmationFunction.Arn
+
+  CachaoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CachaoUserPool
+      ClientName: !Sub '${AWS::StackName}-client'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      PreventUserExistenceErrors: ENABLED
+
+  CachaoVideosBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'cachao-videos-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - HEAD
+            AllowedOrigins:
+              - "*"
+            ExposedHeaders:
+              - ETag
+              - x-amz-server-side-encryption
+              - x-amz-request-id
+              - x-amz-id-2
+            MaxAge: 3000
+
+  StripePaymentFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-image-url.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-image-url/
+      Handler: migrate-add-image-url.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddImageUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /migrate/add-image-url
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddAlbumsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-albums.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-albums/
+      Handler: migrate-add-albums.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddAlbums:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-albums
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddDateToAlbumsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-date-to-albums.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-date-to-albums/
+      Handler: migrate-add-date-to-albums.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddDateToAlbums:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-date-to-albums
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddEventStaffFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-event-staff.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-event-staff/
+      Handler: migrate-add-event-staff.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddEventStaff:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate/add-event-staff
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddFlightsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-flights.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-flights/
+      Handler: migrate-add-flights.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddFlights:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-flights
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateFlightsToStaffFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-flights-to-staff.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-flights-to-staff/
+      Handler: migrate-flights-to-staff.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateFlightsToStaff:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-flights-to-staff
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddAccommodationsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-accommodations.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-accommodations/
+      Handler: migrate-add-accommodations.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddAccommodations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-accommodations
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAllowMultipleAccommodationsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-allow-multiple-accommodations.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-allow-multiple-accommodations/
+      Handler: migrate-allow-multiple-accommodations.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAllowMultipleAccommodations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-allow-multiple-accommodations
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddArtistSubcategoriesFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-artist-subcategories.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-artist-subcategories/
+      Handler: migrate-add-artist-subcategories.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddArtistSubcategories:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-artist-subcategories
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddStaffImageFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-staff-image.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-staff-image/
+      Handler: migrate-add-staff-image.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddStaffImage:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-staff-image
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddStaffPublicFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-staff-public.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-staff-public/
+      Handler: migrate-add-staff-public.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddStaffPublic:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-staff-public
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddTicketsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-tickets.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-tickets/
+      Handler: migrate-add-tickets.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddTickets:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-tickets
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddTicketDiscountsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-ticket-discounts.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-ticket-discounts/
+      Handler: migrate-add-ticket-discounts.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddTicketDiscounts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-ticket-discounts
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  # Dead letter queue for Stripe EventBridge handler (failed async invocations)
+  StripeEventDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-stripe-event-dlq'
+      MessageRetentionPeriod: 1209600  # 14 days
+      VisibilityTimeout: 60
+
+  StripeEventDLQPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt StripeEventDLQ.Arn
+            Condition:
+              ArnLike:
+                aws:SourceArn: !GetAtt StripeEventBridgeHandler.Arn
+      Queues:
+        - !Ref StripeEventDLQ
+
+  # SNS topic for Stripe EventBridge failure alarms
+  StripeEventFailureSNS:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${AWS::StackName}-stripe-event-failures'
+      DisplayName: Cachao Stripe EventBridge handler failures
+
+  StripePaymentFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - app.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: stripe-payment-function/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 60
+      MemorySize: 512
+      Tracing: Active
+      Tags:
+        Service: cachao
+        Component: payment-processing
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+          STRIPE_WEBHOOK_SECRET: !Ref StripeWebhookSecret
+      Events:
+        CreateTicketCheckout:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/tickets/{ticketId}/checkout
+            Method: post
+            Auth:
+              Authorizer: NONE
+        StripeWebhook:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /webhooks/stripe
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  StripeEventBridgeHandler:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - app.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: stripe-payment-function/
+      Handler: app.eventBridgeHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 60
+      MemorySize: 512
+      ReservedConcurrentExecutions: 10
+      Tracing: Active
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt StripeEventDLQ.Arn
+      Tags:
+        Service: cachao
+        Component: payment-processing
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Events:
+        StripeEventBridge:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: !If [HasStripePartnerBus, !Ref StripePartnerEventBusName, default]
+            State: ENABLED
+            Pattern:
+              # Stripe sends source = partner event source name (e.g. aws.partner/stripe.com/ed_test_...)
+              source:
+                - !If [HasStripePartnerBus, !Ref StripePartnerEventBusName, stripe.com]
+              detail-type:
+                - checkout.session.completed
+
+  # CloudWatch alarm when Stripe EventBridge handler fails
+  StripeEventBridgeHandlerAlarm:
+    Type: AWS::CloudWatch::Alarm
+    DependsOn: StripeEventBridgeHandler
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-stripe-eventbridge-failures'
+      AlarmDescription: Alert when Stripe EventBridge handler Lambda fails
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref StripeEventBridgeHandler
+      AlarmActions:
+        - !Ref StripeEventFailureSNS
+      TreatMissingData: notBreaching
+
+  MigrateAddTicketOrdersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - app.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-ticket-orders/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddTicketOrders:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-ticket-orders
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddTicketValidatedFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - app.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-ticket-validated/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddTicketValidated:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/migrate-add-ticket-validated
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddUsersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-users.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-users/
+      Handler: migrate-add-users.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddUsers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /migrate/add-users
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  MigrateAddThumbnailFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - migrate-add-thumbnail.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: migrate-add-thumbnail/
+      Handler: migrate-add-thumbnail.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        MigrateAddThumbnail:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /migrate/add-thumbnail
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - create-user.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: create-user-function/
+      Handler: create-user.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # Not in VPC - can access Cognito directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+          COGNITO_USER_POOL_ID: !Ref CachaoUserPool
+          USER_POOL_ID: !Ref CachaoUserPool
+      Policies:
+        - Statement:
+            - Sid: CognitoUserManagement
+              Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminGetUser
+                - cognito-idp:ListUsers
+              Resource: !GetAtt CachaoUserPool.Arn
+
+  PostConfirmationFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - post-confirmation.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: post-confirmation-function/
+      Handler: post-confirmation.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # Not in VPC - can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+
+  PostConfirmationFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref PostConfirmationFunction
+      Principal: cognito-idp.amazonaws.com
+      Action: lambda:InvokeFunction
+      SourceArn: !GetAtt CachaoUserPool.Arn
+
+  GenerateThumbnailFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - generate-thumbnail.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: generate-thumbnail/
+      Handler: generate-thumbnail.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 300
+      MemorySize: 3008
+      # Removed VPC config - Lambda doesn't need VPC for S3 access
+      # S3 access works via IAM roles without VPC
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+          S3_BUCKET_NAME: !Ref CachaoVideosBucket
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref CachaoVideosBucket
+        - S3WritePolicy:
+            BucketName: !Ref CachaoVideosBucket
+      Layers:
+        - arn:aws:lambda:eu-west-1:109539191011:layer:ffmpeg:1
+      Events:
+        GenerateThumbnail:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos/generate-thumbnail
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  DeleteAllVideosFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - app.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: delete-videos-function/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      # VPC removed - Lambda can access RDS directly via internet
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+      Events:
+        DeleteAllVideos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/delete-all-videos
+            Method: delete
+            Auth:
+              Authorizer: NONE
+
+  EventsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - app.ts
+        Target: "es2022"
+        Format: "cjs"
+    Properties:
+      CodeUri: events-function/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Timeout: 60
+      MemorySize: 512
+      # VPC removed - Lambda can access RDS directly via internet
+      # Force update to recover from ROLLBACK_COMPLETE
+      Environment:
+        Variables:
+          DB_HOST: !Ref DatabaseHost
+          DB_PORT: "3306"
+          DB_NAME: cachao
+          DB_USER: !Ref DatabaseUser
+          DB_PASSWORD: !Ref DatabasePassword
+          S3_BUCKET_NAME: !Ref CachaoVideosBucket
+          USER_POOL_ID: !Ref CachaoUserPool
+          COGNITO_USER_POOL_ID: !Ref CachaoUserPool
+          COGNITO_CLIENT_ID: !Ref CachaoUserPoolClient
+          USER_POOL_CLIENT_ID: !Ref CachaoUserPoolClient
+          THUMBNAIL_FUNCTION_NAME: !Ref GenerateThumbnailFunction
+          CREATE_USER_FUNCTION_NAME: !Ref CreateUserFunction
+          AVIATIONSTACK_API_KEY: !Ref AviationStackApiKey
+          AIRLABS_API_KEY: !Ref AirLabsApiKey
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+          STRIPE_WEBHOOK_SECRET: !Ref StripeWebhookSecret
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref CachaoVideosBucket
+        - S3ReadPolicy:
+            BucketName: !Ref CachaoVideosBucket
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GenerateThumbnailFunction
+        - Statement:
+            - Sid: CognitoUserManagement
+              Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminGetUser
+                - cognito-idp:ListUsers
+                - cognito-idp:AdminUpdateUserAttributes
+                - cognito-idp:AdminInitiateAuth
+                - cognito-idp:AdminRespondToAuthChallenge
+                - cognito-idp:AdminSetUserPassword
+                - cognito-idp:AdminResetUserPassword
+              Resource: !GetAtt CachaoUserPool.Arn
+        - LambdaInvokePolicy:
+            FunctionName: !Ref CreateUserFunction
+      Events:
+        GetEvents:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events
+            Method: get
+            Auth:
+              Authorizer: NONE
+        CreateEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GenerateEventImageUploadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/image-upload-url
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}
+            Method: get
+            Auth:
+              Authorizer: NONE
+        UpdateEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}
+            Method: patch
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        EventsSubPathsProxy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/{proxy+}
+            Method: ANY
+            Auth:
+              Authorizer: NONE
+        GetArtistProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /artists/{id}
+            Method: get
+            Auth:
+              Authorizer: NONE
+        Login:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /auth/login
+            Method: post
+            Auth:
+              Authorizer: NONE
+        ResendVerificationCode:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /auth/resend-verification-code
+            Method: post
+            Auth:
+              Authorizer: NONE
+        ForgotPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /auth/forgot-password
+            Method: post
+            Auth:
+              Authorizer: NONE
+        ConfirmForgotPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /auth/confirm-forgot-password
+            Method: post
+            Auth:
+              Authorizer: NONE
+        GetAdminTicketOrders:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/ticket-orders
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
+        MarkEmailVerified:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/mark-email-verified
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        AdminResetPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /admin/reset-password
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetEventStaff:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff
+            Method: get
+            Auth:
+              Authorizer: NONE
+        AddEventStaff:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateEventStaff:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}
+            Method: put
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteEventStaff:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetEventDiscountCodes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/discount-codes
+            Method: get
+            Auth:
+              Authorizer: NONE
+        AddEventDiscountCode:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/discount-codes
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateEventDiscountCode:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/discount-codes/{codeId}
+            Method: put
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteEventDiscountCode:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/discount-codes/{codeId}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetEventTicketOrders:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/ticket-orders
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
+        ValidateTicketOrder:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/ticket-orders/{orderId}/validate
+            Method: patch
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetStaffFlights:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}/flights
+            Method: get
+            Auth:
+              Authorizer: NONE
+        AddStaffFlight:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}/flights
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateStaffFlight:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}/flights/{flightId}
+            Method: put
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteStaffFlight:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}/flights/{flightId}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetEventAccommodations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/accommodations
+            Method: get
+            Auth:
+              Authorizer: NONE
+        AddEventAccommodation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/accommodations
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateEventAccommodation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/accommodations/{accommodationId}
+            Method: put
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteEventAccommodation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/accommodations/{accommodationId}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        AssignAccommodation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/accommodations/{accommodationId}/assign
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UnassignAccommodation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/accommodations/{accommodationId}/assign/{staffId}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetStaffAccommodations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /events/{id}/staff/{staffId}/accommodations
+            Method: get
+            Auth:
+              Authorizer: NONE
+        UploadVideos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GeneratePresignedUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos/upload-url
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        ConfirmVideoUpload:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos/confirm
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteVideos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateVideoCategory:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos/{id}
+            Method: patch
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetUserProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/profile
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
+        UpdateUserProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/profile
+            Method: patch
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GenerateProfilePhotoUploadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/profile-photo-upload-url
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetUserEvents:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/events
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetUserTickets:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/tickets
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetUserVideos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/videos
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
+        InitiateMultipartUpload:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos/multipart/init
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+        CompleteMultipartUpload:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /videos/multipart/complete
+            Method: post
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+Parameters:
+  Environment:
+    Type: String
+    Description: Deployment environment (dev, staging, prod)
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+  DatabaseHost:
+    Type: String
+    Description: RDS database host endpoint
+    Default: cachao-dev-db.cetzgm3nbskt.eu-west-1.rds.amazonaws.com
+  DatabaseUser:
+    Type: String
+    Description: Database username
+    NoEcho: false
+  DatabasePassword:
+    Type: String
+    Description: Database password
+    NoEcho: true
+  AviationStackApiKey:
+    Type: String
+    Description: AviationStack API key for flight lookups (optional, get free key at https://aviationstack.com)
+    Default: ""
+    NoEcho: true
+  AirLabsApiKey:
+    Type: String
+    Description: AirLabs API key for flight lookups (optional fallback, get free key at https://airlabs.co)
+    Default: ""
+    NoEcho: true
+  StripeSecretKey:
+    Type: String
+    Description: Stripe secret key (get from https://dashboard.stripe.com/apikeys)
+    Default: ""
+    NoEcho: true
+  StripeWebhookSecret:
+    Type: String
+    Description: Stripe webhook secret (get from Stripe dashboard after creating webhook endpoint)
+    Default: ""
+    NoEcho: true
+  StripePartnerEventBusName:
+    Type: String
+    Description: "Stripe EventBridge partner event bus name (e.g. aws.partner/stripe.com/ed_test_xxx). In EventBridge > Partner event sources, select your Stripe source and click 'Associate with event bus' first so the bus exists; then use that bus name here."
+    Default: ""
+
+Conditions:
+  HasStripePartnerBus: !Not [!Equals [!Ref StripePartnerEventBusName, ""]]
+
+Outputs:
+  CachaoApi:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${CachaoApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"
+  EventsApi:
+    Description: "API Gateway endpoint URL for Events function"
+    Value: !Sub "https://${CachaoApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/events/"
+  VideosApi:
+    Description: "API Gateway endpoint URL for Video upload function"
+    Value: !Sub "https://${CachaoApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/videos/"
+  VideosBucket:
+    Description: "S3 Bucket for storing video files"
+    Value: !Ref CachaoVideosBucket
+  EventsFunction:
+    Description: "Events Lambda Function ARN"
+    Value: !GetAtt EventsFunction.Arn
+  EventsFunctionIamRole:
+    Description: "Implicit IAM Role created for Events function"
+    Value: !GetAtt EventsFunctionRole.Arn
+  UserPoolId:
+    Description: "Cognito User Pool ID"
+    Value: !Ref CachaoUserPool
+  UserPoolClientId:
+    Description: "Cognito User Pool Client ID"
+    Value: !Ref CachaoUserPoolClient
+  StripeEventFailureSNSTopicArn:
+    Description: "SNS Topic ARN for Stripe EventBridge handler failure alerts (subscribe email/SMS in Console)"
+    Value: !Ref StripeEventFailureSNS
+  StripeEventDLQArn:
+    Description: "SQS DLQ ARN for failed Stripe EventBridge events"
+    Value: !GetAtt StripeEventDLQ.Arn

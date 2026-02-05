@@ -1,0 +1,27 @@
+meta {
+  name: Create Discount Code
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/discount-codes
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "code": "SUMMER2024",
+    "discount_type": "percentage",
+    "discount_value": 20,
+    "max_uses": 100,
+    "valid_from": "2024-01-01T00:00:00Z",
+    "valid_until": "2024-12-31T23:59:59Z"
+  }
+}

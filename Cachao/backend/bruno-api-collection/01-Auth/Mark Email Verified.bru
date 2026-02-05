@@ -1,0 +1,26 @@
+meta {
+  name: Mark Email Verified
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/admin/mark-email-verified
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{auth_token}}
+}
+
+body:json {
+  {
+    "email": "limonsito.films@gmail.com"
+  }
+}
+
+vars:pre-request {
+  auth_token: eyJraWQiOiJaMzdHVTdGdzBUXC90VmgrdEdJOGRtaUZBa1hOdFZ5dmtuUHBjY3djN2J3cz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMjY1YjQ3NC1lMGYxLTcwYTQtNGNkMi0yODVhNGJkMjBmZjEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMS5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTFfeTFGRFFwUTliIiwiY29nbml0bzp1c2VybmFtZSI6IjIyNjViNDc0LWUwZjEtNzBhNC00Y2QyLTI4NWE0YmQyMGZmMSIsIm9yaWdpbl9qdGkiOiI2M2Q2MzJlYy1jZWYxLTQyYzEtYmE4ZC0xZTQ5MjQyY2I5NzUiLCJhdWQiOiIzN2E0MWh1NXU3bWxtNm5iaDluM2QyM29nYiIsImV2ZW50X2lkIjoiODIzZjMxNTMtOGJiNy00NTgwLWIwOGQtNDBjODg2NGE0OTJiIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3Njg3NTUzNjQsIm5hbWUiOiJyYXVsIiwiZXhwIjoxNzY4NzU4OTY0LCJpYXQiOjE3Njg3NTUzNjQsImp0aSI6ImI2NjA1YmM1LTQ5NTItNGQ4ZC1hOGYxLTRmODZhNDc5NzEwNSIsImVtYWlsIjoicmF1bG1zYW5jaGV6N0BnbWFpbC5jb20ifQ.KnPYUkh-urlKqZqtJ6fi3ufLa7cgJn-O_nKEAlgElLpZKcfGkNBzwOOtg12DephP6WZsnFLHkJ_4RjGuvIYDdW3UV1C5EF0mK-cFMQMqILoW0IasEwgyMxmJE3bWhFk-B7Gnxx4kx_yNhfuoyukNc7z69cm4qEKuriZO1LP0uvMEyS5S9VGWw41VIYUCXXZuLLz4pKSghAXcgtKi3AgriZ1BwdYqaoMvTFlbEmnPi1QI-4MTIZAhEdYeoof8q4UIMqhT4dotvawl-LlawYQjXAxf8U1gzyQKRTnGVEeR8315nhBEJdo2Gpego3snuTkvnfBX-z3uqhqzMI2spD784Q
+}

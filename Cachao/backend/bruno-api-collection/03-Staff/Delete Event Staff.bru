@@ -1,0 +1,15 @@
+meta {
+  name: Delete Event Staff
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/staff/{{staff_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Create Ticket Discount
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}/discounts
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "discount_code_id": 1,
+    "discount_type": "percentage",
+    "discount_value": 15
+  }
+}

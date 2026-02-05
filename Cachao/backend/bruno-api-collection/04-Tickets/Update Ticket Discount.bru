@@ -1,0 +1,22 @@
+meta {
+  name: Update Ticket Discount
+  type: http
+  seq: 12
+}
+
+put {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}/discounts/{{discount_code_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "discount_value": 20
+  }
+}

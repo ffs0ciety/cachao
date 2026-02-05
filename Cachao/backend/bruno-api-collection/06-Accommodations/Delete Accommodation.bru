@@ -1,0 +1,15 @@
+meta {
+  name: Delete Accommodation
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/accommodations/{{accommodation_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

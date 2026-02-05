@@ -1,0 +1,15 @@
+meta {
+  name: Unassign Accommodation
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/accommodations/{{accommodation_id}}/assign/{{staff_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

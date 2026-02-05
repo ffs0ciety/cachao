@@ -1,0 +1,28 @@
+meta {
+  name: Complete Multipart Upload
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{api_url}}/videos/multipart/complete
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "upload_id": "your-upload-id",
+    "parts": [
+      {
+        "part_number": 1,
+        "etag": "etag-from-upload"
+      }
+    ]
+  }
+}

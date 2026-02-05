@@ -1,0 +1,28 @@
+meta {
+  name: Create Accommodation
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/accommodations
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "name": "Hotel Room",
+    "description": "Standard hotel room",
+    "capacity": 2,
+    "check_in": "2024-12-31T15:00:00Z",
+    "check_out": "2025-01-02T11:00:00Z",
+    "address": "123 Hotel St",
+    "notes": "Breakfast included"
+  }
+}

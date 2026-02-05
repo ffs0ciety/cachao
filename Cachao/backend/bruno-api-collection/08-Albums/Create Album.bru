@@ -1,0 +1,24 @@
+meta {
+  name: Create Album
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/albums
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "name": "Event Photos",
+    "description": "Photos from the event",
+    "date": "2024-12-31"
+  }
+}

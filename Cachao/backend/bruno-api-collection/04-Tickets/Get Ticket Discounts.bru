@@ -1,0 +1,11 @@
+meta {
+  name: Get Ticket Discounts
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}/discounts
+  body: none
+  auth: none
+}

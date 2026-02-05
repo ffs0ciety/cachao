@@ -1,0 +1,14 @@
+{
+  "name": "migrate-add-ticket-validated",
+  "version": "1.0.0",
+  "description": "Add validated_at column to ticket_orders",
+  "main": "app.ts",
+  "dependencies": {
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

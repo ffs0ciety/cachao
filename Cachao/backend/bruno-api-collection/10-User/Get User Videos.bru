@@ -1,0 +1,15 @@
+meta {
+  name: Get User Videos
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{api_url}}/user/videos
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

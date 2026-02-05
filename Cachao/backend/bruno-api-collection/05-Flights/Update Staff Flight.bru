@@ -1,0 +1,23 @@
+meta {
+  name: Update Staff Flight
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{api_url}}/events/{{event_id}}/staff/{{staff_id}}/flights/{{flight_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "flight_number": "AA456",
+    "departure_date": "2024-12-31T11:00:00Z"
+  }
+}

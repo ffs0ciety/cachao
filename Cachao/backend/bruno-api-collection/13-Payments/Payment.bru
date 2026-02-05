@@ -1,0 +1,15 @@
+meta {
+  name: Payment
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}/checkout
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

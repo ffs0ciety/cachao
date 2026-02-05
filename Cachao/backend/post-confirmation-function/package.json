@@ -1,0 +1,22 @@
+{
+  "name": "post-confirmation-function",
+  "version": "1.0.0",
+  "description": "Cognito PostConfirmation trigger to create user in database",
+  "main": "post-confirmation.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.490.0",
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}
+
+
+
+

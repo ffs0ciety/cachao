@@ -1,0 +1,28 @@
+meta {
+  name: Create Staff Flight
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/staff/{{staff_id}}/flights
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "flight_number": "AA123",
+    "airline": "American Airlines",
+    "departure_airport": "JFK",
+    "arrival_airport": "LAX",
+    "departure_date": "2024-12-31T10:00:00Z",
+    "arrival_date": "2024-12-31T13:00:00Z",
+    "notes": "Direct flight"
+  }
+}

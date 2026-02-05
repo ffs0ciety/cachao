@@ -1,0 +1,15 @@
+meta {
+  name: Delete Ticket Discount
+  type: http
+  seq: 13
+}
+
+delete {
+  url: {{api_url}}/events/{{event_id}}/tickets/{{ticket_id}}/discounts/{{discount_code_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Get User Tickets
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{api_url}}/user/tickets
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{id_token}}
+}

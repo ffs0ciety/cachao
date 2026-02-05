@@ -1,0 +1,24 @@
+meta {
+  name: Get Video Upload URL
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/videos/upload-url
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "file_name": "video.mp4",
+    "content_type": "video/mp4",
+    "file_size": 10485760
+  }
+}

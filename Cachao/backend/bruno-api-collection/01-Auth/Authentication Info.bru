@@ -1,0 +1,63 @@
+meta {
+  name: Authentication Info
+  type: http
+  seq: 0
+}
+
+note {
+  # Authentication in Cachao API
+
+  ## How Authentication Works
+
+  Cachao uses **AWS Cognito** for authentication, which is handled client-side through AWS Amplify. There is **no REST API login endpoint** - authentication happens directly between the frontend and Cognito.
+
+  ## Getting an Auth Token for Testing
+
+  To test authenticated endpoints in Bruno, you need to obtain a JWT token from Cognito. Here are the options:
+
+  ### Option 1: Get Token from Browser (Easiest)
+  1. Log in to the Cachao frontend application
+  2. Open browser DevTools (F12)
+  3. Go to Application/Storage → Local Storage
+  4. Look for keys starting with `CognitoIdentityServiceProvider`
+  5. Find the `idToken` or `accessToken` value
+  6. Copy the token value
+  7. Set it in Bruno environment: `auth_token: Bearer YOUR_TOKEN_HERE`
+
+  ### Option 2: Use AWS CLI
+  ```bash
+  aws cognito-idp initiate-auth \
+    --auth-flow USER_PASSWORD_AUTH \
+    --client-id YOUR_CLIENT_ID \
+    --auth-parameters USERNAME=user@example.com,PASSWORD=yourpassword \
+    --region eu-west-1
+  ```
+  Extract the `IdToken` from the response.
+
+  ### Option 3: Use Cognito API Directly
+  You can use the AWS Cognito API endpoints directly:
+  - Initiate Auth: `https://cognito-idp.eu-west-1.amazonaws.com/`
+  - But this requires proper AWS SDK setup
+
+  ## Token Format
+  Tokens should be included in the `Authorization` header:
+  ```
+  Authorization: Bearer eyJraWQiOiJ...
+  ```
+
+  ## Token Expiration
+  Cognito tokens typically expire after 1 hour. You'll need to refresh your token periodically.
+
+  ## Public Endpoints
+  The following endpoints don't require authentication:
+  - GET /events
+  - GET /events/{id}
+  - GET /events/{id}/staff
+  - GET /events/{id}/tickets
+  - GET /events/{id}/discount-codes
+  - GET /events/{id}/videos
+  - GET /events/{id}/albums
+  - GET /artists/{id}
+  - GET /health
+  - POST /auth/resend-verification-code
+}

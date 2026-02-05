@@ -1,0 +1,24 @@
+meta {
+  name: Update Discount Code
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{api_url}}/events/{{event_id}}/discount-codes/{{discount_code_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "code": "SUMMER2024",
+    "discount_value": 25,
+    "max_uses": 150
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "generate-thumbnail",
+  "version": "1.0.0",
+  "description": "Lambda function to generate video thumbnails",
+  "main": "generate-thumbnail.ts",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.490.0",
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.11.0"
+  }
+}
+
+
+
+
+

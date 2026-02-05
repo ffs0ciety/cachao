@@ -1,0 +1,11 @@
+meta {
+  name: Get Event Tickets
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/events/{{event_id}}/tickets
+  body: none
+  auth: none
+}

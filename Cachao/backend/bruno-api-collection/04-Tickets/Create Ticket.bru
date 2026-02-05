@@ -1,0 +1,29 @@
+meta {
+  name: Create Ticket
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/events/{{event_id}}/tickets
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{id_token}}
+}
+
+body:json {
+  {
+    "name": "VIP Ticket",
+    "description": "VIP access ticket",
+    "price": 100.00,
+    "currency": "USD",
+    "quantity": 100,
+    "max_quantity": 2,
+    "available_from": "2024-01-01T00:00:00Z",
+    "available_until": "2024-12-31T23:59:59Z"
+  }
+}

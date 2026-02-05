@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Cachao API",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

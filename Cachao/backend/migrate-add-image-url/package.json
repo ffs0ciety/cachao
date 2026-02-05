@@ -1,0 +1,22 @@
+{
+  "name": "migrate-add-image-url",
+  "version": "1.0.0",
+  "description": "Lambda function to add image_url column to events table",
+  "main": "migrate-add-image-url.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mariadb": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  }
+}
+
+
+
+
+
