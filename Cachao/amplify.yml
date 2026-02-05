@@ -5,7 +5,9 @@ applications:
       phases:
         preBuild:
           commands:
-            - npm ci
+            # Clean native modules to avoid architecture mismatch
+            - rm -rf node_modules package-lock.json
+            - npm install
         build:
           commands:
             - echo "NUXT_PUBLIC_API_URL=$NUXT_PUBLIC_API_URL" >> .env
@@ -20,5 +22,4 @@ applications:
         files:
           - '**/*'
       cache:
-        paths:
-          - node_modules/**/*
+        paths: []
