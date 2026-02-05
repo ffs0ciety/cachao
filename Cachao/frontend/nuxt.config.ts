@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   
   css: ['~/assets/css/main.css'],
   
+  // Use SPA mode for Amplify static hosting
+  ssr: false,
+  
   runtimeConfig: {
     // Private keys (only available on server-side)
     
@@ -32,13 +35,9 @@ export default defineNuxtConfig({
     }
   },
   
-  // Ensure client-side only for API calls
-  ssr: true,
-  
   // Add route rules to handle API calls client-side only
   routeRules: {
-    '/api/**': { cors: true, headers: { 'Access-Control-Allow-Origin': '*' } },
-    '/events/staff/**': { ssr: false }
+    '/api/**': { cors: true, headers: { 'Access-Control-Allow-Origin': '*' } }
   }
 })
 

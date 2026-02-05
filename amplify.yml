@@ -18,7 +18,7 @@ applications:
             - echo "Build complete"
             - ls -la dist || echo "No dist folder found"
       artifacts:
-        baseDirectory: .amplify-hosting/static
+        baseDirectory: .output/public
         files:
           - '**/*'
       cache:
