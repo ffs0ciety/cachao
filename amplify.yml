@@ -5,23 +5,14 @@ applications:
       phases:
         preBuild:
           commands:
-            # Use Node 20 LTS
-            - nvm use 20
-            # Clean and reinstall for Linux
-            - rm -rf node_modules package-lock.json .nuxt .output
-            - npm install --platform=linux --arch=x64
+            - npm ci
         build:
           commands:
-            - echo "NUXT_PUBLIC_API_URL=$NUXT_PUBLIC_API_URL" >> .env
-            - echo "NUXT_PUBLIC_API_BASE_PATH=$NUXT_PUBLIC_API_BASE_PATH" >> .env
-            - echo "NUXT_PUBLIC_APP_URL=$NUXT_PUBLIC_APP_URL" >> .env
-            - echo "NUXT_PUBLIC_COGNITO_USER_POOL_ID=$NUXT_PUBLIC_COGNITO_USER_POOL_ID" >> .env
-            - echo "NUXT_PUBLIC_COGNITO_CLIENT_ID=$NUXT_PUBLIC_COGNITO_CLIENT_ID" >> .env
-            - echo "NUXT_PUBLIC_COGNITO_REGION=$NUXT_PUBLIC_COGNITO_REGION" >> .env
             - npm run generate
       artifacts:
         baseDirectory: dist
         files:
           - '**/*'
       cache:
-        paths: []
+        paths:
+          - node_modules/**/*
