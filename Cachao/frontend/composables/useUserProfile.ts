@@ -36,7 +36,7 @@ export interface UserVideo {
 function getApiUrl(endpoint: string = ''): string {
   const config = useRuntimeConfig();
   const baseUrl = config.public.apiUrl || 'https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com';
-  const basePath = config.public.apiBasePath || '/Prod';
+  const basePath = config.public.apiBasePath || '';
   return `${baseUrl}${basePath}${endpoint}`;
 }
 
