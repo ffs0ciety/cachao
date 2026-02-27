@@ -131,37 +131,47 @@ async function addEventStaff(event: APIGatewayProxyEvent, connection: mariadb.Po
   if (!verify.ok) return verify.error!;
 
   const body = parseBody(event);
-  const { name, email, role, image_url, bio, instagram_url, tiktok_url, youtube_url, website_url, country, city, partner_name, partner_id, styles } = body;
+  const { name, email, role, phone, notes, image_url, is_public } = body;
 
-  if (!name || !email || !role) return jsonResponse(400, { success: false, error: 'name, email, and role are required' });
+  if (!name || !role) return jsonResponse(400, { success: false, error: 'name and role are required' });
 
-  // Check if image_url column exists
+  // Check which optional columns exist
   let hasImageUrlColumn = false;
+  let hasIsPublicColumn = false;
   try {
-    const imageUrlCheck = await connection.query(`
-      SELECT COUNT(*) as count
+    const columnsCheck = await connection.query(`
+      SELECT COLUMN_NAME
       FROM INFORMATION_SCHEMA.COLUMNS
       WHERE TABLE_SCHEMA = DATABASE()
         AND TABLE_NAME = 'event_staff'
-        AND COLUMN_NAME = 'image_url'
+        AND COLUMN_NAME IN ('image_url', 'is_public')
     `) as any[];
-    hasImageUrlColumn = Array.isArray(imageUrlCheck) && imageUrlCheck.length > 0 && (imageUrlCheck[0] as any).count > 0;
+    for (const row of columnsCheck) {
+      if (row.COLUMN_NAME === 'image_url') hasImageUrlColumn = true;
+      if (row.COLUMN_NAME === 'is_public') hasIsPublicColumn = true;
+    }
   } catch (e) {
-    console.warn('Error checking for image_url column:', e);
+    console.warn('Error checking for optional columns:', e);
   }
 
-  // Build dynamic query
-  const columns: string[] = ['event_id', 'name', 'email', 'role'];
-  const values: any[] = [eventId, name, email, role];
+  // Build dynamic query with only existing columns
+  const columns: string[] = ['event_id', 'name', 'role'];
+  const values: any[] = [eventId, name, role];
+
+  if (hasIsPublicColumn) {
+    columns.push('is_public');
+    values.push(is_public === true || is_public === 'true' ? 1 : 0);
+  }
+
+  columns.push('email', 'phone', 'notes');
+  values.push(email || null, phone || null, notes || null);
 
   if (hasImageUrlColumn) {
     columns.push('image_url');
     values.push(image_url || null);
   }
 
-  columns.push('bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id', 'styles', 'created_at');
-  values.push(bio || null, instagram_url || null, tiktok_url || null, youtube_url || null, website_url || null, country || null, city || null, partner_name || null, partner_id || null, styles ? JSON.stringify(styles) : null);
-
+  columns.push('created_at');
   const placeholders = columns.map(col => col === 'created_at' ? 'NOW()' : '?').join(', ');
 
   const result = await connection.query(
@@ -181,28 +191,41 @@ async function updateEventStaff(event: APIGatewayProxyEvent, connection: mariadb
   const updates: string[] = [];
   const values: any[] = [];
 
-  // Check if image_url column exists
+  // Check which optional columns exist
   let hasImageUrlColumn = false;
+  let hasIsPublicColumn = false;
   try {
-    const imageUrlCheck = await connection.query(`
-      SELECT COUNT(*) as count
+    const columnsCheck = await connection.query(`
+      SELECT COLUMN_NAME
       FROM INFORMATION_SCHEMA.COLUMNS
       WHERE TABLE_SCHEMA = DATABASE()
         AND TABLE_NAME = 'event_staff'
-        AND COLUMN_NAME = 'image_url'
+        AND COLUMN_NAME IN ('image_url', 'is_public')
     `) as any[];
-    hasImageUrlColumn = Array.isArray(imageUrlCheck) && imageUrlCheck.length > 0 && (imageUrlCheck[0] as any).count > 0;
+    for (const row of columnsCheck) {
+      if (row.COLUMN_NAME === 'image_url') hasImageUrlColumn = true;
+      if (row.COLUMN_NAME === 'is_public') hasIsPublicColumn = true;
+    }
   } catch (e) {
-    console.warn('Error checking for image_url column:', e);
+    console.warn('Error checking for optional columns:', e);
   }
 
-  const fields = ['name', 'email', 'role', 'bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id'];
+  // Only use columns that exist in the table
+  const fields = ['name', 'email', 'role', 'phone', 'notes'];
   if (hasImageUrlColumn) fields.push('image_url');
+  if (hasIsPublicColumn) fields.push('is_public');
 
   for (const field of fields) {
-    if (body[field] !== undefined) { updates.push(`${field} = ?`); values.push(body[field]); }
+    if (body[field] !== undefined) {
+      if (field === 'is_public') {
+        updates.push(`${field} = ?`);
+        values.push(body[field] === true || body[field] === 'true' ? 1 : 0);
+      } else {
+        updates.push(`${field} = ?`);
+        values.push(body[field]);
+      }
+    }
   }
-  if (body.styles !== undefined) { updates.push('styles = ?'); values.push(JSON.stringify(body.styles)); }
 
   if (updates.length) {
     updates.push('updated_at = NOW()');
