@@ -135,10 +135,38 @@ async function addEventStaff(event: APIGatewayProxyEvent, connection: mariadb.Po
 
   if (!name || !email || !role) return jsonResponse(400, { success: false, error: 'name, email, and role are required' });
 
+  // Check if image_url column exists
+  let hasImageUrlColumn = false;
+  try {
+    const imageUrlCheck = await connection.query(`
+      SELECT COUNT(*) as count
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'event_staff'
+        AND COLUMN_NAME = 'image_url'
+    `) as any[];
+    hasImageUrlColumn = Array.isArray(imageUrlCheck) && imageUrlCheck.length > 0 && (imageUrlCheck[0] as any).count > 0;
+  } catch (e) {
+    console.warn('Error checking for image_url column:', e);
+  }
+
+  // Build dynamic query
+  const columns: string[] = ['event_id', 'name', 'email', 'role'];
+  const values: any[] = [eventId, name, email, role];
+
+  if (hasImageUrlColumn) {
+    columns.push('image_url');
+    values.push(image_url || null);
+  }
+
+  columns.push('bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id', 'styles', 'created_at');
+  values.push(bio || null, instagram_url || null, tiktok_url || null, youtube_url || null, website_url || null, country || null, city || null, partner_name || null, partner_id || null, styles ? JSON.stringify(styles) : null);
+
+  const placeholders = columns.map(col => col === 'created_at' ? 'NOW()' : '?').join(', ');
+
   const result = await connection.query(
-    `INSERT INTO event_staff (event_id, name, email, role, image_url, bio, instagram_url, tiktok_url, youtube_url, website_url, country, city, partner_name, partner_id, styles, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-    [eventId, name, email, role, image_url || null, bio || null, instagram_url || null, tiktok_url || null, youtube_url || null, website_url || null, country || null, city || null, partner_name || null, partner_id || null, styles ? JSON.stringify(styles) : null]
+    `INSERT INTO event_staff (${columns.join(', ')}) VALUES (${placeholders})`,
+    values
   ) as any;
 
   const rows = await connection.query('SELECT * FROM event_staff WHERE id = ?', [result.insertId]) as any[];
@@ -153,7 +181,24 @@ async function updateEventStaff(event: APIGatewayProxyEvent, connection: mariadb
   const updates: string[] = [];
   const values: any[] = [];
 
-  const fields = ['name', 'email', 'role', 'image_url', 'bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id'];
+  // Check if image_url column exists
+  let hasImageUrlColumn = false;
+  try {
+    const imageUrlCheck = await connection.query(`
+      SELECT COUNT(*) as count
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'event_staff'
+        AND COLUMN_NAME = 'image_url'
+    `) as any[];
+    hasImageUrlColumn = Array.isArray(imageUrlCheck) && imageUrlCheck.length > 0 && (imageUrlCheck[0] as any).count > 0;
+  } catch (e) {
+    console.warn('Error checking for image_url column:', e);
+  }
+
+  const fields = ['name', 'email', 'role', 'bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id'];
+  if (hasImageUrlColumn) fields.push('image_url');
+
   for (const field of fields) {
     if (body[field] !== undefined) { updates.push(`${field} = ?`); values.push(body[field]); }
   }
