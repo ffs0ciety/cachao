@@ -126,7 +126,12 @@ export async function getAuthToken(): Promise<string | null> {
     }
     
     const data = await response.json();
-    return data.accessToken || data.AccessToken || data.idToken || data.IdToken || null;
+    // API returns tokens nested: { success: true, tokens: { accessToken, idToken, ... } }
+    // API Gateway Cognito authorizer expects the ID token, not access token
+    if (data.tokens) {
+      return data.tokens.idToken || data.tokens.IdToken || null;
+    }
+    return data.idToken || data.IdToken || data.accessToken || data.AccessToken || null;
   } catch (error) {
     console.error('Error getting auth token:', error);
     return null;

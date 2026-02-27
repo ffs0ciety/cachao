@@ -5,8 +5,8 @@ export const config = {
   cognitoClientId: process.env.COGNITO_CLIENT_ID || '37a41hu5u7mlm6nbh9n3d23ogb',
   
   testUser: {
-    email: process.env.TEST_USER_EMAIL || '',
-    password: process.env.TEST_USER_PASSWORD || '',
+    email: process.env.TEST_USER_EMAIL || 'raulmsanchez7@gmail.com',
+    password: process.env.TEST_USER_PASSWORD || 'qaxvaw-femtoq-3puGzo',
   },
   
   testData: {
