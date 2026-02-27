@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import mariadb from 'mariadb';
+import * as mariadb from 'mariadb';
 import Stripe from 'stripe';
 
 let pool: mariadb.Pool | null = null;

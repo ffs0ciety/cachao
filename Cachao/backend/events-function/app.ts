@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import mariadb from 'mariadb';
+import * as mariadb from 'mariadb';
 import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
@@ -2489,6 +2489,318 @@ async function updateUserProfile(
         success: false,
         error: error.message || 'Failed to update user profile',
       }),
+    };
+  }
+}
+
+/**
+ * Get public profile by nickname
+ */
+async function getPublicProfile(
+  event: APIGatewayProxyEvent,
+  connection: mariadb.PoolConnection,
+  nickname: string
+): Promise<APIGatewayProxyResult> {
+  try {
+    const [user] = await connection.query(
+      `SELECT nickname, name, photo_url, cover_photo_url, bio, location, 
+              dance_styles, followers_count, following_count 
+       FROM users WHERE nickname = ?`,
+      [nickname.toLowerCase()]
+    ) as any[];
+
+    if (!user) {
+      return {
+        statusCode: 404,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'User not found' }),
+      };
+    }
+
+    // Generate presigned URLs for photos
+    const s3 = getS3Client();
+    const bucketName = process.env.S3_BUCKET_NAME;
+    
+    const profile: any = { ...user };
+    
+    // Parse dance_styles if it's a string
+    if (typeof profile.dance_styles === 'string') {
+      try {
+        profile.dance_styles = JSON.parse(profile.dance_styles);
+      } catch {
+        profile.dance_styles = [];
+      }
+    }
+    
+    // Generate presigned URL for profile photo
+    if (profile.photo_url && bucketName) {
+      try {
+        let s3Key = profile.photo_url.split('?')[0];
+        if (s3Key.includes('amazonaws.com')) {
+          const match = s3Key.match(/https?:\/\/[^\/]+\/(.+)$/);
+          if (match) s3Key = decodeURIComponent(match[1]);
+        }
+        const cmd = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
+        profile.photo_url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+      } catch (e) {
+        console.error('Error generating presigned URL for photo:', e);
+      }
+    }
+    
+    // Generate presigned URL for cover photo
+    if (profile.cover_photo_url && bucketName) {
+      try {
+        let s3Key = profile.cover_photo_url.split('?')[0];
+        if (s3Key.includes('amazonaws.com')) {
+          const match = s3Key.match(/https?:\/\/[^\/]+\/(.+)$/);
+          if (match) s3Key = decodeURIComponent(match[1]);
+        }
+        const cmd = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
+        profile.cover_photo_url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+      } catch (e) {
+        console.error('Error generating presigned URL for cover photo:', e);
+      }
+    }
+
+    // Get user's groups (placeholder - will be implemented when groups table exists)
+    profile.groups = [];
+    
+    // Get user's schools (placeholder - will be implemented when schools table exists)
+    profile.schools = [];
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: true, profile }),
+    };
+  } catch (error: any) {
+    console.error('Error getting public profile:', error);
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: false, error: error.message || 'Failed to get profile' }),
+    };
+  }
+}
+
+/**
+ * Check if nickname is available
+ */
+async function checkNicknameAvailability(
+  connection: mariadb.PoolConnection,
+  nickname: string
+): Promise<APIGatewayProxyResult> {
+  try {
+    const cleanNickname = nickname.toLowerCase().trim();
+    
+    // Validate format
+    const validPattern = /^[a-zA-Z0-9_]{3,30}$/;
+    if (!validPattern.test(cleanNickname)) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: true, available: false, reason: 'Invalid format' }),
+      };
+    }
+    
+    // Check reserved words
+    const reserved = ['admin', 'api', 'www', 'support', 'help', 'cachao', 'system', 'null', 'undefined'];
+    if (reserved.includes(cleanNickname)) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: true, available: false, reason: 'Reserved' }),
+      };
+    }
+
+    const [existing] = await connection.query(
+      'SELECT nickname FROM users WHERE nickname = ?',
+      [cleanNickname]
+    ) as any[];
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: true, available: !existing }),
+    };
+  } catch (error: any) {
+    console.error('Error checking nickname:', error);
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: false, error: error.message }),
+    };
+  }
+}
+
+/**
+ * Update user nickname
+ */
+async function updateUserNickname(
+  event: APIGatewayProxyEvent,
+  connection: mariadb.PoolConnection,
+  cognitoSub: string | null
+): Promise<APIGatewayProxyResult> {
+  try {
+    if (!cognitoSub) {
+      return {
+        statusCode: 401,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'Authentication required' }),
+      };
+    }
+
+    const bodyString = event.isBase64Encoded
+      ? Buffer.from(event.body || '', 'base64').toString('utf-8')
+      : event.body || '{}';
+    const { nickname } = JSON.parse(bodyString);
+    
+    if (!nickname) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'Nickname is required' }),
+      };
+    }
+
+    const cleanNickname = nickname.toLowerCase().trim();
+    
+    // Validate format
+    const validPattern = /^[a-zA-Z0-9_]{3,30}$/;
+    if (!validPattern.test(cleanNickname)) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'Invalid nickname format. Use 3-30 characters: letters, numbers, underscores only.' }),
+      };
+    }
+
+    // Check if nickname is taken by another user
+    const [existing] = await connection.query(
+      'SELECT cognito_sub FROM users WHERE nickname = ? AND cognito_sub != ?',
+      [cleanNickname, cognitoSub]
+    ) as any[];
+
+    if (existing) {
+      return {
+        statusCode: 409,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'Nickname is already taken' }),
+      };
+    }
+
+    // Update nickname
+    await connection.query(
+      'UPDATE users SET nickname = ?, updated_at = NOW() WHERE cognito_sub = ?',
+      [cleanNickname, cognitoSub]
+    );
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: true, nickname: cleanNickname }),
+    };
+  } catch (error: any) {
+    console.error('Error updating nickname:', error);
+    // Handle duplicate key error
+    if (error.code === 'ER_DUP_ENTRY') {
+      return {
+        statusCode: 409,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'Nickname is already taken' }),
+      };
+    }
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: false, error: error.message }),
+    };
+  }
+}
+
+/**
+ * Get public user videos by nickname
+ */
+async function getPublicUserVideos(
+  connection: mariadb.PoolConnection,
+  nickname: string
+): Promise<APIGatewayProxyResult> {
+  try {
+    // First get the user by nickname
+    const [user] = await connection.query(
+      'SELECT cognito_sub FROM users WHERE nickname = ?',
+      [nickname.toLowerCase()]
+    ) as any[];
+
+    if (!user) {
+      return {
+        statusCode: 404,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+        body: JSON.stringify({ success: false, error: 'User not found' }),
+      };
+    }
+
+    // Get user's public videos
+    const videos = await connection.query(
+      `SELECT v.id, v.title, v.video_url, v.thumbnail_url, v.category, 
+              v.event_id, e.name as event_name, v.created_at
+       FROM videos v
+       LEFT JOIN events e ON v.event_id = e.id
+       WHERE v.cognito_sub = ?
+       ORDER BY v.created_at DESC
+       LIMIT 50`,
+      [user.cognito_sub]
+    ) as any[];
+
+    // Generate presigned URLs for videos
+    const s3 = getS3Client();
+    const bucketName = process.env.S3_BUCKET_NAME;
+    
+    const videosWithUrls = await Promise.all(videos.map(async (video: any) => {
+      const result = { ...video };
+      
+      if (video.video_url && bucketName) {
+        try {
+          let s3Key = video.video_url.split('?')[0];
+          if (s3Key.includes('amazonaws.com')) {
+            const match = s3Key.match(/https?:\/\/[^\/]+\/(.+)$/);
+            if (match) s3Key = decodeURIComponent(match[1]);
+          }
+          const cmd = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
+          result.video_url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+        } catch (e) {
+          console.error('Error generating presigned URL for video:', e);
+        }
+      }
+      
+      if (video.thumbnail_url && bucketName) {
+        try {
+          let s3Key = video.thumbnail_url.split('?')[0];
+          if (s3Key.includes('amazonaws.com')) {
+            const match = s3Key.match(/https?:\/\/[^\/]+\/(.+)$/);
+            if (match) s3Key = decodeURIComponent(match[1]);
+          }
+          const cmd = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
+          result.thumbnail_url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+        } catch (e) {
+          console.error('Error generating presigned URL for thumbnail:', e);
+        }
+      }
+      
+      return result;
+    }));
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: true, videos: videosWithUrls }),
+    };
+  } catch (error: any) {
+    console.error('Error getting public user videos:', error);
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
+      body: JSON.stringify({ success: false, error: error.message }),
     };
   }
 }
@@ -13786,6 +14098,44 @@ export const lambdaHandler = async (
     // POST /user/profile-photo-upload-url - Generate presigned URL for profile photo
     if (path === '/user/profile-photo-upload-url' && event.httpMethod === 'POST') {
       return await generateProfilePhotoUploadUrl(event, cognitoSub);
+    }
+
+    // PATCH /user/nickname - Update user nickname
+    if (path === '/user/nickname' && event.httpMethod === 'PATCH') {
+      if (!connection) {
+        const dbPool = getPool();
+        connection = await dbPool.getConnection();
+      }
+      return await updateUserNickname(event, connection, cognitoSub);
+    }
+
+    // Handle /users/* routes (public endpoints via proxy)
+    if (path.startsWith('/users/') && event.httpMethod === 'GET') {
+      if (!connection) {
+        const dbPool = getPool();
+        connection = await dbPool.getConnection();
+      }
+      
+      // GET /users/check-nickname/:nickname - Check nickname availability
+      const checkNicknameMatch = path.match(/^\/users\/check-nickname\/([^\/]+)$/);
+      if (checkNicknameMatch) {
+        const nickname = decodeURIComponent(checkNicknameMatch[1]);
+        return await checkNicknameAvailability(connection, nickname);
+      }
+
+      // GET /users/:nickname/videos - Get public user videos
+      const publicVideosMatch = path.match(/^\/users\/([^\/]+)\/videos$/);
+      if (publicVideosMatch) {
+        const nickname = decodeURIComponent(publicVideosMatch[1]);
+        return await getPublicUserVideos(connection, nickname);
+      }
+
+      // GET /users/:nickname - Get public profile (must be last, catches remaining)
+      const publicProfileMatch = path.match(/^\/users\/([^\/]+)$/);
+      if (publicProfileMatch) {
+        const nickname = decodeURIComponent(publicProfileMatch[1]);
+        return await getPublicProfile(event, connection, nickname);
+      }
     }
 
     // GET /user/events - Get user's events

@@ -1,0 +1,16 @@
+{
+  "name": "cachao-api-tests",
+  "version": "1.0.0",
+  "description": "API tests for Cachao backend",
+  "type": "module",
+  "scripts": {
+    "test": "npx tsx run-tests.ts",
+    "test:public": "npx tsx run-tests.ts --public",
+    "test:auth": "npx tsx run-tests.ts --auth",
+    "test:quick": "npx tsx run-tests.ts --quick"
+  },
+  "dependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

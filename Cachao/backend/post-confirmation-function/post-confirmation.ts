@@ -1,5 +1,5 @@
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
-import mariadb from 'mariadb';
+import * as mariadb from 'mariadb';
 
 let pool: mariadb.Pool | null = null;
 
