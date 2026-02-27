@@ -1,62 +1,62 @@
 <template>
   <div class="space-y-4">
     <!-- Add Ticket Form -->
-    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Ticket</h3>
+    <div class="card">
+      <h3 class="text-lg font-semibold text-text-primary mb-4">Add New Ticket</h3>
       <form @submit.prevent="handleAddTicket" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Ticket Name *</label>
+          <div class="form-group">
+            <label class="form-label">Ticket Name *</label>
             <input
               v-model="newTicket.name"
               type="text"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-input"
               placeholder="e.g., General Admission"
             />
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Price *</label>
+          <div class="form-group">
+            <label class="form-label">Price *</label>
             <input
               v-model.number="newTicket.price"
               type="number"
               step="0.01"
               min="0"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-input"
               placeholder="0.00"
             />
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Max Quantity (Optional)</label>
+          <div class="form-group">
+            <label class="form-label">Max Quantity (Optional)</label>
             <input
               v-model.number="newTicket.max_quantity"
               type="number"
               min="1"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-input"
               placeholder="Leave empty for unlimited"
             />
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Ticket Image (Optional)</label>
+          <div class="form-group">
+            <label class="form-label">Ticket Image (Optional)</label>
             <input
               ref="imageInput"
               type="file"
               accept="image/*"
               @change="handleImageSelect"
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              class="block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-subtle file:text-primary hover:file:opacity-80"
             />
             <div v-if="newTicketImagePreview" class="mt-2">
-              <img :src="newTicketImagePreview" alt="Preview" class="h-24 object-cover rounded-md border border-gray-300" />
+              <img :src="newTicketImagePreview" alt="Preview" class="h-24 object-cover rounded-md border border-border-subtle" />
             </div>
           </div>
         </div>
         <button
           type="submit"
           :disabled="addingTicket"
-          class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          class="btn btn-primary"
         >
           <span v-if="addingTicket">Adding...</span>
           <span v-else>Add Ticket</span>
@@ -66,26 +66,26 @@
 
     <!-- Tickets List -->
     <div v-if="tickets.length > 0" class="space-y-3">
-      <h3 class="text-lg font-semibold text-gray-700">Existing Tickets</h3>
+      <h3 class="text-lg font-semibold text-text-primary">Existing Tickets</h3>
       <div
         v-for="ticket in tickets"
         :key="ticket.id"
-        class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+        class="card p-4 hover:bg-elevated transition-colors"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-2">
-              <h4 class="text-lg font-semibold text-gray-800">{{ ticket.name }}</h4>
+              <h4 class="text-lg font-semibold text-text-primary">{{ ticket.name }}</h4>
               <span
                 :class="[
-                  'px-2 py-1 rounded text-xs font-medium',
-                  ticket.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  'badge',
+                  ticket.is_active ? 'badge-success' : ''
                 ]"
               >
                 {{ ticket.is_active ? 'Active' : 'Inactive' }}
               </span>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-text-secondary">
               <div>
                 <span class="font-medium">Price:</span> ${{ ticket.price.toFixed(2) }}
               </div>
@@ -101,15 +101,15 @@
               </div>
             </div>
             <div v-if="ticket.image_url" class="mt-2">
-              <img :src="ticket.image_url" alt="Ticket image" class="h-32 object-cover rounded-md border border-gray-300" />
+              <img :src="ticket.image_url" alt="Ticket image" class="h-32 object-cover rounded-md border border-border-subtle" />
             </div>
             <!-- Ticket Discounts Section -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="mt-4 pt-4 border-t border-border-subtle">
               <div class="flex items-center justify-between mb-2">
-                <h5 class="text-sm font-semibold text-gray-700">Date-Based Discounts</h5>
+                <h5 class="text-sm font-semibold text-text-secondary">Date-Based Discounts</h5>
                 <button
                   @click="openAddDiscountModal(ticket)"
-                  class="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-xs"
+                  class="btn btn-success btn-sm"
                 >
                   + Add Discount
                 </button>
@@ -118,17 +118,17 @@
                 <div
                   v-for="discount in ticketDiscounts[ticket.id]"
                   :key="discount.id"
-                  class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm"
+                  class="flex items-center justify-between p-2 bg-elevated rounded text-sm"
                 >
                   <div class="flex-1">
-                    <span class="font-medium">
+                    <span class="font-medium text-text-primary">
                       {{ discount.discount_type === 'percentage' ? `${discount.discount_value}%` : `$${discount.discount_value.toFixed(2)}` }}
                     </span>
-                    <span class="text-gray-600 ml-2">until {{ formatDate(discount.valid_until) }}</span>
+                    <span class="text-text-secondary ml-2">until {{ formatDate(discount.valid_until) }}</span>
                     <span
                       :class="[
-                        'ml-2 px-1.5 py-0.5 rounded text-xs',
-                        discount.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        'ml-2 badge',
+                        discount.is_active ? 'badge-success' : ''
                       ]"
                     >
                       {{ discount.is_active ? 'Active' : 'Inactive' }}
@@ -137,32 +137,32 @@
                   <div class="flex gap-1">
                     <button
                       @click="editDiscount(ticket, discount)"
-                      class="px-2 py-1 bg-blue-400 text-white rounded hover:bg-blue-500 transition-colors text-xs"
+                      class="btn btn-primary btn-sm"
                     >
                       Edit
                     </button>
                     <button
                       @click="confirmDeleteDiscount(ticket, discount)"
-                      class="px-2 py-1 bg-red-400 text-white rounded hover:bg-red-500 transition-colors text-xs"
+                      class="btn btn-danger btn-sm"
                     >
                       Delete
                     </button>
                   </div>
                 </div>
               </div>
-              <div v-else class="text-sm text-gray-500 italic">No discounts configured</div>
+              <div v-else class="text-sm text-text-disabled italic">No discounts configured</div>
             </div>
           </div>
           <div class="flex gap-2 ml-4">
             <button
               @click="editTicket(ticket)"
-              class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+              class="btn btn-primary btn-sm"
             >
               Edit
             </button>
             <button
               @click="confirmDeleteTicket(ticket)"
-              class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+              class="btn btn-danger btn-sm"
             >
               Delete
             </button>
@@ -172,30 +172,30 @@
     </div>
 
     <!-- Edit Ticket Modal -->
-    <div v-if="editingTicket" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="cancelEdit">
-      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div v-if="editingTicket" class="modal-overlay" @click.self="cancelEdit">
+      <div class="modal max-w-2xl max-h-[90vh] overflow-y-auto">
         <div class="p-6">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">Edit Ticket</h3>
+          <h3 class="text-xl font-bold text-text-primary mb-4">Edit Ticket</h3>
           <form @submit.prevent="handleUpdateTicket" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Ticket Name *</label>
+              <div class="form-group">
+                <label class="form-label">Ticket Name *</label>
                 <input
                   v-model="editingTicket.name"
                   type="text"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="form-input"
                 />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Price *</label>
+              <div class="form-group">
+                <label class="form-label">Price *</label>
                 <input
                   v-model.number="editingTicket.price"
                   type="number"
                   step="0.01"
                   min="0"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="form-input"
                 />
               </div>
             </div>

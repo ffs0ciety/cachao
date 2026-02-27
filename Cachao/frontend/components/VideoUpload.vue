@@ -1,40 +1,40 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Upload Videos</h2>
+  <div class="card">
+    <h2 class="text-2xl font-semibold text-text-primary mb-4">Upload Videos</h2>
 
     <!-- Upload Queue -->
     <div v-if="uploadQueue.length > 0" class="space-y-4 mb-6">
-      <h3 class="text-lg font-medium text-gray-700">Upload Queue ({{ uploadQueue.length }})</h3>
+      <h3 class="text-lg font-medium text-text-secondary">Upload Queue ({{ uploadQueue.length }})</h3>
       
-      <div v-for="(item, index) in uploadQueue" :key="item.id" class="border border-gray-200 rounded-lg p-4">
+      <div v-for="(item, index) in uploadQueue" :key="item.id" class="border border-border-subtle rounded-lg p-4 bg-elevated">
         <div class="flex items-start justify-between mb-2">
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-800 truncate">{{ item.file.name }}</p>
-            <p class="text-xs text-gray-500">{{ formatFileSize(item.file.size) }}</p>
+            <p class="text-sm font-medium text-text-primary truncate">{{ item.file.name }}</p>
+            <p class="text-xs text-text-disabled">{{ formatFileSize(item.file.size) }}</p>
           </div>
           <div class="ml-4 flex items-center gap-2">
-            <span v-if="item.status === 'pending'" class="text-xs text-gray-500">Waiting...</span>
-            <span v-else-if="item.status === 'uploading'" class="text-xs text-blue-600">{{ Math.round(item.progress) }}%</span>
-            <span v-else-if="item.status === 'success'" class="text-xs text-green-600">✓ Complete</span>
-            <span v-else-if="item.status === 'error'" class="text-xs text-red-600">✗ Failed</span>
+            <span v-if="item.status === 'pending'" class="text-xs text-text-disabled">Waiting...</span>
+            <span v-else-if="item.status === 'uploading'" class="text-xs text-primary">{{ Math.round(item.progress) }}%</span>
+            <span v-else-if="item.status === 'success'" class="text-xs text-success">✓ Complete</span>
+            <span v-else-if="item.status === 'error'" class="text-xs text-error">✗ Failed</span>
             <button
               v-if="item.status === 'uploading'"
               @click="cancelFileUpload(item.id)"
-              class="text-xs text-red-600 hover:text-red-800"
+              class="text-xs text-error hover:opacity-80"
             >
               Cancel
             </button>
             <button
               v-else-if="item.status === 'error'"
               @click="retryUpload(item.id)"
-              class="text-xs text-blue-600 hover:text-blue-800"
+              class="text-xs text-primary hover:opacity-80"
             >
               Retry
             </button>
             <button
               v-if="item.status !== 'uploading'"
               @click="removeFromQueue(item.id)"
-              class="text-xs text-gray-500 hover:text-gray-700"
+              class="text-xs text-text-disabled hover:text-text-secondary"
             >
               Remove
             </button>
@@ -42,20 +42,20 @@
         </div>
 
         <!-- Progress Bar -->
-        <div v-if="item.status === 'uploading'" class="w-full bg-gray-200 rounded-full h-2 mb-2">
+        <div v-if="item.status === 'uploading'" class="w-full bg-hover rounded-full h-2 mb-2">
           <div
-            class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            class="bg-primary h-2 rounded-full transition-all duration-300"
             :style="{ width: `${item.progress}%` }"
           ></div>
         </div>
 
         <!-- Error Message -->
-        <div v-if="item.status === 'error' && item.error" class="mt-2 text-xs text-red-600 bg-red-50 p-2 rounded">
+        <div v-if="item.status === 'error' && item.error" class="mt-2 text-xs text-error bg-error-subtle p-2 rounded">
           {{ item.error }}
         </div>
 
         <!-- Success Message -->
-        <div v-if="item.status === 'success'" class="mt-2 text-xs text-green-600 bg-green-50 p-2 rounded">
+        <div v-if="item.status === 'success'" class="mt-2 text-xs text-success bg-success-subtle p-2 rounded">
           Uploaded successfully
         </div>
       </div>
@@ -65,7 +65,7 @@
         <button
           @click="startAllUploads"
           :disabled="!hasPendingUploads || isUploading || !isAlbumReady"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+          class="btn btn-primary flex-1"
         >
             <span v-if="isUploading">Uploading...</span>
             <span v-else-if="pendingCount > 0">Upload All ({{ pendingCount }})</span>
@@ -74,18 +74,18 @@
           <button
             @click="clearCompleted"
             :disabled="completedCount === 0"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+            class="btn btn-secondary"
           >
             Clear Completed
           </button>
           <button
             @click="clearQueue"
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            class="btn btn-danger"
           >
             Clear All
           </button>
         </div>
-        <p v-if="!isAlbumReady && hasPendingUploads" class="text-sm text-red-600 font-medium">
+        <p v-if="!isAlbumReady && hasPendingUploads" class="text-sm text-error font-medium">
           ⚠️ Please select or create an album before uploading
         </p>
       </div>
@@ -93,23 +93,23 @@
 
     <!-- File Selection -->
     <div class="space-y-4">
-      <div v-if="defaultEventId" class="text-sm text-gray-600 bg-blue-50 p-3 rounded">
+      <div v-if="defaultEventId" class="alert alert-info">
         <p class="font-medium">Videos will be uploaded to this event</p>
       </div>
 
       <!-- Album Selection -->
-      <div v-if="defaultEventId" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-        <label for="album-select" class="block text-sm font-medium text-gray-700 mb-2">
-          Album <span class="text-red-500">*</span>
-          <span class="text-xs font-normal text-gray-500 ml-2">(Select existing or create new)</span>
+      <div v-if="defaultEventId" class="border border-border-subtle rounded-lg p-4 bg-elevated">
+        <label for="album-select" class="form-label">
+          Album <span class="text-error">*</span>
+          <span class="text-xs font-normal text-text-disabled ml-2">(Select existing or create new)</span>
         </label>
         
         <!-- Option 1: Select existing album -->
-        <div v-if="!showNewAlbumInput" class="flex gap-2">
+        <div v-if="!showNewAlbumInput" class="flex gap-2 mt-2">
           <select
             id="album-select"
             v-model="selectedAlbumId"
-            class="flex-1 px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            class="form-input flex-1"
             :disabled="albumsLoading"
           >
             <option value="">-- Select an album --</option>
@@ -120,27 +120,27 @@
           <button
             type="button"
             @click="showNewAlbumInput = true; selectedAlbumId = null"
-            class="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors whitespace-nowrap"
+            class="btn btn-success whitespace-nowrap"
           >
             + Create New
           </button>
         </div>
         
         <!-- Option 2: Create new album inline -->
-        <div v-else class="space-y-2">
+        <div v-else class="space-y-2 mt-2">
           <div class="flex gap-2">
             <input
               v-model="newAlbumName"
               type="text"
               placeholder="Enter new album name"
-              class="flex-1 px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="form-input flex-1"
               @keyup.enter="createAlbumAndSelect"
               @blur="handleAlbumInputBlur"
             />
             <input
               v-model="newAlbumDate"
               type="date"
-              class="px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="form-input"
               placeholder="Date (optional)"
             />
           </div>
@@ -149,36 +149,36 @@
               type="button"
               @click="createAlbumAndSelect"
               :disabled="!newAlbumName.trim() || creatingAlbum"
-              class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+              class="btn btn-primary"
             >
               {{ creatingAlbum ? 'Creating...' : 'Create' }}
             </button>
             <button
               type="button"
               @click="showNewAlbumInput = false; newAlbumName = ''; newAlbumDate = ''"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+              class="btn btn-secondary"
             >
               Cancel
             </button>
           </div>
-          <p class="text-xs text-gray-500">Date is optional - use it for events with multiple sessions (e.g., every Sunday)</p>
+          <p class="form-help">Date is optional - use it for events with multiple sessions (e.g., every Sunday)</p>
         </div>
         
-        <p v-if="albumsLoading" class="mt-2 text-xs text-gray-500">Loading albums...</p>
-        <p v-if="selectedAlbumId" class="mt-2 text-sm text-green-600">
+        <p v-if="albumsLoading" class="mt-2 text-xs text-text-disabled">Loading albums...</p>
+        <p v-if="selectedAlbumId" class="mt-2 text-sm text-success">
           ✓ Videos will be added to: <strong>{{ selectedAlbumName }}</strong>
         </p>
       </div>
 
       <div>
-        <label for="video-file-input" class="block text-sm font-medium text-gray-700 mb-2">
+        <label for="video-file-input" class="form-label">
           Select Video Files (Multiple)
         </label>
-        <div class="flex gap-2">
+        <div class="flex gap-2 mt-2">
           <button
             type="button"
             @click="fileInput?.click()"
-            class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors font-medium"
+            class="btn btn-primary"
           >
             Choose Files
           </button>
@@ -192,10 +192,10 @@
             class="hidden"
           />
         </div>
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-text-secondary">
           You can select multiple video files at once.
           <span v-if="selectedAlbumId"> Videos will be added to: <strong>{{ selectedAlbumName }}</strong></span>
-          <span v-else class="text-amber-600"> Please select or create an album before uploading.</span>
+          <span v-else class="text-warning"> Please select or create an album before uploading.</span>
         </p>
       </div>
     </div>
@@ -203,10 +203,10 @@
     <!-- Summary -->
     <div v-if="uploadQueue.length > 0" class="mt-4 flex items-center justify-between text-sm">
       <div class="flex gap-4">
-        <span class="text-gray-600">Total: <strong>{{ uploadQueue.length }}</strong></span>
-        <span class="text-blue-600">Uploading: <strong>{{ uploadingCount }}</strong></span>
-        <span class="text-green-600">Success: <strong>{{ successCount }}</strong></span>
-        <span class="text-red-600">Failed: <strong>{{ errorCount }}</strong></span>
+        <span class="text-text-secondary">Total: <strong>{{ uploadQueue.length }}</strong></span>
+        <span class="text-primary">Uploading: <strong>{{ uploadingCount }}</strong></span>
+        <span class="text-success">Success: <strong>{{ successCount }}</strong></span>
+        <span class="text-error">Failed: <strong>{{ errorCount }}</strong></span>
       </div>
     </div>
   </div>

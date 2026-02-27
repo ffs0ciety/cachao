@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-4">
-    <h3 class="text-xl font-bold text-gray-800 mb-4">Purchase Tickets</h3>
+    <h3 class="text-xl font-bold text-text-primary mb-4">Purchase Tickets</h3>
     
-    <div v-if="tickets.length === 0" class="text-gray-500 text-center py-8">
+    <div v-if="tickets.length === 0" class="text-text-secondary text-center py-8">
       No tickets available for this event.
     </div>
 
@@ -10,7 +10,7 @@
       <div
         v-for="ticket in tickets"
         :key="ticket.id"
-        class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+        class="card p-6 hover:bg-elevated transition-colors"
       >
         <div v-if="ticket.image_url" class="mb-4">
           <img
@@ -19,11 +19,11 @@
             class="w-full h-48 object-cover rounded-md"
           />
         </div>
-        <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ ticket.name }}</h4>
+        <h4 class="text-lg font-semibold text-text-primary mb-2">{{ ticket.name }}</h4>
         <div class="mb-4">
-          <span class="text-2xl font-bold text-blue-600">€{{ ticket.price.toFixed(2) }}</span>
+          <span class="text-2xl font-bold text-primary">€{{ ticket.price.toFixed(2) }}</span>
         </div>
-        <div class="text-sm text-gray-600 mb-4">
+        <div class="text-sm text-text-secondary mb-4">
           <div v-if="ticket.max_quantity">
             <span class="font-medium">Available:</span>
             {{ ticket.max_quantity - ticket.sold_quantity }} / {{ ticket.max_quantity }}
@@ -36,10 +36,10 @@
           @click="openPurchaseModal(ticket)"
           :disabled="!ticket.is_active || (ticket.max_quantity && ticket.sold_quantity >= ticket.max_quantity)"
           :class="[
-            'w-full px-4 py-2 rounded-md font-medium transition-colors',
+            'btn w-full',
             !ticket.is_active || (ticket.max_quantity && ticket.sold_quantity >= ticket.max_quantity)
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
+              ? 'btn-secondary opacity-50 cursor-not-allowed'
+              : 'btn-primary'
           ]"
         >
           {{ !ticket.is_active ? 'Sold Out' : (ticket.max_quantity && ticket.sold_quantity >= ticket.max_quantity) ? 'Sold Out' : 'Purchase' }}
@@ -48,50 +48,50 @@
     </div>
 
     <!-- Purchase Modal -->
-    <div v-if="selectedTicket" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="closePurchaseModal">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div v-if="selectedTicket" class="modal-overlay" @click.self="closePurchaseModal">
+      <div class="modal max-w-md max-h-[90vh] overflow-y-auto">
         <div class="p-6">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">Purchase {{ selectedTicket.name }}</h3>
+          <h3 class="text-xl font-bold text-text-primary mb-4">Purchase {{ selectedTicket.name }}</h3>
           <form @submit.prevent="handlePurchase" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <div class="form-group">
+              <label class="form-label">Email *</label>
               <input
                 v-model="purchaseForm.email"
                 type="email"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="form-input"
                 placeholder="your@email.com"
               />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
+            <div class="form-group">
+              <label class="form-label">Quantity *</label>
               <input
                 v-model.number="purchaseForm.quantity"
                 type="number"
                 min="1"
                 :max="selectedTicket.max_quantity ? selectedTicket.max_quantity - selectedTicket.sold_quantity : undefined"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="form-input"
               />
-              <p class="text-xs text-gray-500 mt-1">
+              <p class="form-help">
                 Max: {{ selectedTicket.max_quantity ? selectedTicket.max_quantity - selectedTicket.sold_quantity : 'Unlimited' }}
               </p>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Discount Code (Optional)</label>
+            <div class="form-group">
+              <label class="form-label">Discount Code (Optional)</label>
               <input
                 v-model="purchaseForm.discount_code"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="form-input"
                 placeholder="Enter discount code"
               />
             </div>
-            <div class="pt-4 border-t border-gray-200">
+            <div class="pt-4 border-t border-border-subtle">
               <div class="flex justify-between items-center mb-4">
-                <span class="font-medium">Subtotal:</span>
-                <span class="text-lg font-semibold">€{{ (selectedTicket.price * purchaseForm.quantity).toFixed(2) }}</span>
+                <span class="font-medium text-text-primary">Subtotal:</span>
+                <span class="text-lg font-semibold text-text-primary">€{{ (selectedTicket.price * purchaseForm.quantity).toFixed(2) }}</span>
               </div>
-              <div v-if="purchaseForm.discount_code" class="text-sm text-green-600 mb-2">
+              <div v-if="purchaseForm.discount_code" class="text-sm text-success mb-2">
                 Discount code will be applied at checkout
               </div>
             </div>
@@ -99,7 +99,7 @@
               <button
                 type="submit"
                 :disabled="processing"
-                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                class="btn btn-primary flex-1"
               >
                 <span v-if="processing">Processing...</span>
                 <span v-else>Proceed to Payment</span>
@@ -107,12 +107,12 @@
               <button
                 type="button"
                 @click="closePurchaseModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+                class="btn btn-secondary"
               >
                 Cancel
               </button>
             </div>
-            <div v-if="error" class="text-red-600 text-sm mt-2">
+            <div v-if="error" class="text-error text-sm mt-2">
               {{ error }}
             </div>
           </form>
