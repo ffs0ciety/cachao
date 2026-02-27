@@ -100,7 +100,7 @@
               <span
                 :class="[
                   'px-2 py-1 rounded text-xs font-medium',
-                  code.is_active ? 'bg-green-100 text-green-800' : 'bg-elevated text-text-primary'
+                  code.is_active ? 'bg-success-subtle text-success' : 'bg-elevated text-text-disabled'
                 ]"
               >
                 {{ code.is_active ? 'Active' : 'Inactive' }}

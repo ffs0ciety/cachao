@@ -344,8 +344,8 @@
       <div v-if="event && activeMainTab === 'media'" class="mb-12">
         <!-- Video Upload Section -->
         <div class="mb-8">
-          <div v-if="!isAuthenticated" class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
-            <p class="text-sm text-yellow-800">
+          <div v-if="!isAuthenticated" class="bg-warning-subtle border border-warning/25 rounded-xl p-4 mb-4">
+            <p class="text-sm text-warning">
               <span class="font-medium">Please sign in</span> to upload videos to this event.
             </p>
           </div>
@@ -397,7 +397,7 @@
         </div>
 
         <!-- Videos error -->
-        <div v-else-if="videosError" class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
+        <div v-else-if="videosError" class="bg-warning-subtle border border-warning/25 text-warning px-4 py-3 rounded-lg">
           <p>{{ videosError }}</p>
         </div>
 
@@ -572,7 +572,7 @@
               </div>
               <!-- Display category for non-owner videos -->
               <div v-else-if="video.category" class="mb-2">
-                <span class="inline-block text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                <span class="inline-block text-xs px-2 py-1 bg-primary-subtle text-primary rounded-full font-medium">
                   {{ video.category.charAt(0).toUpperCase() + video.category.slice(1) }}
                 </span>
               </div>
@@ -595,7 +595,7 @@
           </div>
 
           <!-- Albums error -->
-          <div v-else-if="albumsError" class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-4">
+          <div v-else-if="albumsError" class="bg-warning-subtle border border-warning/25 text-warning px-4 py-3 rounded-lg mb-4">
             <p>{{ albumsError }}</p>
           </div>
 
@@ -624,13 +624,13 @@
               <div
                 v-for="video in albumVideos"
                 :key="video.id"
-                class="border border-dark-border rounded-lg overflow-hidden hover:shadow-xl transition-shadow bg-dark-card"
+                class="border border-border-subtle rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-surface group"
               >
                 <!-- Video card content (same as All Videos tab) -->
                 <!-- Checkbox for user's videos -->
                 <div class="p-4">
                   <div class="flex items-center justify-between gap-2 mb-2">
-                    <h3 class="font-semibold text-dark-text-primary flex-1">{{ video.title || 'Untitled Video' }}</h3>
+                    <h3 class="font-semibold text-text-primary flex-1 group-hover:text-primary transition-colors">{{ video.title || 'Untitled Video' }}</h3>
                     <div class="flex items-center gap-2 flex-shrink-0">
                       <input
                         v-if="isAuthenticated && isUserVideo(video)"
@@ -655,14 +655,14 @@
                 </div>
                 <!-- Video player (same structure as All Videos) -->
                 <div 
-                  class="flex items-center justify-center relative group w-full overflow-hidden"
+                  class="flex items-center justify-center relative w-full overflow-hidden"
                   :style="getVideoContainerStyle(video.id)"
                 >
                   <div 
                     v-if="!video.thumbnail_url && !videoThumbnails[video.id] && !videoPlaying[video.id]"
-                    class="absolute inset-0 bg-gray-900 animate-pulse flex items-center justify-center z-0"
+                    class="absolute inset-0 bg-elevated animate-pulse flex items-center justify-center z-0"
                   >
-                    <svg class="w-12 h-12 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-12 h-12 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -704,16 +704,16 @@
                   </video>
                 </div>
                 <div class="p-4">
-                  <p v-if="video.description" class="text-sm text-dark-text-secondary mb-2 line-clamp-2">
+                  <p v-if="video.description" class="text-sm text-text-secondary mb-2 line-clamp-2">
                     {{ video.description }}
                   </p>
                   <!-- Category selector for user's videos -->
                   <div v-if="isAuthenticated && isUserVideo(video)" class="mb-2">
-                    <label class="block text-xs font-medium text-dark-text-secondary mb-1">Category:</label>
+                    <label class="block text-xs font-medium text-text-secondary mb-1">Category:</label>
                     <select
                       :value="video.category || ''"
                       @change="handleCategoryChange(video.id, ($event.target as HTMLSelectElement).value)"
-                      class="w-full text-sm bg-dark-bg border border-dark-border rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-dark-text-primary"
+                      class="w-full text-sm bg-surface border border-border-subtle rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary text-text-primary"
                     >
                       <option value="">None</option>
                       <option value="shows">Shows</option>
@@ -724,11 +724,11 @@
                   </div>
                   <!-- Display category for non-owner videos -->
                   <div v-else-if="video.category" class="mb-2">
-                    <span class="inline-block text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                    <span class="inline-block text-xs px-2 py-1 bg-primary-subtle text-primary rounded-full font-medium">
                       {{ video.category.charAt(0).toUpperCase() + video.category.slice(1) }}
                     </span>
                   </div>
-                  <div class="text-xs text-dark-text-muted">
+                  <div class="text-xs text-text-disabled">
                     <p>Uploaded: {{ formatDate(video.created_at) }}</p>
                   </div>
                 </div>

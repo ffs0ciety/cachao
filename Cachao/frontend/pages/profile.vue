@@ -315,9 +315,9 @@
                     <span
                       :class="{
                         'px-3 py-1 rounded-full text-xs font-medium': true,
-                        'bg-green-50 text-green-700': order.status === 'paid',
-                        'bg-yellow-50 text-yellow-700': order.status === 'pending',
-                        'bg-red-50 text-red-700': order.status === 'failed' || order.status === 'cancelled',
+                        'bg-success-subtle text-success': order.status === 'paid',
+                        'bg-warning-subtle text-warning': order.status === 'pending',
+                        'bg-error-subtle text-error': order.status === 'failed' || order.status === 'cancelled',
                       }"
                     >
                       {{ order.status.toUpperCase() }}

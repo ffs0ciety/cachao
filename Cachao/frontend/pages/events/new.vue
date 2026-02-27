@@ -5,7 +5,7 @@
       <div class="mb-6">
         <NuxtLink
           to="/"
-          class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          class="inline-flex items-center text-primary hover:text-primary-hover transition-colors"
         >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -59,7 +59,7 @@
                 type="file"
                 accept="image/*"
                 @change="handleImageSelect"
-                class="block w-full text-sm text-text-disabled file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                class="block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-subtle file:text-primary hover:file:opacity-80"
               />
               <p class="text-xs text-text-disabled">Select an image for the event</p>
             </div>
@@ -125,30 +125,30 @@
           </div>
 
           <!-- Upload Progress (shown during image upload and event creation) -->
-          <div v-if="submitting || uploadingImage" class="space-y-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div v-if="submitting || uploadingImage" class="space-y-3 bg-info-subtle border border-info/25 rounded-lg p-4">
             <div class="flex items-center justify-between">
-              <p class="text-sm font-medium text-blue-800">
+              <p class="text-sm font-medium text-info">
                 <span v-if="uploadingImage">Uploading image...</span>
                 <span v-else-if="submitting">Creating event...</span>
               </p>
-              <span class="text-sm text-blue-600">{{ Math.round(uploadProgress) }}%</span>
+              <span class="text-sm text-info">{{ Math.round(uploadProgress) }}%</span>
             </div>
-            <div class="w-full bg-blue-200 rounded-full h-2.5">
+            <div class="w-full bg-elevated rounded-full h-2.5">
               <div
-                class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                class="bg-info h-2.5 rounded-full transition-all duration-300"
                 :style="{ width: `${uploadProgress}%` }"
               ></div>
             </div>
           </div>
 
           <!-- Error Message -->
-          <div v-if="error && !submitting && !uploadingImage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <div v-if="error && !submitting && !uploadingImage" class="alert alert-error">
             <p class="font-bold">Error:</p>
             <p>{{ error }}</p>
           </div>
 
           <!-- Success Message -->
-          <div v-if="success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          <div v-if="success" class="alert alert-success">
             <p class="font-bold">Success!</p>
             <p>Event created successfully.</p>
           </div>

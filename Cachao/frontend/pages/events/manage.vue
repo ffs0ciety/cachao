@@ -31,7 +31,7 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-800 rounded-2xl p-6 mb-6">
+      <div v-else-if="error" class="alert alert-error mb-6">
         <p class="font-medium">{{ error }}</p>
         <NuxtLink
           v-if="error.includes('sign in')"
@@ -132,7 +132,7 @@
                     <button
                       type="button"
                       @click="confirmDelete(event)"
-                      class="inline-flex items-center px-4 py-2 bg-red-50 text-red-600 rounded-full text-sm font-medium hover:bg-red-100 transition-colors"
+                      class="inline-flex items-center px-4 py-2 bg-error-subtle text-error rounded-full text-sm font-medium hover:bg-error/20 transition-colors"
                     >
                       Delete
                     </button>

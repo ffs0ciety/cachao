@@ -6,7 +6,7 @@
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+    <div v-else-if="error" class="alert alert-error">
       <p class="font-bold">Error:</p>
       <p>{{ error }}</p>
     </div>

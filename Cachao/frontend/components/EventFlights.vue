@@ -208,7 +208,7 @@
             <div class="flex items-center gap-3 mb-2">
               <span class="text-lg font-semibold text-text-primary">{{ flight.flight_number }}</span>
               <span class="px-2 py-1 text-xs rounded-full"
-                    :class="flight.flight_type === 'departure' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
+                    :class="flight.flight_type === 'departure' ? 'bg-info-subtle text-info' : 'bg-success-subtle text-success'">
                 {{ flight.flight_type === 'departure' ? 'Departure' : 'Return' }}
               </span>
               <span v-if="flight.status" class="px-2 py-1 text-xs rounded-full bg-elevated text-text-primary">

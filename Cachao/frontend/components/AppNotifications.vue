@@ -11,12 +11,12 @@
         class="pointer-events-auto rounded-xl shadow-lg border p-3 flex items-start gap-3"
         :class="typeClasses[item.type]"
       >
-        <span v-if="item.type === 'success'" class="flex-shrink-0 text-green-600" aria-hidden="true">
+        <span v-if="item.type === 'success'" class="flex-shrink-0 text-success" aria-hidden="true">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
         </span>
-        <span v-if="item.type === 'error'" class="flex-shrink-0 text-red-600" aria-hidden="true">
+        <span v-if="item.type === 'error'" class="flex-shrink-0 text-error" aria-hidden="true">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -46,8 +46,8 @@
 const { notifications, dismiss } = useNotifications();
 
 const typeClasses: Record<string, string> = {
-  success: 'bg-green-50 border-green-200 text-green-900',
-  error: 'bg-red-50 border-red-200 text-red-900',
+  success: 'bg-success-subtle border-success/25 text-success',
+  error: 'bg-error-subtle border-error/25 text-error',
   info: 'bg-elevated border-border-subtle text-text-primary',
 };
 </script>
