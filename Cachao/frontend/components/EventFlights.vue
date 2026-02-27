@@ -174,7 +174,7 @@
           <button
             type="button"
             @click="showAddForm = false"
-            class="px-4 py-2 bg-gray-300 text-text-secondary rounded-full hover:bg-gray-400 transition-colors"
+            class="btn btn-secondary"
           >
             Cancel
           </button>

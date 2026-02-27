@@ -200,40 +200,40 @@
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Max Quantity</label>
+              <div class="form-group">
+                <label class="form-label">Max Quantity</label>
                 <input
                   v-model.number="editingTicket.max_quantity"
                   type="number"
                   min="1"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="form-input"
                 />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <div class="form-group">
+                <label class="form-label">Status</label>
                 <select
                   v-model="editingTicket.is_active"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="form-input"
                 >
                   <option :value="true">Active</option>
                   <option :value="false">Inactive</option>
                 </select>
               </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Ticket Image</label>
+            <div class="form-group">
+              <label class="form-label">Ticket Image</label>
               <input
                 ref="editImageInput"
                 type="file"
                 accept="image/*"
                 @change="handleEditImageSelect"
-                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                class="block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-subtle file:text-primary hover:file:opacity-80"
               />
               <div v-if="editingTicket.image_url || editImagePreview" class="mt-2">
                 <img
                   :src="editImagePreview || editingTicket.image_url"
                   alt="Preview"
-                  class="h-32 object-cover rounded-md border border-gray-300"
+                  class="h-32 object-cover rounded-md border border-border-subtle"
                 />
               </div>
             </div>
@@ -241,7 +241,7 @@
               <button
                 type="submit"
                 :disabled="updatingTicket"
-                class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                class="btn btn-primary"
               >
                 <span v-if="updatingTicket">Updating...</span>
                 <span v-else>Update Ticket</span>
@@ -249,7 +249,7 @@
               <button
                 type="button"
                 @click="cancelEdit"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                class="btn btn-secondary"
               >
                 Cancel
               </button>
@@ -260,28 +260,28 @@
     </div>
 
     <!-- Add/Edit Discount Modal -->
-    <div v-if="discountModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="closeDiscountModal">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div v-if="discountModalOpen" class="modal-overlay" @click.self="closeDiscountModal">
+      <div class="modal max-w-md">
         <div class="p-6">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">
+          <h3 class="text-xl font-bold text-text-primary mb-4">
             {{ editingDiscount ? 'Edit Discount' : 'Add Discount' }}
           </h3>
           <form @submit.prevent="handleSaveDiscount" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Discount Type *</label>
+            <div class="form-group">
+              <label class="form-label">Discount Type *</label>
               <select
                 v-model="newDiscount.discount_type"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="form-input"
               >
                 <option value="fixed">Fixed Amount ($)</option>
                 <option value="percentage">Percentage (%)</option>
               </select>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
+            <div class="form-group">
+              <label class="form-label">
                 Discount Value *
-                <span class="text-xs text-gray-500">
+                <span class="text-xs text-text-disabled">
                   ({{ newDiscount.discount_type === 'percentage' ? '0-100%' : 'Amount in $' }})
                 </span>
               </label>
@@ -292,24 +292,24 @@
                 :min="newDiscount.discount_type === 'percentage' ? '0' : '0'"
                 :max="newDiscount.discount_type === 'percentage' ? '100' : undefined"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="form-input"
                 :placeholder="newDiscount.discount_type === 'percentage' ? 'e.g., 10' : 'e.g., 10.00'"
               />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Valid Until *</label>
+            <div class="form-group">
+              <label class="form-label">Valid Until *</label>
               <input
                 v-model="newDiscount.valid_until"
                 type="date"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="form-input"
               />
             </div>
             <div class="flex gap-2">
               <button
                 type="submit"
                 :disabled="savingDiscount"
-                class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                class="btn btn-primary"
               >
                 <span v-if="savingDiscount">Saving...</span>
                 <span v-else>{{ editingDiscount ? 'Update' : 'Add' }} Discount</span>
@@ -317,7 +317,7 @@
               <button
                 type="button"
                 @click="closeDiscountModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                class="btn btn-secondary"
               >
                 Cancel
               </button>

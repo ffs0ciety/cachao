@@ -165,7 +165,7 @@
             </button>
             <NuxtLink
               to="/"
-              class="px-4 py-2 bg-hover text-text-secondary rounded-full hover:bg-gray-300 transition-colors"
+              class="btn btn-secondary"
             >
               Cancel
             </NuxtLink>

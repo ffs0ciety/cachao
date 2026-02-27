@@ -3257,8 +3257,16 @@ async function updateEvent(
       values.push(end_date || null);
     }
     if (image_url !== undefined) {
+      let cleanImageUrl = image_url;
+      
+      // If it's a presigned URL, extract just the S3 path
+      if (image_url && (image_url.includes('X-Amz-') || image_url.includes('?'))) {
+        // Remove query parameters (presigned URL signature)
+        cleanImageUrl = image_url.split('?')[0];
+      }
+      
       // Validate image_url length (VARCHAR(500))
-      if (image_url && image_url.length > 500) {
+      if (cleanImageUrl && cleanImageUrl.length > 500) {
         return {
           statusCode: 400,
           headers: {
@@ -3272,7 +3280,7 @@ async function updateEvent(
         };
       }
       updates.push('image_url = ?');
-      values.push(image_url || null);
+      values.push(cleanImageUrl || null);
     }
 
     if (updates.length === 0) {
@@ -13690,7 +13698,7 @@ export const lambdaHandler = async (
           }
         }
 
-        const { name, description, start_date, end_date, image_url } = body;
+        const { name, description, start_date, end_date, image_url: rawImageUrl } = body;
 
         if (!name || !start_date) {
           return {
@@ -13704,6 +13712,12 @@ export const lambdaHandler = async (
               error: 'Name and start_date are required',
             }),
           };
+        }
+
+        // Clean image_url (remove presigned URL query params if present)
+        let image_url = rawImageUrl;
+        if (rawImageUrl && (rawImageUrl.includes('X-Amz-') || rawImageUrl.includes('?'))) {
+          image_url = rawImageUrl.split('?')[0];
         }
 
         // Validate image_url length (VARCHAR(500))
