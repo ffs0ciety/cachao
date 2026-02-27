@@ -98,7 +98,7 @@
               <p v-if="uploadingPhoto" class="mt-2 text-sm text-primary">Uploading...</p>
             </div>
 
-            <!-- Name and Email Section -->
+            <!-- Name, Nickname and Email Section -->
             <div class="flex-1 space-y-4">
               <div>
                 <label class="block text-sm font-medium text-text-secondary mb-2">
@@ -108,19 +108,65 @@
                   <input
                     v-model="editingName"
                     type="text"
-                    class="flex-1 px-4 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-text-primary"
+                    class="form-input flex-1"
                     placeholder="Your name"
                   />
                   <button
                     @click="saveName"
                     :disabled="savingName || editingName === profile.name"
-                    class="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                    class="btn btn-primary"
                   >
                     <span v-if="savingName">Saving...</span>
                     <span v-else>Save</span>
                   </button>
                 </div>
               </div>
+
+              <!-- Nickname Section -->
+              <div>
+                <label class="block text-sm font-medium text-text-secondary mb-2">
+                  Username / Nickname
+                </label>
+                <div class="flex gap-2">
+                  <div class="relative flex-1">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-disabled">@</span>
+                    <input
+                      v-model="editingNickname"
+                      type="text"
+                      class="form-input pl-8 w-full"
+                      :class="{
+                        'border-success': nicknameStatus === 'available',
+                        'border-error': nicknameStatus === 'taken' || nicknameStatus === 'invalid'
+                      }"
+                      placeholder="your_username"
+                      pattern="[a-zA-Z0-9_]+"
+                      @input="checkNickname"
+                    />
+                  </div>
+                  <button
+                    @click="saveNickname"
+                    :disabled="savingNickname || !canSaveNickname"
+                    class="btn btn-primary"
+                  >
+                    <span v-if="savingNickname">Saving...</span>
+                    <span v-else>Save</span>
+                  </button>
+                </div>
+                <div class="mt-1 text-xs">
+                  <span v-if="checkingNickname" class="text-text-disabled">Checking availability...</span>
+                  <span v-else-if="nicknameStatus === 'available'" class="text-success">✓ Username is available</span>
+                  <span v-else-if="nicknameStatus === 'taken'" class="text-error">✗ Username is already taken</span>
+                  <span v-else-if="nicknameStatus === 'invalid'" class="text-error">✗ Only letters, numbers, and underscores allowed</span>
+                  <span v-else-if="profile.nickname" class="text-text-disabled">
+                    Your public profile: 
+                    <NuxtLink :to="`/u/${profile.nickname}`" class="text-primary hover:underline">
+                      cachao.io/u/{{ profile.nickname }}
+                    </NuxtLink>
+                  </span>
+                  <span v-else class="text-text-disabled">Choose a unique username for your public profile</span>
+                </div>
+              </div>
+
               <div>
                 <label class="block text-sm font-medium text-text-secondary mb-2">
                   Email
@@ -372,7 +418,7 @@
 <script setup lang="ts">
 import type { UserProfile, UserEvent, UserVideo } from '~/composables/useUserProfile';
 
-const { fetchProfile, updateProfile, generatePhotoUploadUrl, uploadPhotoToS3, fetchUserEvents, fetchUserVideos } = useUserProfile();
+const { fetchProfile, updateProfile, generatePhotoUploadUrl, uploadPhotoToS3, fetchUserEvents, fetchUserVideos, checkNicknameAvailability, updateNickname } = useUserProfile();
 const { fetchUserTickets } = useTickets();
 const { isAuthenticated, checkAuth, getUserEmail, logout } = useAuth();
 
@@ -392,6 +438,13 @@ const savingName = ref(false);
 const uploadingPhoto = ref(false);
 const photoInput = ref<HTMLInputElement | null>(null);
 const activeTab = ref<'profile' | 'events' | 'tickets' | 'videos'>('profile');
+
+// Nickname related state
+const editingNickname = ref('');
+const savingNickname = ref(false);
+const checkingNickname = ref(false);
+const nicknameStatus = ref<'available' | 'taken' | 'invalid' | 'unchanged' | null>(null);
+let nicknameCheckTimeout: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(async () => {
   // Check authentication first
@@ -415,6 +468,81 @@ const handleLogout = async () => {
   await navigateTo('/');
 };
 
+// Computed property for nickname save button
+const canSaveNickname = computed(() => {
+  if (!editingNickname.value) return false;
+  if (editingNickname.value === profile.value?.nickname) return false;
+  if (nicknameStatus.value === 'taken' || nicknameStatus.value === 'invalid') return false;
+  if (checkingNickname.value) return false;
+  return nicknameStatus.value === 'available';
+});
+
+// Validate and check nickname availability
+const checkNickname = () => {
+  const nickname = editingNickname.value.trim().toLowerCase();
+  
+  // Clear any pending check
+  if (nicknameCheckTimeout) {
+    clearTimeout(nicknameCheckTimeout);
+  }
+  
+  // If empty or same as current, reset status
+  if (!nickname) {
+    nicknameStatus.value = null;
+    return;
+  }
+  
+  if (nickname === profile.value?.nickname) {
+    nicknameStatus.value = 'unchanged';
+    return;
+  }
+  
+  // Validate format: only letters, numbers, underscores, 3-30 chars
+  const validPattern = /^[a-zA-Z0-9_]{3,30}$/;
+  if (!validPattern.test(nickname)) {
+    nicknameStatus.value = 'invalid';
+    return;
+  }
+  
+  // Debounce the API call
+  checkingNickname.value = true;
+  nicknameStatus.value = null;
+  
+  nicknameCheckTimeout = setTimeout(async () => {
+    try {
+      const available = await checkNicknameAvailability(nickname);
+      nicknameStatus.value = available ? 'available' : 'taken';
+    } catch (err) {
+      console.error('Error checking nickname:', err);
+      nicknameStatus.value = null;
+    } finally {
+      checkingNickname.value = false;
+    }
+  }, 500);
+};
+
+// Save nickname
+const saveNickname = async () => {
+  if (!canSaveNickname.value) return;
+  
+  try {
+    savingNickname.value = true;
+    const result = await updateNickname(editingNickname.value.trim().toLowerCase());
+    
+    if (result.success) {
+      // Reload profile to get updated data
+      await loadProfile();
+      nicknameStatus.value = null;
+    } else {
+      error.value = result.error || 'Failed to update nickname';
+    }
+  } catch (err: any) {
+    error.value = err.message || 'Failed to update nickname';
+  } finally {
+    savingNickname.value = false;
+  }
+};
+
 const loadProfile = async () => {
   try {
     loading.value = true;
@@ -423,6 +551,7 @@ const loadProfile = async () => {
     if (data) {
       profile.value = data;
       editingName.value = data.name || '';
+      editingNickname.value = data.nickname || '';
     } else {
       error.value = 'Profile not found. Please try refreshing the page.';
     }

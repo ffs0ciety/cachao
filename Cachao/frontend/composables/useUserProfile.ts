@@ -1,9 +1,44 @@
 export interface UserProfile {
   cognito_sub: string;
   name: string | null;
+  nickname: string | null;
   photo_url: string | null;
+  cover_photo_url: string | null;
+  bio: string | null;
+  location: string | null;
+  dance_styles: string[] | null;
+  followers_count: number;
+  following_count: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface UserGroup {
+  id: string;
+  name: string;
+  image_url: string | null;
+  role: string;
+}
+
+export interface UserSchool {
+  id: string;
+  name: string;
+  image_url: string | null;
+  location: string | null;
+}
+
+export interface PublicUserProfile {
+  nickname: string;
+  name: string | null;
+  photo_url: string | null;
+  cover_photo_url: string | null;
+  bio: string | null;
+  location: string | null;
+  dance_styles: string[] | null;
+  followers_count: number;
+  following_count: number;
+  groups: UserGroup[];
+  schools: UserSchool[];
 }
 
 export interface UserEvent {
@@ -229,6 +264,86 @@ export const useUserProfile = () => {
     }
   };
 
+  const fetchPublicProfile = async (nickname: string): Promise<PublicUserProfile | null> => {
+    try {
+      const url = getApiUrl(`/users/${nickname}`);
+      const response = await $fetch<{ success: boolean; profile: PublicUserProfile }>(
+        url,
+        { method: 'GET' }
+      );
+
+      if (response.success && response.profile) {
+        return response.profile;
+      }
+      return null;
+    } catch (error: any) {
+      console.error('Error fetching public profile:', error);
+      if (error.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  };
+
+  const checkNicknameAvailability = async (nickname: string): Promise<boolean> => {
+    try {
+      const url = getApiUrl(`/users/check-nickname/${encodeURIComponent(nickname)}`);
+      const response = await $fetch<{ success: boolean; available: boolean }>(
+        url,
+        { method: 'GET' }
+      );
+      return response.available;
+    } catch (error: any) {
+      console.error('Error checking nickname:', error);
+      return false;
+    }
+  };
+
+  const updateNickname = async (nickname: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
+      const url = getApiUrl('/user/nickname');
+      const response = await $fetch<{ success: boolean; nickname: string; error?: string }>(
+        url,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ nickname }),
+        }
+      );
+
+      return { success: response.success, error: response.error };
+    } catch (error: any) {
+      console.error('Error updating nickname:', error);
+      return { success: false, error: error.message || 'Failed to update nickname' };
+    }
+  };
+
+  const fetchPublicUserVideos = async (nickname: string): Promise<UserVideo[]> => {
+    try {
+      const url = getApiUrl(`/users/${nickname}/videos`);
+      const response = await $fetch<{ success: boolean; videos: UserVideo[] }>(
+        url,
+        { method: 'GET' }
+      );
+
+      if (response.success) {
+        return response.videos;
+      }
+      return [];
+    } catch (error: any) {
+      console.error('Error fetching public user videos:', error);
+      return [];
+    }
+  };
+
   return {
     fetchProfile,
     updateProfile,
@@ -236,6 +351,10 @@ export const useUserProfile = () => {
     uploadPhotoToS3,
     fetchUserEvents,
     fetchUserVideos,
+    fetchPublicProfile,
+    checkNicknameAvailability,
+    updateNickname,
+    fetchPublicUserVideos,
   };
 };
 
