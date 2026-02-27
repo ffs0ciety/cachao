@@ -91,6 +91,47 @@
           </button>
         </div>
 
+        <!-- Next Event Card -->
+        <div v-if="nextEvent" class="mb-8">
+          <NuxtLink
+            :to="nextEvent.involvement_type === 'staff' ? `/events/${nextEvent.id}/my-info` : `/events/${nextEvent.id}`"
+            class="block card hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary"
+          >
+            <div class="flex items-center gap-4">
+              <div v-if="nextEvent.image_url" class="flex-shrink-0">
+                <img
+                  :src="nextEvent.image_url"
+                  :alt="nextEvent.name"
+                  class="w-20 h-20 rounded-lg object-cover"
+                />
+              </div>
+              <div v-else class="flex-shrink-0 w-20 h-20 rounded-lg bg-elevated flex items-center justify-center">
+                <svg class="w-8 h-8 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-primary font-medium mb-1">
+                  Your Next Event
+                  <span v-if="nextEvent.involvement_type === 'staff'" class="text-text-secondary">
+                    ({{ nextEvent.staff_role || 'Staff' }})
+                  </span>
+                  <span v-else class="text-text-secondary">(Ticket Holder)</span>
+                </p>
+                <h3 class="text-lg font-semibold text-text-primary truncate">{{ nextEvent.name }}</h3>
+                <p class="text-sm text-text-secondary">
+                  {{ formatDate(nextEvent.start_date) }}
+                </p>
+              </div>
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </NuxtLink>
+        </div>
+
         <!-- Tab Navigation -->
         <div class="tabs mb-8">
           <button
@@ -455,9 +496,9 @@
 </template>
 
 <script setup lang="ts">
-import type { UserProfile, UserEvent, UserVideo } from '~/composables/useUserProfile';
+import type { UserProfile, UserEvent, UserVideo, NextEvent } from '~/composables/useUserProfile';
 
-const { fetchProfile, updateProfile, generatePhotoUploadUrl, uploadPhotoToS3, fetchUserEvents, fetchUserVideos, checkNicknameAvailability, updateNickname } = useUserProfile();
+const { fetchProfile, updateProfile, generatePhotoUploadUrl, uploadPhotoToS3, fetchUserEvents, fetchUserVideos, checkNicknameAvailability, updateNickname, fetchNextEvent } = useUserProfile();
 const { fetchUserTickets } = useTickets();
 const { isAuthenticated, checkAuth, getUserEmail, logout } = useAuth();
 
@@ -465,6 +506,7 @@ const profile = ref<UserProfile | null>(null);
 const userEvents = ref<UserEvent[]>([]);
 const userVideos = ref<UserVideo[]>([]);
 const userTickets = ref<any[]>([]);
+const nextEvent = ref<NextEvent | null>(null);
 const expandedQrOrder = ref<any>(null);
 const userEmail = ref<string | null>(null);
 const loading = ref(true);
@@ -503,6 +545,7 @@ onMounted(async () => {
     await loadEvents();
     await loadVideos();
     await loadTickets();
+    await loadNextEvent();
   }
 });
 
@@ -600,6 +643,14 @@ const loadEmail = async () => {
     userEmail.value = email;
   } catch (err: any) {
     console.error('Error loading email:', err);
+  }
+};
+
+const loadNextEvent = async () => {
+  try {
+    nextEvent.value = await fetchNextEvent();
+  } catch (err: any) {
+    console.error('Error loading next event:', err);
   }
 };
 

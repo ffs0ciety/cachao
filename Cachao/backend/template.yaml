@@ -1082,6 +1082,14 @@ Resources:
             Method: get
             Auth:
               Authorizer: CognitoAuthorizer
+        GetUserNextEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CachaoApi
+            Path: /user/next-event
+            Method: get
+            Auth:
+              Authorizer: CognitoAuthorizer
         UserProfileOptions:
           Type: Api
           Properties:

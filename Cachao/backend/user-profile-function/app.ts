@@ -146,6 +146,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     if (path === '/user/videos' && method === 'GET') {
       return await getUserVideos(event, connection, cognitoSub);
     }
+    if (path === '/user/next-event' && method === 'GET') {
+      return await getUserNextEvent(event, connection, cognitoSub);
+    }
 
     return jsonResponse(404, { success: false, error: 'Route not found' });
   } catch (error: any) {
@@ -469,4 +472,103 @@ async function getUserVideos(
   }));
 
   return jsonResponse(200, { success: true, count: serializedVideos.length, videos: serializedVideos });
+}
+
+async function getUserNextEvent(
+  event: APIGatewayProxyEvent,
+  connection: mariadb.PoolConnection,
+  cognitoSub: string | null
+): Promise<APIGatewayProxyResult> {
+  if (!cognitoSub) {
+    return jsonResponse(401, { success: false, error: 'Authentication required' });
+  }
+
+  const claims = event.requestContext?.authorizer?.claims;
+  let userEmail = claims?.email || null;
+  
+  if (!userEmail) {
+    const authHeader = event.headers.Authorization || event.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.substring(7);
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf-8'));
+          userEmail = payload.email || null;
+        }
+      } catch (e) {
+        console.error('Error decoding JWT token for email:', e);
+      }
+    }
+  }
+
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  // Get next event from tickets purchased (upcoming events only)
+  let ticketEvent: any = null;
+  try {
+    const ticketEvents = await connection.query(
+      `SELECT DISTINCT e.*, 'ticket' as involvement_type
+       FROM events e
+       INNER JOIN ticket_orders tord ON e.id = tord.event_id
+       WHERE tord.cognito_sub = ?
+         AND tord.status = 'completed'
+         AND e.start_date >= ?
+       ORDER BY e.start_date ASC
+       LIMIT 1`,
+      [cognitoSub, now]
+    ) as any[];
+    if (ticketEvents.length > 0) {
+      ticketEvent = ticketEvents[0];
+    }
+  } catch (e) {
+    console.warn('Error fetching ticket events:', e);
+  }
+
+  // Get next event as staff/artist (upcoming events only)
+  let staffEvent: any = null;
+  if (userEmail) {
+    try {
+      const normalizedEmail = userEmail.toLowerCase().trim();
+      const staffEvents = await connection.query(
+        `SELECT DISTINCT e.*, es.role as staff_role, 'staff' as involvement_type
+         FROM events e
+         INNER JOIN event_staff es ON e.id = es.event_id
+         WHERE LOWER(TRIM(es.email)) = ?
+           AND e.start_date >= ?
+         ORDER BY e.start_date ASC
+         LIMIT 1`,
+        [normalizedEmail, now]
+      ) as any[];
+      if (staffEvents.length > 0) {
+        staffEvent = staffEvents[0];
+      }
+    } catch (e) {
+      console.warn('Error fetching staff events:', e);
+    }
+  }
+
+  // Determine which event is next (earliest start_date)
+  let nextEvent: any = null;
+  if (ticketEvent && staffEvent) {
+    const ticketDate = new Date(ticketEvent.start_date).getTime();
+    const staffDate = new Date(staffEvent.start_date).getTime();
+    nextEvent = ticketDate <= staffDate ? ticketEvent : staffEvent;
+  } else {
+    nextEvent = ticketEvent || staffEvent;
+  }
+
+  if (!nextEvent) {
+    return jsonResponse(200, { success: true, next_event: null });
+  }
+
+  // Generate presigned URL for image if needed
+  const bucketName = process.env.S3_BUCKET_NAME;
+  const serialized = serializeBigInt(nextEvent);
+  if (serialized.image_url && bucketName) {
+    const presignedUrl = await generatePresignedUrlForS3Key(serialized.image_url, bucketName);
+    if (presignedUrl) serialized.image_url = presignedUrl;
+  }
+
+  return jsonResponse(200, { success: true, next_event: serialized });
 }

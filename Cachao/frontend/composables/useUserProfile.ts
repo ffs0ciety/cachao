@@ -68,6 +68,17 @@ export interface UserVideo {
   updated_at: string;
 }
 
+export interface NextEvent {
+  id: string;
+  name: string;
+  description: string | null;
+  start_date: string;
+  end_date: string | null;
+  image_url: string | null;
+  involvement_type: 'ticket' | 'staff';
+  staff_role?: string;
+}
+
 function getApiUrl(endpoint: string = ''): string {
   const config = useRuntimeConfig();
   const baseUrl = config.public.apiUrl || '';
@@ -344,6 +355,34 @@ export const useUserProfile = () => {
     }
   };
 
+  const fetchNextEvent = async (): Promise<NextEvent | null> => {
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
+      const url = getApiUrl('/user/next-event');
+      const response = await $fetch<{ success: boolean; next_event: NextEvent | null }>(
+        url,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.success) {
+        return response.next_event;
+      }
+      return null;
+    } catch (error: any) {
+      console.error('Error fetching next event:', error);
+      return null;
+    }
+  };
+
   return {
     fetchProfile,
     updateProfile,
@@ -355,6 +394,7 @@ export const useUserProfile = () => {
     checkNicknameAvailability,
     updateNickname,
     fetchPublicUserVideos,
+    fetchNextEvent,
   };
 };
 
