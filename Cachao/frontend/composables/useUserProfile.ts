@@ -70,8 +70,8 @@ export interface UserVideo {
 
 function getApiUrl(endpoint: string = ''): string {
   const config = useRuntimeConfig();
-  const baseUrl = config.public.apiUrl || 'https://oi7p8gbold.execute-api.eu-west-1.amazonaws.com';
-  const basePath = config.public.apiBasePath || '';
+  const baseUrl = config.public.apiUrl || '';
+  const basePath = config.public.apiBasePath || '/api';
   return `${baseUrl}${basePath}${endpoint}`;
 }
 
