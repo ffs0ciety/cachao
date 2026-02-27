@@ -55,18 +55,18 @@
             {{ event.description }}
           </p>
 
-          <div class="flex flex-wrap gap-8 text-text-secondary">
+          <div class="flex flex-wrap gap-8">
             <div>
               <span class="text-sm font-medium text-text-disabled block mb-1">Start Date</span>
-              <span class="text-base">{{ formatDate(event.start_date) }}</span>
+              <span class="text-base text-text-primary">{{ formatDate(event.start_date) }}</span>
             </div>
             <div v-if="event.end_date">
               <span class="text-sm font-medium text-text-disabled block mb-1">End Date</span>
-              <span class="text-base">{{ formatDate(event.end_date) }}</span>
+              <span class="text-base text-text-primary">{{ formatDate(event.end_date) }}</span>
             </div>
             <div v-if="event.owner_name">
               <span class="text-sm font-medium text-text-disabled block mb-1">Created by</span>
-              <span class="text-base">{{ event.owner_name }}</span>
+              <span class="text-base text-text-primary">{{ event.owner_name }}</span>
             </div>
           </div>
         </div>
