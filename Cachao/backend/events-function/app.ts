@@ -11085,15 +11085,34 @@ async function getUserVideos(
       };
     }
 
-    const videos = await connection.query(
-      `SELECT v.*, e.name as event_name, a.name as album_name 
-       FROM videos v 
-       LEFT JOIN events e ON v.event_id = e.id 
-       LEFT JOIN albums a ON v.album_id = a.id 
-       WHERE v.cognito_sub = ? 
-       ORDER BY v.created_at DESC`,
-      [cognitoSub]
-    ) as any[];
+    // Check if album_id column exists in videos table
+    const columnCheck = await connection.query(`
+      SELECT COUNT(*) as count FROM information_schema.columns 
+      WHERE table_schema = DATABASE() AND table_name = 'videos' AND column_name = 'album_id'
+    `);
+    const hasAlbumId = Array.isArray(columnCheck) && columnCheck.length > 0 && (columnCheck[0] as any).count > 0;
+
+    let videos: any[];
+    if (hasAlbumId) {
+      videos = await connection.query(
+        `SELECT v.*, e.name as event_name, a.name as album_name 
+         FROM videos v 
+         LEFT JOIN events e ON v.event_id = e.id 
+         LEFT JOIN albums a ON v.album_id = a.id 
+         WHERE v.cognito_sub = ? 
+         ORDER BY v.created_at DESC`,
+        [cognitoSub]
+      ) as any[];
+    } else {
+      videos = await connection.query(
+        `SELECT v.*, e.name as event_name 
+         FROM videos v 
+         LEFT JOIN events e ON v.event_id = e.id 
+         WHERE v.cognito_sub = ? 
+         ORDER BY v.created_at DESC`,
+        [cognitoSub]
+      ) as any[];
+    }
 
     const s3 = getS3Client();
     const bucketName = process.env.S3_BUCKET_NAME;

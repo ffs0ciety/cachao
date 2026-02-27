@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-base">
     <AppNavigation @open-auth="showAuthModal = true" />
     <div class="pt-16">
       <NuxtPage />

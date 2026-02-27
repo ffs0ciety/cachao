@@ -1,95 +1,73 @@
 <template>
-  <div class="min-h-screen bg-white py-12">
+  <div class="min-h-screen py-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 class="text-4xl font-semibold text-gray-900 mb-2">Profile</h1>
-          <p class="text-lg text-gray-600">Manage your profile, events, and videos</p>
+          <h1 class="text-4xl font-semibold text-text-primary mb-2">Profile</h1>
+          <p class="text-lg text-text-secondary">Manage your profile, events, and videos</p>
         </div>
         <button
           v-if="!loading && !error"
           type="button"
           @click="handleLogout"
-          class="flex-shrink-0 px-4 py-2.5 text-gray-600 bg-gray-100 rounded-full text-sm font-medium hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          class="btn btn-secondary"
         >
           Sign out
         </button>
       </div>
 
       <!-- Tab Navigation -->
-      <div v-if="!loading && !error" class="border-b border-gray-200 mb-8">
-        <nav class="flex space-x-8 overflow-x-auto" aria-label="Tabs">
-          <button
-            @click="activeTab = 'profile'"
-            :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
-              activeTab === 'profile'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            ]"
-          >
-            Profile
-          </button>
-          <button
-            @click="activeTab = 'events'"
-            :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
-              activeTab === 'events'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            ]"
-          >
-            Events
-          </button>
-          <button
-            @click="activeTab = 'tickets'"
-            :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
-              activeTab === 'tickets'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            ]"
-          >
-            Tickets
-          </button>
-          <button
-            @click="activeTab = 'videos'"
-            :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
-              activeTab === 'videos'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            ]"
-          >
-            Videos
-          </button>
-        </nav>
+      <div v-if="!loading && !error" class="tabs mb-8">
+        <button
+          @click="activeTab = 'profile'"
+          :class="['tab', activeTab === 'profile' ? 'active' : '']"
+        >
+          Profile
+        </button>
+        <button
+          @click="activeTab = 'events'"
+          :class="['tab', activeTab === 'events' ? 'active' : '']"
+        >
+          Events
+        </button>
+        <button
+          @click="activeTab = 'tickets'"
+          :class="['tab', activeTab === 'tickets' ? 'active' : '']"
+        >
+          Tickets
+        </button>
+        <button
+          @click="activeTab = 'videos'"
+          :class="['tab', activeTab === 'videos' ? 'active' : '']"
+        >
+          Videos
+        </button>
       </div>
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-16">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-primary"></div>
-        <p class="mt-4 text-gray-500">Loading profile...</p>
+        <div class="spinner spinner-lg mx-auto"></div>
+        <p class="mt-4 text-text-secondary">Loading profile...</p>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
+      <div v-else-if="error" class="alert alert-error mb-6">
         <p>{{ error }}</p>
       </div>
 
       <!-- Profile Content -->
       <div v-else class="space-y-8">
         <!-- Profile Section -->
-        <div v-if="activeTab === 'profile'" class="bg-white rounded-2xl p-8 border border-gray-100">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">Profile Information</h2>
+        <div v-if="activeTab === 'profile'" class="card">
+          <h2 class="text-2xl font-semibold text-text-primary mb-6">Profile Information</h2>
           
           <div class="flex flex-col sm:flex-row gap-6">
             <!-- Photo Section -->
             <div class="flex-shrink-0">
               <div class="relative">
-                <div v-if="!profile.photo_url" class="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center">
-                  <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div v-if="!profile.photo_url" class="avatar avatar-xl bg-elevated">
+                  <svg class="w-10 h-10 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>

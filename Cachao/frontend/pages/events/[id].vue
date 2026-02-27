@@ -1,13 +1,14 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen">
     <div class="container mx-auto px-4 py-12 max-w-6xl">
       <!-- Loading state -->
       <div v-if="loading" class="text-center py-16">
-        <p class="text-gray-500">Loading event...</p>
+        <div class="spinner spinner-lg mx-auto mb-4"></div>
+        <p class="text-text-secondary">Loading event...</p>
       </div>
 
       <!-- Error state -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
+      <div v-else-if="error" class="alert alert-error mb-4">
         <p class="font-semibold">Error:</p>
         <p>{{ error }}</p>
       </div>
@@ -15,9 +16,9 @@
       <!-- Event details -->
       <div v-else-if="event" class="mb-12">
         <!-- Event Image -->
-        <div class="w-full h-96 md:h-[500px] overflow-hidden bg-gray-100 rounded-2xl mb-8 relative">
-          <div v-if="!eventImageLoaded && event.image_url" class="absolute inset-0 bg-gray-100 animate-pulse flex items-center justify-center z-10">
-            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-full h-96 md:h-[500px] overflow-hidden bg-elevated rounded-2xl mb-8 relative">
+          <div v-if="!eventImageLoaded && event.image_url" class="absolute inset-0 skeleton flex items-center justify-center z-10">
+            <svg class="w-16 h-16 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
@@ -30,8 +31,8 @@
             @load="eventImageLoaded = true"
             @error="eventImageLoaded = true"
           />
-          <div v-else class="absolute inset-0 bg-gray-100 flex items-center justify-center">
-            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-else class="absolute inset-0 bg-elevated flex items-center justify-center">
+            <svg class="w-16 h-16 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
@@ -40,38 +41,38 @@
         <!-- Event Header -->
         <div class="mb-8">
           <div class="flex justify-between items-start mb-4">
-            <h1 class="text-4xl font-semibold text-gray-900">{{ event.name }}</h1>
+            <h1 class="text-4xl font-semibold text-text-primary">{{ event.name }}</h1>
             <NuxtLink
               v-if="isEventOwner"
               :to="`/events/edit/${event.id}`"
-              class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
+              class="btn btn-primary"
             >
               Manage Event
             </NuxtLink>
           </div>
           
-          <p v-if="event.description" class="text-lg text-gray-600 mb-6 leading-relaxed">
+          <p v-if="event.description" class="text-lg text-text-secondary mb-6 leading-relaxed">
             {{ event.description }}
           </p>
 
-          <div class="flex flex-wrap gap-8 text-gray-600">
+          <div class="flex flex-wrap gap-8 text-text-secondary">
             <div>
-              <span class="text-sm font-medium text-gray-500 block mb-1">Start Date</span>
+              <span class="text-sm font-medium text-text-disabled block mb-1">Start Date</span>
               <span class="text-base">{{ formatDate(event.start_date) }}</span>
             </div>
             <div v-if="event.end_date">
-              <span class="text-sm font-medium text-gray-500 block mb-1">End Date</span>
+              <span class="text-sm font-medium text-text-disabled block mb-1">End Date</span>
               <span class="text-base">{{ formatDate(event.end_date) }}</span>
             </div>
             <div v-if="event.owner_name">
-              <span class="text-sm font-medium text-gray-500 block mb-1">Created by</span>
+              <span class="text-sm font-medium text-text-disabled block mb-1">Created by</span>
               <span class="text-base">{{ event.owner_name }}</span>
             </div>
           </div>
         </div>
 
         <!-- Tab Navigation -->
-        <div class="border-b border-gray-200 mb-8">
+        <div class="border-b border-border-subtle mb-8">
           <nav class="flex space-x-8 overflow-x-auto" aria-label="Tabs">
             <button
               v-if="isEventStaff && myEventInfo"

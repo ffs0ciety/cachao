@@ -1,14 +1,14 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50" @click.self="close">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-100">
+  <div v-if="isOpen" class="modal-overlay" @click.self="close">
+    <div class="modal max-w-md">
       <div class="p-8">
         <div class="flex justify-between items-center mb-8">
-          <h2 class="text-2xl font-semibold text-gray-900">
+          <h2 class="text-2xl font-semibold text-text-primary">
             {{ showForgotPassword ? 'Reset Password' : showResetPassword ? 'Set New Password' : needsVerification ? 'Verify Email' : showSignUp ? 'Sign Up' : 'Sign In' }}
           </h2>
           <button
             @click="close"
-            class="text-gray-400 hover:text-gray-600 transition-colors"
+            class="text-text-disabled hover:text-text-primary transition-colors"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -17,124 +17,110 @@
         </div>
 
         <!-- Toggle between Sign In and Sign Up -->
-        <div v-if="!needsVerification && !requiresNewPassword && !showForgotPassword && !showResetPassword" class="mb-6 flex border-b border-gray-200">
+        <div v-if="!needsVerification && !requiresNewPassword && !showForgotPassword && !showResetPassword" class="tabs mb-6">
           <button
             @click="showSignUp = false"
-            :class="[
-              'flex-1 py-3 px-4 text-center font-medium transition-colors',
-              !showSignUp ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700'
-            ]"
+            :class="['tab', !showSignUp ? 'active' : '']"
           >
             Sign In
           </button>
           <button
             @click="showSignUp = true"
-            :class="[
-              'flex-1 py-3 px-4 text-center font-medium transition-colors',
-              showSignUp ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700'
-            ]"
+            :class="['tab', showSignUp ? 'active' : '']"
           >
             Sign Up
           </button>
         </div>
 
-        <div v-if="authError" class="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+        <div v-if="authError" class="alert alert-error mb-6">
           <p class="font-semibold">Error:</p>
           <p>{{ authError }}</p>
-          <p v-if="authError.includes('Too many') || authError.includes('limit exceeded')" class="text-sm mt-2 text-red-700">
+          <p v-if="authError.includes('Too many') || authError.includes('limit exceeded')" class="text-sm mt-2 opacity-80">
             💡 <strong>Tip:</strong> If you need immediate access, contact support. Otherwise, please wait 15-30 minutes before trying again.
           </p>
         </div>
 
-        <div v-if="requiresNewPassword" class="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
+        <div v-if="requiresNewPassword" class="alert alert-warning mb-6">
           <p class="font-semibold mb-2">🔑 Set Your Password</p>
           <p class="text-sm">Your account requires a password change. Please enter a new password below.</p>
         </div>
 
-        <div v-if="needsVerification" class="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+        <div v-if="needsVerification" class="alert alert-info mb-6">
           <p class="font-semibold mb-2">📧 Check your email!</p>
           <p class="text-sm mb-2">We sent a verification code to <strong>{{ email }}</strong></p>
           <p class="text-sm font-medium">Enter the 6-digit code from your email below:</p>
-          <div v-if="resendCodeSuccess" class="mt-2 text-sm text-green-700 font-medium">
+          <div v-if="resendCodeSuccess" class="mt-2 text-sm text-success font-medium">
             ✅ Verification code resent! Check your email.
             <span v-if="resendCodeMessage" class="block mt-1">{{ resendCodeMessage }}</span>
           </div>
         </div>
 
-        <div v-if="showForgotPassword" class="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+        <div v-if="showForgotPassword" class="alert alert-info mb-6">
           <p class="font-semibold mb-2">🔐 Reset your password</p>
           <p class="text-sm mb-2">Enter your email address and we'll send you a code to reset your password.</p>
-          <p class="text-xs text-blue-700 mt-2">💡 <strong>Tip:</strong> Check your spam/junk folder if you don't receive the email within a few minutes.</p>
+          <p class="text-xs opacity-80 mt-2">💡 <strong>Tip:</strong> Check your spam/junk folder if you don't receive the email within a few minutes.</p>
         </div>
 
-        <div v-if="showResetPassword" class="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+        <div v-if="showResetPassword" class="alert alert-info mb-6">
           <p class="font-semibold mb-2">📧 Check your email!</p>
           <p class="text-sm mb-2">We sent a password reset code to <strong>{{ email }}</strong></p>
           <p class="text-sm font-medium mb-2">Enter the code and your new password below:</p>
-          <p class="text-xs text-blue-700">💡 <strong>Didn't receive it?</strong> Check your spam/junk folder. The email may take a few minutes to arrive.</p>
+          <p class="text-xs opacity-80">💡 <strong>Didn't receive it?</strong> Check your spam/junk folder. The email may take a few minutes to arrive.</p>
         </div>
 
         <!-- Verification Code Form -->
         <form v-if="requiresNewPassword" @submit.prevent="handleSubmit" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              New Password
-            </label>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
             <input
               v-model="newPassword"
               type="password"
               required
               minlength="8"
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="Enter your new password"
             />
-            <p class="mt-1 text-xs text-gray-500">Must be at least 8 characters with uppercase, lowercase, and numbers</p>
+            <p class="form-help">Must be at least 8 characters with uppercase, lowercase, and numbers</p>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Confirm New Password
-            </label>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
             <input
               v-model="confirmPassword"
               type="password"
               required
               minlength="8"
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="Confirm your new password"
             />
           </div>
           <button
             type="submit"
             :disabled="loading || !newPassword || !confirmPassword || newPassword !== confirmPassword"
-            class="w-full bg-primary text-white py-3 px-4 rounded-full hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-200 disabled:cursor-not-allowed font-medium"
+            class="btn btn-primary w-full"
           >
             {{ loading ? 'Setting Password...' : 'Set New Password' }}
           </button>
         </form>
 
         <form v-if="needsVerification" @submit.prevent="handleVerification" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Verification Code
-            </label>
+          <div class="form-group">
+            <label class="form-label">Verification Code</label>
             <input
               v-model="verificationCode"
               type="text"
               required
               maxlength="6"
-              class="w-full px-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-center text-2xl tracking-widest text-gray-900 placeholder-gray-400"
+              class="form-input text-center text-2xl tracking-widest"
               placeholder="000000"
               autocomplete="one-time-code"
             />
-            <p class="mt-1 text-xs text-gray-500">
-              Enter the 6-digit code from your email
-            </p>
+            <p class="form-help">Enter the 6-digit code from your email</p>
           </div>
 
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="btn btn-primary w-full"
           >
             <span v-if="loading">Verifying...</span>
             <span v-else>Verify Email</span>
@@ -145,7 +131,7 @@
               type="button"
               @click="handleResendCode"
               :disabled="resendCodeLoading"
-              class="flex-1 text-sm text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-blue-300 py-2 px-4 rounded-full hover:bg-blue-50"
+              class="btn btn-secondary flex-1"
             >
               <span v-if="resendCodeLoading">Sending...</span>
               <span v-else>Resend Code</span>
@@ -153,7 +139,7 @@
             <button
               type="button"
               @click="needsVerification = false"
-              class="flex-1 text-sm text-gray-600 hover:text-gray-900 transition-colors border border-gray-200 py-2 px-4 rounded-full hover:bg-gray-50 bg-white font-medium"
+              class="btn btn-ghost flex-1"
             >
               Back to Sign In
             </button>
@@ -162,15 +148,13 @@
 
         <!-- Forgot Password Form -->
         <form v-if="showForgotPassword" @submit.prevent="handleForgotPassword" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Email
-            </label>
+          <div class="form-group">
+            <label class="form-label">Email</label>
             <input
               v-model="email"
               type="email"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="your@email.com"
             />
           </div>
@@ -178,7 +162,7 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="btn btn-primary w-full"
           >
             <span v-if="loading">Sending code...</span>
             <span v-else>Send Reset Code</span>
@@ -187,7 +171,7 @@
           <button
             type="button"
             @click="showForgotPassword = false"
-            class="w-full text-sm text-gray-600 hover:text-gray-900 transition-colors font-medium"
+            class="btn btn-ghost w-full"
           >
             Back to Sign In
           </button>
@@ -195,49 +179,39 @@
 
         <!-- Reset Password Form -->
         <form v-else-if="showResetPassword" @submit.prevent="handleResetPassword" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Reset Code
-            </label>
+          <div class="form-group">
+            <label class="form-label">Reset Code</label>
             <input
               v-model="resetCode"
               type="text"
               required
               maxlength="6"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-2xl tracking-widest"
+              class="form-input text-center text-2xl tracking-widest"
               placeholder="000000"
               autocomplete="one-time-code"
             />
-            <p class="mt-1 text-xs text-dark-text-muted">
-              Enter the 6-digit code from your email
-            </p>
+            <p class="form-help">Enter the 6-digit code from your email</p>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              New Password
-            </label>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
             <input
               v-model="newPassword"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="••••••••"
             />
-            <p class="mt-1 text-xs text-dark-text-muted">
-              Must be at least 8 characters with uppercase, lowercase, and numbers
-            </p>
+            <p class="form-help">Must be at least 8 characters with uppercase, lowercase, and numbers</p>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Confirm New Password
-            </label>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
             <input
               v-model="confirmPassword"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="••••••••"
             />
           </div>
@@ -245,7 +219,7 @@
           <button
             type="submit"
             :disabled="loading || newPassword !== confirmPassword"
-            class="w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="btn btn-primary w-full"
           >
             <span v-if="loading">Resetting password...</span>
             <span v-else>Reset Password</span>
@@ -254,7 +228,7 @@
           <button
             type="button"
             @click="showResetPassword = false; showForgotPassword = true"
-            class="w-full text-sm text-gray-600 hover:text-gray-900 transition-colors font-medium"
+            class="btn btn-ghost w-full"
           >
             Back
           </button>
@@ -262,52 +236,44 @@
 
         <!-- Sign Up Form -->
         <form v-if="showSignUp && !needsVerification && !requiresNewPassword && !showForgotPassword && !showResetPassword" @submit.prevent="handleSignUp" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Name
-            </label>
+          <div class="form-group">
+            <label class="form-label">Name</label>
             <input
               v-model="name"
               type="text"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="Your Name"
             />
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Email
-            </label>
+          <div class="form-group">
+            <label class="form-label">Email</label>
             <input
               v-model="email"
               type="email"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="your@email.com"
             />
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Password
-            </label>
+          <div class="form-group">
+            <label class="form-label">Password</label>
             <input
               v-model="password"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="••••••••"
             />
-            <p class="mt-1 text-xs text-dark-text-muted">
-              Must be at least 8 characters with uppercase, lowercase, and numbers
-            </p>
+            <p class="form-help">Must be at least 8 characters with uppercase, lowercase, and numbers</p>
           </div>
 
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-green-600 text-white py-2 px-4 rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="btn btn-success w-full"
           >
             <span v-if="loading">Creating account...</span>
             <span v-else>Sign Up</span>
@@ -316,28 +282,24 @@
 
         <!-- Sign In Form -->
         <form v-else-if="!showSignUp && !needsVerification && !showForgotPassword && !showResetPassword" @submit.prevent="handleSubmit" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Email
-            </label>
+          <div class="form-group">
+            <label class="form-label">Email</label>
             <input
               v-model="email"
               type="email"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="your@email.com"
             />
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-dark-text-secondary mb-2">
-              Password
-            </label>
+          <div class="form-group">
+            <label class="form-label">Password</label>
             <input
               v-model="password"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 placeholder-gray-400"
+              class="form-input"
               placeholder="••••••••"
             />
           </div>
@@ -346,7 +308,7 @@
             <button
               type="button"
               @click="showForgotPassword = true"
-              class="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              class="text-sm text-primary hover:text-primary-hover transition-colors"
             >
               Forgot Password?
             </button>
@@ -355,7 +317,7 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="btn btn-primary w-full"
           >
             <span v-if="loading">Signing in...</span>
             <span v-else>Sign In</span>
