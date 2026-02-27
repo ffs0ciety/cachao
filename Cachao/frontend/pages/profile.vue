@@ -101,14 +101,14 @@
             <!-- Name and Email Section -->
             <div class="flex-1 space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-text-secondary mb-2">
                   Name
                 </label>
                 <div class="flex gap-2">
                   <input
                     v-model="editingName"
                     type="text"
-                    class="flex-1 px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-gray-900"
+                    class="flex-1 px-4 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-text-primary"
                     placeholder="Your name"
                   />
                   <button
@@ -122,27 +122,27 @@
                 </div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-text-secondary mb-2">
                   Email
                 </label>
-                <div class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900">
+                <div class="px-4 py-2 bg-elevated border border-border-subtle rounded-lg text-text-primary">
                   {{ userEmail || 'Loading...' }}
                 </div>
-                <p class="mt-1 text-xs text-gray-500">Your email address from your account</p>
+                <p class="mt-1 text-xs text-text-disabled">Your email address from your account</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- My Events Section -->
-        <div v-if="activeTab === 'events'" class="bg-white rounded-2xl p-8 border border-gray-100">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">My Events</h2>
+        <div v-if="activeTab === 'events'" class="bg-surface rounded-2xl p-8 border border-border-subtle">
+          <h2 class="text-2xl font-semibold text-text-primary mb-6">My Events</h2>
           
           <div v-if="loadingEvents" class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-primary"></div>
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-border-subtle border-t-primary"></div>
           </div>
           
-          <div v-else-if="userEvents.length === 0" class="text-center py-12 text-gray-500">
+          <div v-else-if="userEvents.length === 0" class="text-center py-12 text-text-disabled">
             <p class="mb-4">You haven't created or joined any events yet.</p>
             <NuxtLink to="/events/new" class="inline-block text-primary hover:text-primary-600 font-medium">
               Create your first event →
@@ -154,7 +154,7 @@
               v-for="event in userEvents"
               :key="event.id"
               :to="`/events/${event.id}`"
-              class="group border border-gray-100 rounded-xl p-6 hover:shadow-lg transition-all duration-300 bg-white"
+              class="group border border-border-subtle rounded-xl p-6 hover:shadow-lg transition-all duration-300 bg-surface"
             >
               <div v-if="event.image_url" class="mb-4 overflow-hidden rounded-lg">
                 <img
@@ -164,19 +164,19 @@
                 />
               </div>
               <div class="flex items-start justify-between mb-2">
-                <h3 class="font-semibold text-gray-900 flex-1 group-hover:text-primary transition-colors">{{ event.name }}</h3>
+                <h3 class="font-semibold text-text-primary flex-1 group-hover:text-primary transition-colors">{{ event.name }}</h3>
                 <span
                   v-if="event.user_role"
                   :class="{
                     'px-2.5 py-1 rounded-full text-xs font-medium': true,
                     'bg-primary/10 text-primary': event.user_role === 'owner',
-                    'bg-gray-100 text-gray-700': event.user_role !== 'owner',
+                    'bg-elevated text-text-secondary': event.user_role !== 'owner',
                   }"
                 >
                   {{ event.user_role === 'owner' ? 'Owner' : event.user_role.charAt(0).toUpperCase() + event.user_role.slice(1) }}
                 </span>
               </div>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm text-text-secondary">
                 {{ formatDate(event.start_date) }}
                 <span v-if="event.end_date"> - {{ formatDate(event.end_date) }}</span>
               </p>
@@ -185,14 +185,14 @@
         </div>
 
         <!-- My Tickets Section -->
-        <div v-if="activeTab === 'tickets'" class="bg-white rounded-2xl p-8 border border-gray-100">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">My Tickets</h2>
+        <div v-if="activeTab === 'tickets'" class="bg-surface rounded-2xl p-8 border border-border-subtle">
+          <h2 class="text-2xl font-semibold text-text-primary mb-6">My Tickets</h2>
           
           <div v-if="loadingTickets" class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-primary"></div>
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-border-subtle border-t-primary"></div>
           </div>
           
-          <div v-else-if="userTickets.length === 0" class="text-center py-12 text-gray-500">
+          <div v-else-if="userTickets.length === 0" class="text-center py-12 text-text-disabled">
             <p class="mb-4">You haven't purchased any tickets yet.</p>
             <NuxtLink to="/" class="inline-block text-primary hover:text-primary-600 font-medium">
               Browse Events →
@@ -203,7 +203,7 @@
             <div
               v-for="order in userTickets"
               :key="order.id"
-              class="border border-gray-100 rounded-xl p-6 hover:shadow-lg transition-shadow bg-white"
+              class="border border-border-subtle rounded-xl p-6 hover:shadow-lg transition-shadow bg-surface"
             >
               <div class="flex items-start justify-between gap-4">
                 <div class="flex-1 min-w-0">
@@ -216,18 +216,18 @@
                       />
                     </div>
                     <div class="flex-1 min-w-0">
-                      <h3 class="font-semibold text-gray-900">{{ order.ticket_name }}</h3>
-                      <p class="text-sm text-gray-600 mt-1">{{ order.event_name }}</p>
-                      <p v-if="order.event_start_date" class="text-xs text-gray-500 mt-2">
+                      <h3 class="font-semibold text-text-primary">{{ order.ticket_name }}</h3>
+                      <p class="text-sm text-text-secondary mt-1">{{ order.event_name }}</p>
+                      <p v-if="order.event_start_date" class="text-xs text-text-disabled mt-2">
                         {{ formatDate(order.event_start_date) }}
                         <span v-if="order.event_end_date"> - {{ formatDate(order.event_end_date) }}</span>
                       </p>
-                      <p v-if="order.event_location" class="text-xs text-gray-500 mt-1">{{ order.event_location }}</p>
+                      <p v-if="order.event_location" class="text-xs text-text-disabled mt-1">{{ order.event_location }}</p>
                     </div>
                   </div>
-                  <div class="flex items-center gap-4 text-sm text-gray-600 mt-4">
-                    <span>Quantity: <strong class="text-gray-900">{{ order.quantity }}</strong></span>
-                    <span>Total: <strong class="text-gray-900">€{{ parseFloat(order.total_amount).toFixed(2) }}</strong></span>
+                  <div class="flex items-center gap-4 text-sm text-text-secondary mt-4">
+                    <span>Quantity: <strong class="text-text-primary">{{ order.quantity }}</strong></span>
+                    <span>Total: <strong class="text-text-primary">€{{ parseFloat(order.total_amount).toFixed(2) }}</strong></span>
                     <span
                       :class="{
                         'px-3 py-1 rounded-full text-xs font-medium': true,
@@ -245,7 +245,7 @@
                     <button
                       type="button"
                       @click="expandedQrOrder = order"
-                      class="rounded-lg border border-gray-200 p-1 hover:border-primary hover:bg-gray-50 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      class="rounded-lg border border-border-subtle p-1 hover:border-primary hover:bg-elevated transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
                       title="Tap to enlarge for scanning"
                     >
                       <TicketValidateQr
@@ -255,7 +255,7 @@
                       />
                     </button>
                     <template #fallback>
-                      <div class="w-[100px] h-[100px] bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">QR</div>
+                      <div class="w-[100px] h-[100px] bg-elevated rounded-lg flex items-center justify-center text-text-disabled text-xs">QR</div>
                     </template>
                   </ClientOnly>
                   <NuxtLink
@@ -277,16 +277,16 @@
             class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
             @click.self="expandedQrOrder = null"
           >
-            <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 flex flex-col items-center gap-4" @click.stop>
+            <div class="bg-surface rounded-2xl shadow-xl max-w-sm w-full p-6 flex flex-col items-center gap-4" @click.stop>
               <div class="flex items-start justify-between w-full gap-2">
                 <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-gray-900 truncate">{{ expandedQrOrder.ticket_name }}</p>
-                  <p class="text-sm text-gray-600 truncate">{{ expandedQrOrder.event_name }}</p>
+                  <p class="font-semibold text-text-primary truncate">{{ expandedQrOrder.ticket_name }}</p>
+                  <p class="text-sm text-text-secondary truncate">{{ expandedQrOrder.event_name }}</p>
                 </div>
                 <button
                   type="button"
                   @click="expandedQrOrder = null"
-                  class="flex-shrink-0 p-2 rounded-full hover:bg-gray-100 text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  class="flex-shrink-0 p-2 rounded-full hover:bg-elevated text-text-disabled focus:outline-none focus:ring-2 focus:ring-primary/50"
                   aria-label="Close"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,9 +294,9 @@
                   </svg>
                 </button>
               </div>
-              <p class="text-sm text-gray-500">Show this to staff to scan</p>
+              <p class="text-sm text-text-disabled">Show this to staff to scan</p>
               <ClientOnly>
-                <div class="bg-white p-3 rounded-xl border border-gray-200">
+                <div class="bg-surface p-3 rounded-xl border border-border-subtle">
                   <TicketValidateQr
                     v-if="expandedQrOrder"
                     :event-id="String(expandedQrOrder.event_id)"
@@ -305,13 +305,13 @@
                   />
                 </div>
                 <template #fallback>
-                  <div class="w-[280px] h-[280px] bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">Loading QR…</div>
+                  <div class="w-[280px] h-[280px] bg-elevated rounded-xl flex items-center justify-center text-text-disabled">Loading QR…</div>
                 </template>
               </ClientOnly>
               <button
                 type="button"
                 @click="expandedQrOrder = null"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200"
+                class="px-4 py-2 text-sm font-medium text-text-secondary bg-elevated rounded-full hover:bg-hover"
               >
                 Close
               </button>
@@ -320,14 +320,14 @@
         </Teleport>
 
         <!-- My Videos Section -->
-        <div v-if="activeTab === 'videos'" class="bg-white rounded-2xl p-8 border border-gray-100">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">My Videos</h2>
+        <div v-if="activeTab === 'videos'" class="bg-surface rounded-2xl p-8 border border-border-subtle">
+          <h2 class="text-2xl font-semibold text-text-primary mb-6">My Videos</h2>
           
           <div v-if="loadingVideos" class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-primary"></div>
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-border-subtle border-t-primary"></div>
           </div>
           
-          <div v-else-if="userVideos.length === 0" class="text-center py-12 text-gray-500">
+          <div v-else-if="userVideos.length === 0" class="text-center py-12 text-text-disabled">
             <p>You haven't uploaded any videos yet.</p>
           </div>
           
@@ -335,9 +335,9 @@
             <div
               v-for="video in userVideos"
               :key="video.id"
-              class="border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white"
+              class="border border-border-subtle rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-surface"
             >
-              <div class="aspect-video bg-gray-100 relative">
+              <div class="aspect-video bg-elevated relative">
                 <video
                   :src="video.video_url"
                   class="w-full h-full object-contain"
@@ -346,11 +346,11 @@
                 ></video>
               </div>
               <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-1 truncate">{{ video.title }}</h3>
-                <p v-if="video.event_name" class="text-sm text-gray-600 truncate">
+                <h3 class="font-medium text-text-primary mb-1 truncate">{{ video.title }}</h3>
+                <p v-if="video.event_name" class="text-sm text-text-secondary truncate">
                   Event: {{ video.event_name }}
                 </p>
-                <p v-if="video.album_name" class="text-sm text-gray-600 truncate">
+                <p v-if="video.album_name" class="text-sm text-text-secondary truncate">
                   Album: {{ video.album_name }}
                 </p>
                 <NuxtLink

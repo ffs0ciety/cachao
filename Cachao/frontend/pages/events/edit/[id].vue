@@ -1,25 +1,25 @@
 <template>
-  <div class="min-h-screen bg-white py-12" :key="`edit-${eventId}`">
+  <div class="min-h-screen bg-surface py-12" :key="`edit-${eventId}`">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Back + Event name -->
       <div class="mb-8">
         <NuxtLink
           :to="`/events/${eventId}`"
-          class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium mb-2"
+          class="inline-flex items-center text-text-secondary hover:text-text-primary transition-colors text-sm font-medium mb-2"
         >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
           Back to Event
         </NuxtLink>
-        <h1 v-if="event" class="text-2xl font-semibold text-gray-900">{{ event.name }}</h1>
-        <p class="text-gray-600 text-sm mt-1">Manage event details, tickets, discount codes, validation, and team</p>
+        <h1 v-if="event" class="text-2xl font-semibold text-text-primary">{{ event.name }}</h1>
+        <p class="text-text-secondary text-sm mt-1">Manage event details, tickets, discount codes, validation, and team</p>
       </div>
 
       <!-- Loading state -->
       <div v-if="loading" class="text-center py-16">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-primary"></div>
-        <p class="mt-4 text-gray-500">Loading event...</p>
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-border-subtle border-t-primary"></div>
+        <p class="mt-4 text-text-disabled">Loading event...</p>
       </div>
 
       <!-- Error state -->
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Tab navigation (inside event management) -->
-      <div v-else-if="event" class="border-b border-gray-200 mb-8">
+      <div v-else-if="event" class="border-b border-border-subtle mb-8">
         <nav class="flex space-x-8 overflow-x-auto" aria-label="Event management tabs">
           <button
             @click="activeModule = 'details'"
@@ -36,7 +36,7 @@
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
               activeModule === 'details'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
             ]"
           >
             Details
@@ -47,7 +47,7 @@
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
               activeModule === 'tickets'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
             ]"
           >
             Tickets
@@ -58,7 +58,7 @@
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
               activeModule === 'discount-codes'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
             ]"
           >
             Discount codes
@@ -69,7 +69,7 @@
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
               activeModule === 'validate'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
             ]"
           >
             Validate
@@ -80,7 +80,7 @@
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
               activeModule === 'team'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
             ]"
           >
             Team
@@ -89,13 +89,13 @@
       </div>
 
       <!-- Module: Details -->
-      <div v-if="event && activeModule === 'details'" class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Event details</h2>
+      <div v-if="event && activeModule === 'details'" class="bg-surface rounded-2xl border border-border-subtle p-6 sm:p-8">
+        <h2 class="text-xl font-semibold text-text-primary mb-6">Event details</h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Event Name -->
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="name" class="block text-sm font-medium text-text-secondary mb-2">
               Event Name <span class="text-red-500">*</span>
             </label>
             <input
@@ -103,28 +103,28 @@
               v-model="formData.name"
               type="text"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter event name"
             />
           </div>
 
           <!-- Description -->
           <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="description" class="block text-sm font-medium text-text-secondary mb-2">
               Description
             </label>
             <textarea
               id="description"
               v-model="formData.description"
               rows="4"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter event description"
             ></textarea>
           </div>
 
           <!-- Image Upload -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-text-secondary mb-2">
               Event Image (Optional)
             </label>
             <div v-if="!imagePreview && !selectedImageFile && !event.image_url" class="space-y-2">
@@ -133,9 +133,9 @@
                 type="file"
                 accept="image/*"
                 @change="handleImageSelect"
-                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                class="block w-full text-sm text-text-disabled file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p class="text-xs text-gray-500">Select an image for the event</p>
+              <p class="text-xs text-text-disabled">Select an image for the event</p>
             </div>
             
             <!-- Current Image -->
@@ -144,7 +144,7 @@
                 <img
                   :src="event.image_url"
                   alt="Current event image"
-                  class="max-w-full h-64 object-contain border border-gray-300 rounded-md"
+                  class="max-w-full h-64 object-contain border border-border-subtle rounded-md"
                 />
               </div>
               <button
@@ -162,7 +162,7 @@
                 <img
                   :src="imagePreview"
                   alt="Event image preview"
-                  class="max-w-full h-64 object-contain border border-gray-300 rounded-md"
+                  class="max-w-full h-64 object-contain border border-border-subtle rounded-md"
                 />
                 <button
                   type="button"
@@ -182,7 +182,7 @@
                 <img
                   :src="imagePreview || imageUrl"
                   alt="Event image"
-                  class="max-w-full h-64 object-contain border border-gray-300 rounded-md"
+                  class="max-w-full h-64 object-contain border border-border-subtle rounded-md"
                 />
               </div>
               <p class="text-xs text-green-600">✓ Image uploaded successfully</p>
@@ -191,7 +191,7 @@
 
           <!-- Start Date -->
           <div>
-            <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="start_date" class="block text-sm font-medium text-text-secondary mb-2">
               Start Date <span class="text-red-500">*</span>
             </label>
             <input
@@ -199,20 +199,20 @@
               v-model="formData.start_date"
               type="datetime-local"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <!-- End Date -->
           <div>
-            <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="end_date" class="block text-sm font-medium text-text-secondary mb-2">
               End Date (Optional)
             </label>
             <input
               id="end_date"
               v-model="formData.end_date"
               type="datetime-local"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -257,7 +257,7 @@
             </button>
             <NuxtLink
               :to="`/events/${eventId}`"
-              class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors"
+              class="px-4 py-2.5 bg-elevated text-text-secondary rounded-full text-sm font-medium hover:bg-hover transition-colors"
             >
               Cancel
             </NuxtLink>
@@ -273,42 +273,42 @@
       </div>
 
       <!-- Module: Tickets -->
-      <div v-if="event && activeModule === 'tickets'" class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Tickets</h2>
+      <div v-if="event && activeModule === 'tickets'" class="bg-surface rounded-2xl border border-border-subtle p-6 sm:p-8">
+        <h2 class="text-xl font-semibold text-text-primary mb-6">Tickets</h2>
         <TicketsManager :event-id="eventId" />
       </div>
 
       <!-- Module: Discount codes -->
-      <div v-if="event && activeModule === 'discount-codes'" class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Discount codes</h2>
+      <div v-if="event && activeModule === 'discount-codes'" class="bg-surface rounded-2xl border border-border-subtle p-6 sm:p-8">
+        <h2 class="text-xl font-semibold text-text-primary mb-6">Discount codes</h2>
         <DiscountCodesManager :event-id="eventId" />
       </div>
 
       <!-- Module: Validate tickets -->
-      <div v-if="event && activeModule === 'validate'" class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Validate tickets</h2>
+      <div v-if="event && activeModule === 'validate'" class="bg-surface rounded-2xl border border-border-subtle p-6 sm:p-8">
+        <h2 class="text-xl font-semibold text-text-primary mb-6">Validate tickets</h2>
         <div class="space-y-4">
           <!-- Search and filters -->
           <div class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
-              <label for="validate-search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label for="validate-search" class="block text-sm font-medium text-text-secondary mb-1">Search</label>
               <input
                 id="validate-search"
                 v-model="validateSearch"
                 type="text"
                 placeholder="Email or order ID..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 @keydown.enter.prevent="loadTicketOrders(1)"
               />
             </div>
             <div class="flex flex-wrap gap-2 items-center">
-              <span class="text-sm font-medium text-gray-700">Show:</span>
+              <span class="text-sm font-medium text-text-secondary">Show:</span>
               <button
                 type="button"
                 @click="showUnpaid = !showUnpaid; loadTicketOrders(1)"
                 :class="[
                   'px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
-                  showUnpaid ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  showUnpaid ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-elevated text-text-secondary hover:bg-hover'
                 ]"
               >
                 Unpaid
@@ -318,7 +318,7 @@
                 @click="showValidated = !showValidated; loadTicketOrders(1)"
                 :class="[
                   'px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
-                  showValidated ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  showValidated ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-elevated text-text-secondary hover:bg-hover'
                 ]"
               >
                 Validated
@@ -333,33 +333,33 @@
             </button>
           </div>
           <!-- Table -->
-          <div class="border border-gray-200 rounded-2xl overflow-hidden">
-            <div v-if="validateOrdersLoading" class="p-8 text-center text-gray-500">
+          <div class="border border-border-subtle rounded-2xl overflow-hidden">
+            <div v-if="validateOrdersLoading" class="p-8 text-center text-text-disabled">
               Loading orders...
             </div>
             <div v-else-if="validateOrdersError" class="p-4 bg-red-50 text-red-700 rounded-2xl">
               {{ validateOrdersError }}
             </div>
-            <div v-else-if="!validateOrders.length" class="p-8 text-center text-gray-500">
+            <div v-else-if="!validateOrders.length" class="p-8 text-center text-text-disabled">
               No ticket orders found.
             </div>
             <div v-else class="w-full min-w-0">
               <table class="w-full table-fixed divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-elevated">
                   <tr>
-                    <th scope="col" class="w-14 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">QR</th>
-                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
-                    <th scope="col" class="w-[16%] min-w-0 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th scope="col" class="w-[16%] min-w-0 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket</th>
-                    <th scope="col" class="w-12 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Validated</th>
-                    <th scope="col" class="w-28 px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th scope="col" class="w-14 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">QR</th>
+                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Order</th>
+                    <th scope="col" class="w-[16%] min-w-0 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Email</th>
+                    <th scope="col" class="w-[16%] min-w-0 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Ticket</th>
+                    <th scope="col" class="w-12 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Qty</th>
+                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Total</th>
+                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Status</th>
+                    <th scope="col" class="w-16 px-2 py-2 text-left text-xs font-medium text-text-disabled uppercase tracking-wider">Validated</th>
+                    <th scope="col" class="w-28 px-2 py-2 text-right text-xs font-medium text-text-disabled uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <tr v-for="order in validateOrders" :key="order.id" class="hover:bg-gray-50">
+                <tbody class="bg-surface divide-y divide-gray-200">
+                  <tr v-for="order in validateOrders" :key="order.id" class="hover:bg-elevated">
                     <td class="px-2 py-2 align-middle">
                       <ClientOnly>
                         <TicketValidateQr
@@ -368,15 +368,15 @@
                           :size="52"
                         />
                         <template #fallback>
-                          <div class="w-[52px] h-[52px] bg-gray-100 rounded flex items-center justify-center text-gray-400 text-[10px]">QR</div>
+                          <div class="w-[52px] h-[52px] bg-elevated rounded flex items-center justify-center text-text-disabled text-[10px]">QR</div>
                         </template>
                       </ClientOnly>
                     </td>
-                    <td class="px-2 py-2 text-sm text-gray-900 truncate" :title="String(order.id)">{{ order.id }}</td>
-                    <td class="px-2 py-2 text-sm text-gray-700 min-w-0 truncate" :title="order.email || ''">{{ order.email || '—' }}</td>
-                    <td class="px-2 py-2 text-sm text-gray-700 min-w-0 truncate" :title="order.ticket_name || ''">{{ order.ticket_name || '—' }}</td>
-                    <td class="px-2 py-2 text-sm text-gray-700">{{ order.quantity }}</td>
-                    <td class="px-2 py-2 text-sm text-gray-700">€{{ formatAmount(order.total_amount) }}</td>
+                    <td class="px-2 py-2 text-sm text-text-primary truncate" :title="String(order.id)">{{ order.id }}</td>
+                    <td class="px-2 py-2 text-sm text-text-secondary min-w-0 truncate" :title="order.email || ''">{{ order.email || '—' }}</td>
+                    <td class="px-2 py-2 text-sm text-text-secondary min-w-0 truncate" :title="order.ticket_name || ''">{{ order.ticket_name || '—' }}</td>
+                    <td class="px-2 py-2 text-sm text-text-secondary">{{ order.quantity }}</td>
+                    <td class="px-2 py-2 text-sm text-text-secondary">€{{ formatAmount(order.total_amount) }}</td>
                     <td class="px-2 py-2">
                       <span
                         :class="[
@@ -387,9 +387,9 @@
                         {{ order.status }}
                       </span>
                     </td>
-                    <td class="px-2 py-2 text-sm text-gray-700">
+                    <td class="px-2 py-2 text-sm text-text-secondary">
                       <span v-if="order.validated_at" class="text-green-600">Yes</span>
-                      <span v-else class="text-gray-400">No</span>
+                      <span v-else class="text-text-disabled">No</span>
                     </td>
                     <td class="px-2 py-2 text-right">
                       <template v-if="order.status === 'paid'">
@@ -412,7 +412,7 @@
                           {{ validateTogglingId === order.id ? '…' : 'Validate' }}
                         </button>
                       </template>
-                      <span v-else class="text-xs text-gray-400" title="Only paid orders can be validated">—</span>
+                      <span v-else class="text-xs text-text-disabled" title="Only paid orders can be validated">—</span>
                     </td>
                   </tr>
                 </tbody>
@@ -421,7 +421,7 @@
           </div>
           <!-- Pagination -->
           <div v-if="validateTotalPages > 1" class="flex items-center justify-between">
-            <p class="text-sm text-gray-600">
+            <p class="text-sm text-text-secondary">
               Page {{ validatePage }} of {{ validateTotalPages }} ({{ validateTotal }} orders)
             </p>
             <div class="flex gap-2">
@@ -429,7 +429,7 @@
                 type="button"
                 :disabled="validatePage <= 1 || validateOrdersLoading"
                 @click="loadTicketOrders(validatePage - 1)"
-                class="px-3 py-1.5 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-3 py-1.5 border border-border-subtle rounded-full text-sm font-medium text-text-secondary hover:bg-elevated disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -437,7 +437,7 @@
                 type="button"
                 :disabled="validatePage >= validateTotalPages || validateOrdersLoading"
                 @click="loadTicketOrders(validatePage + 1)"
-                class="px-3 py-1.5 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-3 py-1.5 border border-border-subtle rounded-full text-sm font-medium text-text-secondary hover:bg-elevated disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -447,9 +447,9 @@
       </div>
 
       <!-- Module: Team -->
-      <div v-if="event && activeModule === 'team'" class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8">
+      <div v-if="event && activeModule === 'team'" class="bg-surface rounded-2xl border border-border-subtle p-6 sm:p-8">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-semibold text-gray-900">Team</h2>
+          <h2 class="text-xl font-semibold text-text-primary">Team</h2>
           <NuxtLink
             :to="`/events/staff/${eventId}`"
             class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-full text-sm font-medium hover:bg-primary-600 transition-colors"

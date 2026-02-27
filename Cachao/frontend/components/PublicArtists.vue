@@ -2,7 +2,7 @@
   <div>
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-8">
-      <p class="text-gray-600">Loading artists...</p>
+      <p class="text-text-secondary">Loading artists...</p>
     </div>
 
     <!-- Error State -->
@@ -17,7 +17,7 @@
         v-for="artist in filteredArtists"
         :key="artist.id"
         :to="`/artists/${artist.id}`"
-        class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow block"
+        class="bg-elevated rounded-lg p-4 border border-border-subtle hover:shadow-md transition-shadow block"
       >
         <div class="flex items-start gap-4">
           <!-- Avatar -->
@@ -26,11 +26,11 @@
               v-if="artist.image_url"
               :src="artist.image_url"
               :alt="artist.name"
-              class="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+              class="w-16 h-16 rounded-full object-cover border-2 border-border-subtle"
             />
             <div
               v-else
-              class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold text-xl border-2 border-gray-300"
+              class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold text-xl border-2 border-border-subtle"
             >
               {{ artist.name.charAt(0).toUpperCase() }}
             </div>
@@ -38,7 +38,7 @@
           
           <!-- Artist Info -->
           <div class="flex-1 min-w-0">
-            <h3 class="font-semibold text-gray-800 mb-1 hover:text-blue-600">{{ artist.name }}</h3>
+            <h3 class="font-semibold text-text-primary mb-1 hover:text-blue-600">{{ artist.name }}</h3>
             <div v-if="artist.subcategories && artist.subcategories.length > 0" class="flex flex-wrap gap-1 mb-2">
               <span
                 v-for="subcat in artist.subcategories"
@@ -48,7 +48,7 @@
                 {{ subcat }}
               </span>
             </div>
-            <div v-if="artist.notes" class="text-sm text-gray-600 line-clamp-2">
+            <div v-if="artist.notes" class="text-sm text-text-secondary line-clamp-2">
               {{ artist.notes }}
             </div>
           </div>
@@ -57,8 +57,8 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="text-center py-12 text-gray-400">
-      <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div v-else class="text-center py-12 text-text-disabled">
+      <svg class="w-16 h-16 mx-auto mb-3 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
       <p class="text-sm">No artists found</p>

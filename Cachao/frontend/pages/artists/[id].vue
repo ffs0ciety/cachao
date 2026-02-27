@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-elevated">
     <div class="container mx-auto px-4 py-8">
       <!-- Back button -->
       <div class="mb-6">
@@ -16,7 +16,7 @@
 
       <!-- Loading state -->
       <div v-if="loading" class="text-center py-12">
-        <p class="text-gray-600">Loading artist profile...</p>
+        <p class="text-text-secondary">Loading artist profile...</p>
       </div>
 
       <!-- Error state -->
@@ -26,7 +26,7 @@
       </div>
 
       <!-- Artist Profile -->
-      <div v-else-if="artist" class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+      <div v-else-if="artist" class="bg-surface rounded-xl shadow-md overflow-hidden mb-8">
         <!-- Artist Header -->
         <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-8 text-white">
           <div class="flex items-start gap-6">
@@ -40,7 +40,7 @@
               />
               <div
                 v-else
-                class="w-32 h-32 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white font-bold text-4xl border-4 border-white shadow-lg"
+                class="w-32 h-32 rounded-full bg-surface bg-opacity-20 flex items-center justify-center text-white font-bold text-4xl border-4 border-white shadow-lg"
               >
                 {{ artist.name.charAt(0).toUpperCase() }}
               </div>
@@ -53,7 +53,7 @@
                 <span
                   v-for="subcat in artist.subcategories"
                   :key="subcat"
-                  class="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium capitalize backdrop-blur-sm"
+                  class="px-3 py-1 bg-surface bg-opacity-20 rounded-full text-sm font-medium capitalize backdrop-blur-sm"
                 >
                   {{ subcat }}
                 </span>
@@ -66,10 +66,10 @@
         </div>
 
         <!-- Contact Info (if available) -->
-        <div v-if="artist.email || artist.phone" class="p-6 border-b border-gray-200">
+        <div v-if="artist.email || artist.phone" class="p-6 border-b border-border-subtle">
           <div class="grid md:grid-cols-2 gap-4">
             <div v-if="artist.email" class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <a :href="`mailto:${artist.email}`" class="text-blue-600 hover:text-blue-800">
@@ -77,7 +77,7 @@
               </a>
             </div>
             <div v-if="artist.phone" class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
               <a :href="`tel:${artist.phone}`" class="text-blue-600 hover:text-blue-800">
@@ -89,17 +89,17 @@
       </div>
 
       <!-- Public Events Section -->
-      <div v-if="artist" class="bg-white rounded-xl shadow-md p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Upcoming Events</h2>
+      <div v-if="artist" class="bg-surface rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold text-text-primary mb-6">Upcoming Events</h2>
         
         <!-- Loading events -->
         <div v-if="eventsLoading" class="text-center py-8">
-          <p class="text-gray-600">Loading events...</p>
+          <p class="text-text-secondary">Loading events...</p>
         </div>
 
         <!-- No events -->
-        <div v-else-if="events.length === 0" class="text-center py-12 text-gray-500">
-          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-else-if="events.length === 0" class="text-center py-12 text-text-disabled">
+          <svg class="w-16 h-16 mx-auto mb-4 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <p class="text-lg">No upcoming events</p>
@@ -111,10 +111,10 @@
             v-for="eventItem in events"
             :key="eventItem.id"
             :to="`/events/${eventItem.id}`"
-            class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+            class="border border-border-subtle rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
           >
             <!-- Event Image -->
-            <div class="w-full h-48 overflow-hidden bg-gray-200">
+            <div class="w-full h-48 overflow-hidden bg-hover">
               <img
                 v-if="eventItem.image_url"
                 :src="eventItem.image_url"
@@ -122,7 +122,7 @@
                 class="w-full h-full object-cover"
               />
               <div v-else class="w-full h-full flex items-center justify-center">
-                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -130,11 +130,11 @@
             
             <!-- Event Info -->
             <div class="p-4">
-              <h3 class="font-semibold text-gray-800 mb-2">{{ eventItem.name }}</h3>
-              <p v-if="eventItem.description" class="text-sm text-gray-600 mb-3 line-clamp-2">
+              <h3 class="font-semibold text-text-primary mb-2">{{ eventItem.name }}</h3>
+              <p v-if="eventItem.description" class="text-sm text-text-secondary mb-3 line-clamp-2">
                 {{ eventItem.description }}
               </p>
-              <div class="text-xs text-gray-500">
+              <div class="text-xs text-text-disabled">
                 <p>Start: {{ formatDate(eventItem.start_date) }}</p>
                 <p v-if="eventItem.end_date">End: {{ formatDate(eventItem.end_date) }}</p>
               </div>

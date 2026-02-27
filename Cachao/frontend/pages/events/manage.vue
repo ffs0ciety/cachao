@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-white py-12">
+  <div class="min-h-screen bg-surface py-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-4xl font-semibold text-gray-900 mb-2">Event Management</h1>
-        <p class="text-lg text-gray-600">Create, edit, and manage your events</p>
+        <h1 class="text-4xl font-semibold text-text-primary mb-2">Event Management</h1>
+        <p class="text-lg text-text-secondary">Create, edit, and manage your events</p>
       </div>
 
       <!-- Tab Navigation -->
-      <div v-if="!loading && !error" class="border-b border-gray-200 mb-8">
+      <div v-if="!loading && !error" class="border-b border-border-subtle mb-8">
         <nav class="flex space-x-8 overflow-x-auto" aria-label="Tabs">
           <button
             @click="activeTab = 'events'"
@@ -16,7 +16,7 @@
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
               activeTab === 'events'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
             ]"
           >
             My Events
@@ -26,8 +26,8 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-16">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-primary"></div>
-        <p class="mt-4 text-gray-500">Loading events...</p>
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-border-subtle border-t-primary"></div>
+        <p class="mt-4 text-text-disabled">Loading events...</p>
       </div>
 
       <!-- Error State -->
@@ -57,22 +57,22 @@
           </NuxtLink>
           <NuxtLink
             to="/"
-            class="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors text-sm font-medium"
+            class="inline-flex items-center px-4 py-2 text-text-secondary hover:text-text-primary hover:bg-elevated rounded-full transition-colors text-sm font-medium"
           >
             Browse all events
           </NuxtLink>
         </div>
 
         <!-- Events List Card -->
-        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div class="bg-surface rounded-2xl border border-border-subtle overflow-hidden">
           <div v-if="events.length === 0" class="text-center py-16 px-6">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-elevated flex items-center justify-center">
+              <svg class="w-8 h-8 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <p class="text-gray-600 mb-2">You haven't created any events yet.</p>
-            <p class="text-sm text-gray-500 mb-6">Create your first event to start managing tickets, staff, and more.</p>
+            <p class="text-text-secondary mb-2">You haven't created any events yet.</p>
+            <p class="text-sm text-text-disabled mb-6">Create your first event to start managing tickets, staff, and more.</p>
             <NuxtLink
               to="/events/new"
               class="inline-flex items-center px-5 py-2.5 bg-primary text-white rounded-full text-sm font-medium hover:bg-primary-600 transition-colors"
@@ -85,12 +85,12 @@
             <div
               v-for="event in events"
               :key="event.id"
-              class="p-6 hover:bg-gray-50/50 transition-colors"
+              class="p-6 hover:bg-elevated/50 transition-colors"
             >
               <div class="flex flex-col sm:flex-row gap-6">
                 <!-- Event Image -->
                 <div class="flex-shrink-0">
-                  <div class="w-full sm:w-36 h-36 overflow-hidden bg-gray-100 rounded-xl">
+                  <div class="w-full sm:w-36 h-36 overflow-hidden bg-elevated rounded-xl">
                     <img
                       v-if="event.image_url"
                       :src="event.image_url"
@@ -99,7 +99,7 @@
                       @error="handleImageError($event)"
                     />
                     <div v-else class="w-full h-full flex items-center justify-center">
-                      <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-12 h-12 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
@@ -108,9 +108,9 @@
 
                 <!-- Event Details -->
                 <div class="flex-1 min-w-0">
-                  <h2 class="text-xl font-semibold text-gray-900 mb-1 truncate">{{ event.name }}</h2>
-                  <p v-if="event.description" class="text-gray-600 text-sm line-clamp-2 mb-3">{{ event.description }}</p>
-                  <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-500 mb-4">
+                  <h2 class="text-xl font-semibold text-text-primary mb-1 truncate">{{ event.name }}</h2>
+                  <p v-if="event.description" class="text-text-secondary text-sm line-clamp-2 mb-3">{{ event.description }}</p>
+                  <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-disabled mb-4">
                     <span>Start: {{ formatDate(event.start_date) }}</span>
                     <span v-if="event.end_date">End: {{ formatDate(event.end_date) }}</span>
                   </div>
@@ -119,7 +119,7 @@
                   <div class="flex flex-wrap gap-2">
                     <NuxtLink
                       :to="`/events/${event.id}`"
-                      class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors"
+                      class="inline-flex items-center px-4 py-2 bg-elevated text-text-secondary rounded-full text-sm font-medium hover:bg-hover transition-colors"
                     >
                       View
                     </NuxtLink>

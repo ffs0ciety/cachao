@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-elevated">
     <!-- TEST: This should always be visible if page renders -->
     <div class="bg-green-500 text-white p-2 text-center font-bold">
       ✅ STAFF PAGE LOADED - If you see this, the page is rendering!
@@ -17,7 +17,7 @@
           Back to Event
         </NuxtLink>
         <div class="flex justify-between items-center">
-          <h1 class="text-3xl font-bold text-gray-800">Manage Staff & Artists</h1>
+          <h1 class="text-3xl font-bold text-text-primary">Manage Staff & Artists</h1>
           <button
             v-if="isEventOwner"
             @click="showAddForm = !showAddForm"
@@ -29,12 +29,12 @@
       </div>
 
       <!-- Add Staff Form -->
-      <div v-if="showAddForm && isEventOwner" class="mb-6 bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-700 mb-4">Add New Person</h2>
+      <div v-if="showAddForm && isEventOwner" class="mb-6 bg-surface rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-text-secondary mb-4">Add New Person</h2>
         <form @submit.prevent="handleAddStaff" class="space-y-4">
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label for="add-name" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-name" class="block text-sm font-medium text-text-secondary mb-2">
                 Name <span class="text-red-500">*</span>
               </label>
               <input
@@ -42,19 +42,19 @@
                 v-model="addFormData.name"
                 type="text"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter name"
               />
             </div>
             <div>
-              <label for="add-role" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-role" class="block text-sm font-medium text-text-secondary mb-2">
                 Role <span class="text-red-500">*</span>
               </label>
               <select
                 id="add-role"
                 v-model="addFormData.role"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="staff">Staff</option>
                 <option value="artist">Artist</option>
@@ -63,39 +63,39 @@
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label for="add-email" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-email" class="block text-sm font-medium text-text-secondary mb-2">
                 Email (Optional)
               </label>
               <input
                 id="add-email"
                 v-model="addFormData.email"
                 type="email"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="email@example.com"
               />
             </div>
             <div>
-              <label for="add-phone" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-phone" class="block text-sm font-medium text-text-secondary mb-2">
                 Phone (Optional)
               </label>
               <input
                 id="add-phone"
                 v-model="addFormData.phone"
                 type="tel"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="+1 234 567 8900"
               />
             </div>
           </div>
           <div>
-            <label for="add-notes" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="add-notes" class="block text-sm font-medium text-text-secondary mb-2">
               Notes (Optional)
             </label>
             <textarea
               id="add-notes"
               v-model="addFormData.notes"
               rows="3"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Additional information..."
             ></textarea>
           </div>
@@ -114,7 +114,7 @@
             <button
               type="button"
               @click="showAddForm = false"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+              class="px-4 py-2 bg-hover text-text-secondary rounded-md hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
@@ -124,8 +124,8 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
-        <p class="text-gray-600">Loading staff...</p>
-        <p class="text-sm text-gray-400 mt-2">Page is loading... (If you see this, the page rendered!)</p>
+        <p class="text-text-secondary">Loading staff...</p>
+        <p class="text-sm text-text-disabled mt-2">Page is loading... (If you see this, the page rendered!)</p>
       </div>
 
       <!-- Error State -->
@@ -139,33 +139,33 @@
         <div
           v-for="member in staff"
           :key="member.id"
-          class="bg-white rounded-lg shadow-md"
+          class="bg-surface rounded-lg shadow-md"
           style="overflow: visible;"
         >
           <!-- Staff Member Header -->
           <div 
-            class="p-4 border-b border-gray-200 transition-colors"
+            class="p-4 border-b border-border-subtle transition-colors"
             :class="{ 
               'bg-blue-50': editingMember && editingMember.id === member.id,
-              'cursor-pointer hover:bg-gray-50': isEventOwner && (!editingMember || editingMember.id !== member.id)
+              'cursor-pointer hover:bg-elevated': isEventOwner && (!editingMember || editingMember.id !== member.id)
             }"
             @click="handleCardClick(member)"
           >
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <h3 class="text-xl font-semibold text-gray-800">{{ member.name }}</h3>
+                  <h3 class="text-xl font-semibold text-text-primary">{{ member.name }}</h3>
                   <span
                     class="px-2 py-1 text-xs rounded-full"
                     :class="member.role === 'staff' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'"
                   >
                     {{ member.role === 'staff' ? 'Staff' : 'Artist' }}
                   </span>
-                  <span v-if="isEventOwner && (!editingMember || editingMember.id !== member.id)" class="text-xs text-gray-500">
+                  <span v-if="isEventOwner && (!editingMember || editingMember.id !== member.id)" class="text-xs text-text-disabled">
                     (Click to edit)
                   </span>
                 </div>
-                <div class="text-sm text-gray-600 space-y-1">
+                <div class="text-sm text-text-secondary space-y-1">
                   <div v-if="member.email" class="flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -178,7 +178,7 @@
                     </svg>
                     {{ member.phone }}
                   </div>
-                  <div v-if="member.notes" class="text-gray-500 italic mt-2">{{ member.notes }}</div>
+                  <div v-if="member.notes" class="text-text-disabled italic mt-2">{{ member.notes }}</div>
                 </div>
               </div>
               <!-- BUTTONS CONTAINER - ALWAYS VISIBLE -->
@@ -210,12 +210,12 @@
           </div>
 
           <!-- Edit Form -->
-          <div v-if="editingMember && editingMember.id === member.id && isEventOwner" class="p-4 bg-gray-50 border-b border-gray-200">
-            <h4 class="text-lg font-semibold text-gray-700 mb-4">Edit Information</h4>
+          <div v-if="editingMember && editingMember.id === member.id && isEventOwner" class="p-4 bg-elevated border-b border-border-subtle">
+            <h4 class="text-lg font-semibold text-text-secondary mb-4">Edit Information</h4>
             <form @submit.prevent="handleUpdateStaff(member)" class="space-y-4">
               <div class="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label :for="`edit-name-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-name-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Name <span class="text-red-500">*</span>
                   </label>
                   <input
@@ -223,18 +223,18 @@
                     v-model="editingMember.name"
                     type="text"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label :for="`edit-role-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-role-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Role <span class="text-red-500">*</span>
                   </label>
                   <select
                     :id="`edit-role-${member.id}`"
                     v-model="editingMember.role"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="staff">Staff</option>
                     <option value="artist">Artist</option>
@@ -243,39 +243,39 @@
               </div>
               <div class="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label :for="`edit-email-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-email-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Email
                   </label>
                   <input
                     :id="`edit-email-${member.id}`"
                     v-model="editingMember.email"
                     type="email"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="email@example.com"
                   />
                 </div>
                 <div>
-                  <label :for="`edit-phone-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-phone-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Phone
                   </label>
                   <input
                     :id="`edit-phone-${member.id}`"
                     v-model="editingMember.phone"
                     type="tel"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="+1 234 567 8900"
                   />
                 </div>
               </div>
               <div>
-                <label :for="`edit-notes-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                <label :for="`edit-notes-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                   Notes
                 </label>
                 <textarea
                   :id="`edit-notes-${member.id}`"
                   v-model="editingMember.notes"
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Additional information..."
                 ></textarea>
               </div>
@@ -294,7 +294,7 @@
                 <button
                   type="button"
                   @click="editingMember = null"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                  class="px-4 py-2 bg-hover text-text-secondary rounded-md hover:bg-gray-300 transition-colors"
                 >
                   Cancel
                 </button>
@@ -305,7 +305,7 @@
           <!-- Flights Section -->
           <div class="p-4">
             <div class="flex items-center justify-between mb-3">
-              <h4 class="text-lg font-semibold text-gray-700">Flights</h4>
+              <h4 class="text-lg font-semibold text-text-secondary">Flights</h4>
               <button
                 v-if="isEventOwner"
                 @click="toggleFlightsForm(member)"
@@ -316,11 +316,11 @@
             </div>
 
             <!-- Add Flight Form -->
-            <div v-if="showingFlightsForm === member.id && isEventOwner" class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div v-if="showingFlightsForm === member.id && isEventOwner" class="mb-4 p-4 bg-elevated rounded-lg border border-border-subtle">
               <form @submit.prevent="handleAddFlight(member)" class="space-y-4">
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label :for="`flight-number-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`flight-number-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Flight Number <span class="text-red-500">*</span>
                     </label>
                     <input
@@ -330,18 +330,18 @@
                       required
                       pattern="[A-Z]{2,3}\d+"
                       placeholder="e.g., AA123"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <label :for="`flight-type-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`flight-type-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Flight Type <span class="text-red-500">*</span>
                     </label>
                     <select
                       :id="`flight-type-${member.id}`"
                       v-model="flightFormData.flight_type"
                       required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="departure">Departure</option>
                       <option value="return">Return</option>
@@ -349,14 +349,14 @@
                   </div>
                 </div>
                 <div>
-                  <label :for="`departure-date-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`departure-date-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Departure Date (optional)
                   </label>
                   <input
                     :id="`departure-date-${member.id}`"
                     v-model="flightFormData.departure_date"
                     type="date"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div v-if="addingFlight" class="text-sm text-blue-600">
@@ -376,7 +376,7 @@
                   <button
                     type="button"
                     @click="showingFlightsForm = null"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                    class="px-4 py-2 bg-hover text-text-secondary rounded-md hover:bg-gray-300 transition-colors"
                   >
                     Cancel
                   </button>
@@ -389,12 +389,12 @@
               <div
                 v-for="flight in memberFlights[member.id]"
                 :key="flight.id"
-                class="p-3 bg-gray-50 rounded-lg border border-gray-200"
+                class="p-3 bg-elevated rounded-lg border border-border-subtle"
               >
                 <div class="flex items-start justify-between">
                   <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
-                      <span class="font-semibold text-gray-800">{{ flight.flight_number }}</span>
+                      <span class="font-semibold text-text-primary">{{ flight.flight_number }}</span>
                       <span
                         class="px-2 py-1 text-xs rounded-full"
                         :class="flight.flight_type === 'departure' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'"
@@ -402,11 +402,11 @@
                         {{ flight.flight_type === 'departure' ? 'Departure' : 'Return' }}
                       </span>
                     </div>
-                    <div v-if="flight.departure_airport_code || flight.arrival_airport_code" class="text-sm text-gray-600">
+                    <div v-if="flight.departure_airport_code || flight.arrival_airport_code" class="text-sm text-text-secondary">
                       <span v-if="flight.departure_airport_code">{{ flight.departure_airport_code }}</span>
                       <span v-if="flight.departure_airport_code && flight.arrival_airport_code"> → </span>
                       <span v-if="flight.arrival_airport_code">{{ flight.arrival_airport_code }}</span>
-                      <span v-if="flight.departure_date" class="ml-2 text-gray-500">
+                      <span v-if="flight.departure_date" class="ml-2 text-text-disabled">
                         ({{ formatDate(flight.departure_date) }})
                       </span>
                     </div>
@@ -421,7 +421,7 @@
                 </div>
               </div>
             </div>
-            <div v-else class="text-sm text-gray-500 italic">
+            <div v-else class="text-sm text-text-disabled italic">
               No flights added yet.
             </div>
           </div>
@@ -429,9 +429,9 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-12 bg-white rounded-lg shadow-md">
-        <p class="text-gray-500 text-lg mb-2">No staff or artists added yet.</p>
-        <p v-if="isEventOwner" class="text-sm text-gray-400">Click "+ Add Person" to get started.</p>
+      <div v-else class="text-center py-12 bg-surface rounded-lg shadow-md">
+        <p class="text-text-disabled text-lg mb-2">No staff or artists added yet.</p>
+        <p v-if="isEventOwner" class="text-sm text-text-disabled">Click "+ Add Person" to get started.</p>
       </div>
     </div>
   </div>

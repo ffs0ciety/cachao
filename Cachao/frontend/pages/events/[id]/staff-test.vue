@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-8">
+  <div class="min-h-screen bg-elevated p-8">
     <div class="bg-green-500 text-white p-4 rounded mb-4">
       <h1 class="text-2xl font-bold">✅ TEST PAGE - If you see this, routing works!</h1>
       <p>Event ID: {{ eventId }}</p>

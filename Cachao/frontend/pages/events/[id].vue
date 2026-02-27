@@ -81,7 +81,7 @@
                 'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
                 activeMainTab === 'my-info'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
               ]"
             >
               My Info
@@ -92,7 +92,7 @@
                 'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
                 activeMainTab === 'tickets'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
               ]"
             >
               Tickets
@@ -103,7 +103,7 @@
                 'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
                 activeMainTab === 'artists'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
               ]"
             >
               {{ isEventOwner ? 'Team' : 'Artists' }}
@@ -114,7 +114,7 @@
                 'py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
                 activeMainTab === 'media'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
               ]"
             >
               Media
@@ -125,35 +125,35 @@
 
       <!-- My Event Info Section (for staff/artists) -->
       <div v-if="event && isEventStaff && myEventInfo && activeMainTab === 'my-info'" class="mb-12">
-        <div class="bg-white rounded-2xl p-8 border border-gray-100">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-8">My Event Information</h2>
+        <div class="bg-surface rounded-2xl p-8 border border-border-subtle">
+          <h2 class="text-2xl font-semibold text-text-primary mb-8">My Event Information</h2>
           
           <div class="grid md:grid-cols-2 gap-8 mb-8">
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-6">Personal Information</h3>
+              <h3 class="text-lg font-semibold text-text-primary mb-6">Personal Information</h3>
               <div class="space-y-4">
                 <div>
-                  <span class="text-sm font-medium text-gray-500 block mb-1">Name</span>
-                  <p class="text-gray-900">{{ myEventInfo.staff.name }}</p>
+                  <span class="text-sm font-medium text-text-disabled block mb-1">Name</span>
+                  <p class="text-text-primary">{{ myEventInfo.staff.name }}</p>
                 </div>
                 <div>
-                  <span class="text-sm font-medium text-gray-500 block mb-1">Role</span>
-                  <p class="text-gray-900 capitalize">{{ myEventInfo.staff.role }}</p>
+                  <span class="text-sm font-medium text-text-disabled block mb-1">Role</span>
+                  <p class="text-text-primary capitalize">{{ myEventInfo.staff.role }}</p>
                 </div>
                 <div v-if="myEventInfo.staff.email">
-                  <span class="text-sm font-medium text-gray-500 block mb-1">Email</span>
-                  <p class="text-gray-900">{{ myEventInfo.staff.email }}</p>
+                  <span class="text-sm font-medium text-text-disabled block mb-1">Email</span>
+                  <p class="text-text-primary">{{ myEventInfo.staff.email }}</p>
                 </div>
                 <div v-if="myEventInfo.staff.phone">
-                  <span class="text-sm font-medium text-gray-500 block mb-1">Phone</span>
-                  <p class="text-gray-900">{{ myEventInfo.staff.phone }}</p>
+                  <span class="text-sm font-medium text-text-disabled block mb-1">Phone</span>
+                  <p class="text-text-primary">{{ myEventInfo.staff.phone }}</p>
                 </div>
                 <div v-if="myEventInfo.staff.notes">
-                  <span class="text-sm font-medium text-gray-500 block mb-1">Notes</span>
-                  <p class="text-gray-900">{{ myEventInfo.staff.notes }}</p>
+                  <span class="text-sm font-medium text-text-disabled block mb-1">Notes</span>
+                  <p class="text-text-primary">{{ myEventInfo.staff.notes }}</p>
                 </div>
                 <div v-if="myEventInfo.staff.subcategories && myEventInfo.staff.subcategories.length > 0">
-                  <span class="text-sm font-medium text-gray-500 block mb-2">Categories</span>
+                  <span class="text-sm font-medium text-text-disabled block mb-2">Categories</span>
                   <div class="flex flex-wrap gap-2">
                     <span
                       v-for="cat in myEventInfo.staff.subcategories"
@@ -178,23 +178,23 @@
 
           <!-- Flights Section -->
           <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">Flights</h3>
+            <h3 class="text-lg font-semibold text-text-primary mb-6">Flights</h3>
             <div v-if="myEventInfo.flights && myEventInfo.flights.length > 0" class="space-y-4">
               <div
                 v-for="flight in myEventInfo.flights"
                 :key="flight.id"
-                class="border border-gray-100 rounded-xl p-6 bg-gray-50"
+                class="border border-border-subtle rounded-xl p-6 bg-elevated"
               >
                 <div class="flex justify-between items-start mb-4">
                   <div>
-                    <h4 class="font-semibold text-gray-900">
+                    <h4 class="font-semibold text-text-primary">
                       {{ flight.flight_number }} ({{ flight.airline_code }})
                     </h4>
-                    <p class="text-sm text-gray-600 capitalize mt-1">{{ flight.flight_type }}</p>
+                    <p class="text-sm text-text-secondary capitalize mt-1">{{ flight.flight_type }}</p>
                   </div>
                   <span
                     v-if="flight.status"
-                    class="px-3 py-1 bg-white text-gray-700 rounded-full text-xs font-medium border border-gray-200"
+                    class="px-3 py-1 bg-surface text-text-secondary rounded-full text-xs font-medium border border-border-subtle"
                   >
                     {{ flight.status }}
                   </span>
@@ -202,80 +202,80 @@
                 
                 <div class="grid md:grid-cols-2 gap-6 mt-6">
                   <div v-if="flight.departure_airport_code || flight.departure_city">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Departure</p>
-                    <p class="text-gray-900 font-medium">
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">Departure</p>
+                    <p class="text-text-primary font-medium">
                       {{ flight.departure_airport_code || flight.departure_city }}
-                      <span v-if="flight.departure_airport_name" class="text-gray-600 font-normal"> - {{ flight.departure_airport_name }}</span>
+                      <span v-if="flight.departure_airport_name" class="text-text-secondary font-normal"> - {{ flight.departure_airport_name }}</span>
                     </p>
-                    <p v-if="flight.departure_date" class="text-sm text-gray-600 mt-1">
+                    <p v-if="flight.departure_date" class="text-sm text-text-secondary mt-1">
                       {{ formatDateShort(flight.departure_date) }}
                       <span v-if="flight.departure_time"> at {{ flight.departure_time }}</span>
                     </p>
                   </div>
                   
                   <div v-if="flight.arrival_airport_code || flight.arrival_city">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Arrival</p>
-                    <p class="text-gray-900 font-medium">
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">Arrival</p>
+                    <p class="text-text-primary font-medium">
                       {{ flight.arrival_airport_code || flight.arrival_city }}
-                      <span v-if="flight.arrival_airport_name" class="text-gray-600 font-normal"> - {{ flight.arrival_airport_name }}</span>
+                      <span v-if="flight.arrival_airport_name" class="text-text-secondary font-normal"> - {{ flight.arrival_airport_name }}</span>
                     </p>
-                    <p v-if="flight.arrival_date" class="text-sm text-gray-600 mt-1">
+                    <p v-if="flight.arrival_date" class="text-sm text-text-secondary mt-1">
                       {{ formatDateShort(flight.arrival_date) }}
                       <span v-if="flight.arrival_time"> at {{ flight.arrival_time }}</span>
                     </p>
                   </div>
                 </div>
                 
-                <div v-if="flight.aircraft_type" class="mt-4 text-sm text-gray-600">
+                <div v-if="flight.aircraft_type" class="mt-4 text-sm text-text-secondary">
                   Aircraft: {{ flight.aircraft_type }}
                 </div>
               </div>
             </div>
-            <div v-else class="text-center py-8 text-gray-500">
+            <div v-else class="text-center py-8 text-text-disabled">
               <p>No flights added yet.</p>
             </div>
           </div>
 
           <!-- Accommodations Section -->
           <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">Accommodations</h3>
+            <h3 class="text-lg font-semibold text-text-primary mb-6">Accommodations</h3>
             <div v-if="myEventInfo.accommodations && myEventInfo.accommodations.length > 0" class="space-y-4">
               <div
                 v-for="acc in myEventInfo.accommodations"
                 :key="acc.id"
-                class="border border-gray-100 rounded-xl p-6 bg-gray-50"
+                class="border border-border-subtle rounded-xl p-6 bg-elevated"
               >
-                <h4 class="font-semibold text-gray-900 mb-4">{{ acc.name }}</h4>
+                <h4 class="font-semibold text-text-primary mb-4">{{ acc.name }}</h4>
                 
                 <div class="grid md:grid-cols-2 gap-6">
                   <div v-if="acc.address">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Address</p>
-                    <p class="text-gray-900">{{ acc.address }}</p>
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">Address</p>
+                    <p class="text-text-primary">{{ acc.address }}</p>
                   </div>
                   
                   <div v-if="acc.city">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">City</p>
-                    <p class="text-gray-900">{{ acc.city }}</p>
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">City</p>
+                    <p class="text-text-primary">{{ acc.city }}</p>
                   </div>
                   
                   <div v-if="acc.check_in_date">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Check-in</p>
-                    <p class="text-gray-900">{{ formatDateShort(acc.check_in_date) }}</p>
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">Check-in</p>
+                    <p class="text-text-primary">{{ formatDateShort(acc.check_in_date) }}</p>
                   </div>
                   
                   <div v-if="acc.check_out_date">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Check-out</p>
-                    <p class="text-gray-900">{{ formatDateShort(acc.check_out_date) }}</p>
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">Check-out</p>
+                    <p class="text-text-primary">{{ formatDateShort(acc.check_out_date) }}</p>
                   </div>
                   
                   <div v-if="acc.assignment_notes" class="md:col-span-2">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Notes</p>
-                    <p class="text-gray-900">{{ acc.assignment_notes }}</p>
+                    <p class="text-xs font-medium text-text-disabled uppercase tracking-wide mb-2">Notes</p>
+                    <p class="text-text-primary">{{ acc.assignment_notes }}</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else class="text-center py-8 text-gray-500">
+            <div v-else class="text-center py-8 text-text-disabled">
               <p>No accommodations assigned yet.</p>
             </div>
           </div>
@@ -284,15 +284,15 @@
 
       <!-- Tickets Section -->
       <div v-if="event && activeMainTab === 'tickets'" class="mb-12">
-        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+        <div class="bg-surface rounded-2xl p-8 border border-border-subtle">
           <TicketPurchase :event-id="eventId" />
         </div>
       </div>
 
       <!-- Artists Section with Selector (Public View) -->
       <div v-if="event && !isEventOwner && activeMainTab === 'artists'" class="mb-12">
-        <div class="bg-white rounded-2xl p-8 border border-gray-100">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">Artists</h2>
+        <div class="bg-surface rounded-2xl p-8 border border-border-subtle">
+          <h2 class="text-2xl font-semibold text-text-primary mb-6">Artists</h2>
           
           <!-- Category Selector -->
           <div class="mb-8 flex flex-wrap gap-2">
@@ -304,7 +304,7 @@
                 'px-4 py-2 rounded-lg font-medium transition-colors text-sm',
                 selectedArtistCategory === category.value
                   ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-elevated text-text-secondary hover:bg-hover'
               ]"
             >
               {{ category.label }}
@@ -321,12 +321,12 @@
 
       <!-- Staff & Artists Section (Event Owner View) -->
       <div v-if="event && isEventOwner && activeMainTab === 'artists'" class="mb-12">
-        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+        <div class="bg-surface rounded-2xl p-8 border border-border-subtle">
           <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-semibold text-gray-900">Team</h2>
+            <h2 class="text-2xl font-semibold text-text-primary">Team</h2>
             <NuxtLink
               :to="`/events/staff/${eventId}`"
-              class="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-elevated rounded-lg transition-colors font-medium"
             >
               <span>Manage</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -353,9 +353,9 @@
         </div>
 
         <!-- Videos and Albums section with tabs -->
-        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+        <div class="bg-surface rounded-2xl p-8 border border-border-subtle">
         <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-8">
+        <div class="border-b border-border-subtle mb-8">
           <nav class="flex space-x-8" aria-label="Tabs">
             <button
               @click="activeTab = 'videos'"
@@ -363,11 +363,11 @@
                 'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
                 activeTab === 'videos'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
               ]"
             >
               All Videos
-              <span v-if="videos.length > 0" class="ml-2 text-xs bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">
+              <span v-if="videos.length > 0" class="ml-2 text-xs bg-elevated px-2 py-0.5 rounded-full text-text-secondary">
                 {{ videos.length }}
               </span>
             </button>
@@ -377,11 +377,11 @@
                 'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
                 activeTab === 'albums'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-disabled hover:text-text-secondary hover:border-border-subtle'
               ]"
             >
               Albums
-              <span v-if="albums.length > 0" class="ml-2 text-xs bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">
+              <span v-if="albums.length > 0" class="ml-2 text-xs bg-elevated px-2 py-0.5 rounded-full text-text-secondary">
                 {{ albums.length }}
               </span>
             </button>
@@ -393,7 +393,7 @@
 
         <!-- Videos loading -->
         <div v-if="videosLoading" class="text-center py-12">
-          <p class="text-gray-500">Loading videos...</p>
+          <p class="text-text-disabled">Loading videos...</p>
         </div>
 
         <!-- Videos error -->
@@ -402,8 +402,8 @@
         </div>
 
         <!-- No videos -->
-        <div v-else-if="videos.length === 0" class="text-center py-16 text-gray-500">
-          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-else-if="videos.length === 0" class="text-center py-16 text-text-disabled">
+          <svg class="w-16 h-16 mx-auto mb-4 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
           <p class="text-lg">No videos uploaded yet for this event</p>
@@ -412,12 +412,12 @@
         <!-- Bulk actions for selected videos -->
         <div v-if="selectedVideos.size > 0 && isAuthenticated" class="mb-6 p-4 bg-primary/5 rounded-xl border border-primary/20">
           <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-900">
+            <span class="text-sm font-medium text-text-primary">
               {{ selectedVideos.size }} video{{ selectedVideos.size > 1 ? 's' : '' }} selected
             </span>
             <button
               @click="clearSelection"
-              class="px-3 py-1.5 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm border border-gray-200 font-medium"
+              class="px-3 py-1.5 bg-surface text-text-secondary rounded-lg hover:bg-elevated transition-colors text-sm border border-border-subtle font-medium"
             >
               Clear
             </button>
@@ -425,10 +425,10 @@
           <div class="flex items-center gap-3 flex-wrap">
             <!-- Category selector -->
             <div class="flex items-center gap-2">
-              <label class="text-sm font-medium text-gray-700">Set Category:</label>
+              <label class="text-sm font-medium text-text-secondary">Set Category:</label>
               <select
                 v-model="bulkCategory"
-                class="text-sm bg-white border border-gray-200 rounded-full px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
+                class="text-sm bg-surface border border-border-subtle rounded-full px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary text-text-primary"
               >
                 <option value="">-- Select Category --</option>
                 <option value="shows">Shows</option>
@@ -461,7 +461,7 @@
           <div
             v-for="video in videos"
             :key="video.id"
-            class="border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 bg-white group"
+            class="border border-border-subtle rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 bg-surface group"
           >
             <!-- Video player -->
             <div 
@@ -471,9 +471,9 @@
               <!-- Loading placeholder for thumbnail -->
               <div 
                 v-if="!video.thumbnail_url && !videoThumbnails[video.id] && !videoPlaying[video.id]"
-                class="absolute inset-0 bg-gray-100 animate-pulse flex items-center justify-center z-0"
+                class="absolute inset-0 bg-elevated animate-pulse flex items-center justify-center z-0"
               >
-                <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -493,8 +493,8 @@
                 class="absolute inset-0 flex items-center justify-center z-20 cursor-pointer bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200"
                 @click="playVideo(video.id)"
               >
-                <div class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 transition-all">
-                  <svg class="w-8 h-8 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <div class="w-16 h-16 bg-surface bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 transition-all">
+                  <svg class="w-8 h-8 text-text-primary ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                 </div>
@@ -518,7 +518,7 @@
               >
                 Your browser does not support the video tag.
               </video>
-              <div v-else class="text-gray-400 aspect-video w-full flex items-center justify-center bg-gray-100 absolute inset-0">
+              <div v-else class="text-text-disabled aspect-video w-full flex items-center justify-center bg-elevated absolute inset-0">
                 <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
@@ -528,7 +528,7 @@
             <!-- Video info -->
             <div class="p-4">
               <div class="flex items-center justify-between gap-2 mb-2">
-                <h3 class="font-semibold text-gray-900 flex-1 group-hover:text-primary transition-colors">{{ video.title || 'Untitled Video' }}</h3>
+                <h3 class="font-semibold text-text-primary flex-1 group-hover:text-primary transition-colors">{{ video.title || 'Untitled Video' }}</h3>
                 <div class="flex items-center gap-2 flex-shrink-0">
                   <!-- Checkbox for user's videos -->
                   <input
@@ -552,16 +552,16 @@
                   </button>
                 </div>
               </div>
-              <p v-if="video.description" class="text-sm text-gray-600 mb-2 line-clamp-2">
+              <p v-if="video.description" class="text-sm text-text-secondary mb-2 line-clamp-2">
                 {{ video.description }}
               </p>
               <!-- Category selector for user's videos -->
               <div v-if="isAuthenticated && isUserVideo(video)" class="mb-2">
-                <label class="block text-xs font-medium text-gray-700 mb-1">Category:</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Category:</label>
                 <select
                   :value="video.category || ''"
                   @change="handleCategoryChange(video.id, ($event.target as HTMLSelectElement).value)"
-                  class="w-full text-sm bg-white border border-gray-200 rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
+                  class="w-full text-sm bg-surface border border-border-subtle rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary text-text-primary"
                 >
                   <option value="">None</option>
                   <option value="shows">Shows</option>
@@ -576,7 +576,7 @@
                   {{ video.category.charAt(0).toUpperCase() + video.category.slice(1) }}
                 </span>
               </div>
-              <div class="text-xs text-gray-500">
+              <div class="text-xs text-text-disabled">
                 <p>Uploaded: {{ formatDate(video.created_at) }}</p>
                 <p v-if="video.duration_seconds" class="mt-1">
                   Duration: {{ formatDuration(video.duration_seconds) }}
@@ -591,7 +591,7 @@
         <div v-else-if="activeTab === 'albums'">
           <!-- Albums loading -->
           <div v-if="albumsLoading" class="text-center py-12">
-            <p class="text-gray-500">Loading albums...</p>
+            <p class="text-text-disabled">Loading albums...</p>
           </div>
 
           <!-- Albums error -->
@@ -612,8 +612,8 @@
                 Back to Albums
               </button>
               <div>
-                <h3 class="text-xl font-semibold text-gray-900">{{ selectedAlbum.name }}</h3>
-                <p v-if="selectedAlbum.album_date" class="text-sm text-gray-500 mt-1">
+                <h3 class="text-xl font-semibold text-text-primary">{{ selectedAlbum.name }}</h3>
+                <p v-if="selectedAlbum.album_date" class="text-sm text-text-disabled mt-1">
                   {{ new Date(selectedAlbum.album_date).toLocaleDateString() }}
                 </p>
               </div>
@@ -679,8 +679,8 @@
                     class="absolute inset-0 flex items-center justify-center z-20 cursor-pointer bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200"
                     @click="playVideo(video.id)"
                   >
-                    <div class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 transition-all">
-                      <svg class="w-8 h-8 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 bg-surface bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 transition-all">
+                      <svg class="w-8 h-8 text-text-primary ml-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                       </svg>
                     </div>
@@ -734,7 +734,7 @@
                 </div>
               </div>
             </div>
-            <div v-else class="text-center py-12 text-gray-500">
+            <div v-else class="text-center py-12 text-text-disabled">
               <p>No videos in this album yet</p>
             </div>
           </div>
@@ -742,8 +742,8 @@
           <!-- Albums List -->
           <div v-else>
             <!-- No albums -->
-            <div v-if="albums.length === 0" class="text-center py-12 text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-if="albums.length === 0" class="text-center py-12 text-text-disabled">
+              <svg class="w-16 h-16 mx-auto mb-4 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
               <p class="text-lg">No albums created yet</p>
@@ -755,20 +755,20 @@
                 v-for="album in albums"
                 :key="album.id"
                 @click="selectAlbum(album)"
-                class="border border-gray-100 rounded-xl p-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer bg-white group"
+                class="border border-border-subtle rounded-xl p-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer bg-surface group"
               >
                 <div class="flex items-center justify-between mb-4">
                   <div class="flex-1">
-                    <h3 class="text-xl font-semibold text-gray-900 group-hover:text-primary transition-colors">{{ album.name }}</h3>
-                    <p v-if="album.album_date" class="text-sm text-gray-500 mt-1">
+                    <h3 class="text-xl font-semibold text-text-primary group-hover:text-primary transition-colors">{{ album.name }}</h3>
+                    <p v-if="album.album_date" class="text-sm text-text-disabled mt-1">
                       {{ new Date(album.album_date).toLocaleDateString() }}
                     </p>
                   </div>
-                  <svg class="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-6 h-6 text-text-disabled group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
-                <p class="text-sm text-gray-600">
+                <p class="text-sm text-text-secondary">
                   {{ getAlbumVideoCount(album.id) }} video{{ getAlbumVideoCount(album.id) !== 1 ? 's' : '' }}
                 </p>
               </div>

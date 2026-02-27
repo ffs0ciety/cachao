@@ -1,5 +1,5 @@
 <template>
-  <div class="inline-block bg-white p-1 rounded-lg border border-gray-200" :title="'Scan to validate ticket #' + orderId">
+  <div class="inline-block bg-surface p-1 rounded-lg border border-border-subtle" :title="'Scan to validate ticket #' + orderId">
     <img
       v-if="qrDataUrl"
       :src="qrDataUrl"
@@ -8,7 +8,7 @@
       :height="size"
       class="block"
     />
-    <div v-else class="flex items-center justify-center text-gray-400" :style="{ width: size + 'px', height: size + 'px' }">
+    <div v-else class="flex items-center justify-center text-text-disabled" :style="{ width: size + 'px', height: size + 'px' }">
       <span class="text-xs">QR</span>
     </div>
   </div>

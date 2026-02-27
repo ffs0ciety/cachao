@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-elevated">
     <div class="container mx-auto px-4 py-8">
       <!-- Header -->
       <div class="mb-6">
@@ -13,7 +13,7 @@
           Back to Event
         </NuxtLink>
         <div class="flex justify-between items-center">
-          <h1 class="text-3xl font-bold text-gray-800">Manage Staff & Artists</h1>
+          <h1 class="text-3xl font-bold text-text-primary">Manage Staff & Artists</h1>
           <button
             v-if="isEventOwner"
             @click="showAddForm = !showAddForm"
@@ -28,9 +28,9 @@
       </div>
 
       <!-- Accommodations Management Section -->
-      <div v-if="isEventOwner" class="mb-8 bg-white rounded-lg shadow-md p-6">
+      <div v-if="isEventOwner" class="mb-8 bg-surface rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800">Event Accommodations</h2>
+          <h2 class="text-2xl font-bold text-text-primary">Event Accommodations</h2>
           <button
             @click="showAddAccommodationForm = !showAddAccommodationForm"
             class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-sm font-medium"
@@ -43,19 +43,19 @@
         </div>
 
         <!-- Add Accommodation Form -->
-        <div v-if="showAddAccommodationForm" class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Accommodation</h3>
+        <div v-if="showAddAccommodationForm" class="mb-6 p-4 bg-elevated rounded-lg border border-border-subtle">
+          <h3 class="text-lg font-semibold text-text-secondary mb-4">Add New Accommodation</h3>
           <form @submit.prevent="handleAddAccommodation" class="space-y-4">
             <div class="grid md:grid-cols-2 gap-4">
               <div>
-                <label for="acc-type" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="acc-type" class="block text-sm font-medium text-text-secondary mb-2">
                   Type <span class="text-red-500">*</span>
                 </label>
                 <select
                   id="acc-type"
                   v-model="accommodationFormData.accommodation_type"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="hotel">Hotel</option>
                   <option value="airbnb">Airbnb</option>
@@ -64,7 +64,7 @@
                 </select>
               </div>
               <div>
-                <label for="acc-name" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="acc-name" class="block text-sm font-medium text-text-secondary mb-2">
                   Name <span class="text-red-500">*</span>
                 </label>
                 <input
@@ -72,32 +72,32 @@
                   v-model="accommodationFormData.name"
                   type="text"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Grand Hotel"
                 />
               </div>
             </div>
             <div>
-              <label for="acc-address" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="acc-address" class="block text-sm font-medium text-text-secondary mb-2">
                 Address
               </label>
               <input
                 id="acc-address"
                 v-model="accommodationFormData.address"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Street address, city, country"
               />
             </div>
             <div>
-              <label for="acc-notes" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="acc-notes" class="block text-sm font-medium text-text-secondary mb-2">
                 Notes
               </label>
               <textarea
                 id="acc-notes"
                 v-model="accommodationFormData.notes"
                 rows="3"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Additional information..."
               ></textarea>
             </div>
@@ -119,7 +119,7 @@
               <button
                 type="button"
                 @click="showAddAccommodationForm = false"
-                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                class="px-4 py-2 bg-elevated text-text-secondary rounded-full hover:bg-hover transition-colors"
               >
                 Cancel
               </button>
@@ -132,25 +132,25 @@
           <div
             v-for="accommodation in accommodations"
             :key="accommodation.id"
-            class="p-4 bg-gray-50 rounded-xl border border-gray-200"
+            class="p-4 bg-elevated rounded-xl border border-border-subtle"
           >
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <h4 class="font-semibold text-gray-800">{{ accommodation.name }}</h4>
+                  <h4 class="font-semibold text-text-primary">{{ accommodation.name }}</h4>
                   <span
                     class="px-2 py-1 text-xs rounded-full"
                     :class="{
                       'bg-blue-100 text-blue-800': accommodation.accommodation_type === 'hotel',
                       'bg-green-100 text-green-800': accommodation.accommodation_type === 'airbnb',
                       'bg-yellow-100 text-yellow-800': accommodation.accommodation_type === 'apartment',
-                      'bg-gray-100 text-gray-800': accommodation.accommodation_type === 'other'
+                      'bg-elevated text-text-primary': accommodation.accommodation_type === 'other'
                     }"
                   >
                     {{ accommodation.accommodation_type }}
                   </span>
                 </div>
-                <div class="text-sm text-gray-600 space-y-1">
+                <div class="text-sm text-text-secondary space-y-1">
                   <div v-if="accommodation.address">{{ accommodation.address }}</div>
                   <div v-if="accommodation.room_number" class="flex items-center gap-2">
                     Room {{ accommodation.room_number }}
@@ -164,14 +164,14 @@
                     <span v-if="accommodation.check_out_date">{{ formatDate(accommodation.check_out_date) }}</span>
                   </div>
                   <div v-if="accommodation.assigned_staff_names && accommodation.assigned_staff_names.length > 0" class="mt-2">
-                    <span class="text-gray-500">Assigned to: {{ accommodation.assigned_staff_names.join(', ') }}</span>
+                    <span class="text-text-disabled">Assigned to: {{ accommodation.assigned_staff_names.join(', ') }}</span>
                   </div>
                 </div>
               </div>
               <div class="relative group">
                 <button
                   @click.stop="accommodationMenuOpen = accommodationMenuOpen === accommodation.id ? null : accommodation.id"
-                  class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  class="p-2 text-text-disabled hover:text-text-secondary hover:bg-elevated rounded-full transition-colors"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -179,12 +179,12 @@
                 </button>
                 <div
                   v-if="accommodationMenuOpen === accommodation.id"
-                  class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                  class="absolute right-0 top-8 bg-surface rounded-lg shadow-lg border border-border-subtle py-1 z-10 min-w-[120px]"
                   @click.stop
                 >
                   <button
                     @click="toggleEditAccommodation(accommodation); accommodationMenuOpen = null"
-                    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    class="w-full px-4 py-2 text-left text-sm text-text-secondary hover:bg-elevated flex items-center gap-2"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -209,14 +209,14 @@
               <form @submit.prevent="handleUpdateAccommodation(accommodation)" class="space-y-4">
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label :for="`edit-acc-type-${accommodation.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`edit-acc-type-${accommodation.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Type <span class="text-red-500">*</span>
                     </label>
                     <select
                       :id="`edit-acc-type-${accommodation.id}`"
                       v-model="editingAccommodation.accommodation_type"
                       required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="hotel">Hotel</option>
                       <option value="airbnb">Airbnb</option>
@@ -225,7 +225,7 @@
                     </select>
                   </div>
                   <div>
-                    <label :for="`edit-acc-name-${accommodation.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`edit-acc-name-${accommodation.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Name <span class="text-red-500">*</span>
                     </label>
                     <input
@@ -233,32 +233,32 @@
                       v-model="editingAccommodation.name"
                       type="text"
                       required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Grand Hotel"
                     />
                   </div>
                 </div>
                 <div>
-                  <label :for="`edit-acc-address-${accommodation.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-acc-address-${accommodation.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Address
                   </label>
                   <input
                     :id="`edit-acc-address-${accommodation.id}`"
                     v-model="editingAccommodation.address"
                     type="text"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Street address, city, country"
                   />
                 </div>
                 <div>
-                  <label :for="`edit-acc-notes-${accommodation.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-acc-notes-${accommodation.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Notes
                   </label>
                   <textarea
                     :id="`edit-acc-notes-${accommodation.id}`"
                     v-model="editingAccommodation.notes"
                     rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Additional information..."
                   ></textarea>
                 </div>
@@ -283,7 +283,7 @@
                       <button
                         type="button"
                         @click="editingAccommodation = null"
-                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                        class="px-4 py-2 bg-elevated text-text-secondary rounded-full hover:bg-hover transition-colors"
                       >
                         Cancel
                       </button>
@@ -292,18 +292,18 @@
             </div>
           </div>
         </div>
-        <div v-else class="text-sm text-gray-500 italic">
+        <div v-else class="text-sm text-text-disabled italic">
           No accommodations added yet. Add one to get started.
         </div>
       </div>
 
       <!-- Add Staff Form -->
-      <div v-if="showAddForm && isEventOwner" class="mb-6 bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-700 mb-4">Add New Person</h2>
+      <div v-if="showAddForm && isEventOwner" class="mb-6 bg-surface rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-text-secondary mb-4">Add New Person</h2>
         <form @submit.prevent="handleAddStaff" class="space-y-4">
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label for="add-name" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-name" class="block text-sm font-medium text-text-secondary mb-2">
                 Name <span class="text-red-500">*</span>
               </label>
               <input
@@ -311,19 +311,19 @@
                 v-model="addFormData.name"
                 type="text"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter name"
               />
             </div>
             <div>
-              <label for="add-role" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-role" class="block text-sm font-medium text-text-secondary mb-2">
                 Role <span class="text-red-500">*</span>
               </label>
               <select
                 id="add-role"
                 v-model="addFormData.role"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="staff">Staff</option>
                 <option value="artist">Artist</option>
@@ -332,99 +332,99 @@
           </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label for="add-email" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-email" class="block text-sm font-medium text-text-secondary mb-2">
                 Email (Optional)
               </label>
               <input
                 id="add-email"
                 v-model="addFormData.email"
                 type="email"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="email@example.com"
               />
             </div>
             <div>
-              <label for="add-phone" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="add-phone" class="block text-sm font-medium text-text-secondary mb-2">
                 Phone (Optional)
               </label>
               <input
                 id="add-phone"
                 v-model="addFormData.phone"
                 type="tel"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="+1 234 567 8900"
               />
             </div>
           </div>
           <!-- Artist Subcategories -->
           <div v-if="addFormData.role === 'artist'">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-text-secondary mb-2">
               Subcategories (Optional)
             </label>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                 <input
                   type="checkbox"
                   v-model="addFormData.subcategories"
                   value="dj"
                   class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
-                <span class="text-sm text-gray-700">DJ</span>
+                <span class="text-sm text-text-secondary">DJ</span>
               </label>
-              <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                 <input
                   type="checkbox"
                   v-model="addFormData.subcategories"
                   value="media"
                   class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
-                <span class="text-sm text-gray-700">Media</span>
+                <span class="text-sm text-text-secondary">Media</span>
               </label>
-              <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                 <input
                   type="checkbox"
                   v-model="addFormData.subcategories"
                   value="teacher"
                   class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
-                <span class="text-sm text-gray-700">Teacher</span>
+                <span class="text-sm text-text-secondary">Teacher</span>
               </label>
-              <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                 <input
                   type="checkbox"
                   v-model="addFormData.subcategories"
                   value="performer"
                   class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
-                <span class="text-sm text-gray-700">Performer</span>
+                <span class="text-sm text-text-secondary">Performer</span>
               </label>
             </div>
           </div>
-          <div v-if="addFormData.role === 'artist'" class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <div v-if="addFormData.role === 'artist'" class="flex items-center gap-2 p-3 bg-elevated rounded-lg border border-border-subtle">
             <input
               id="add-is-public"
               type="checkbox"
               v-model="addFormData.is_public"
               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
             />
-            <label for="add-is-public" class="text-sm font-medium text-gray-700 cursor-pointer">
+            <label for="add-is-public" class="text-sm font-medium text-text-secondary cursor-pointer">
               Show in public event view
             </label>
           </div>
           <div>
-            <label for="add-notes" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="add-notes" class="block text-sm font-medium text-text-secondary mb-2">
               Notes (Optional)
             </label>
             <textarea
               id="add-notes"
               v-model="addFormData.notes"
               rows="3"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Additional information..."
             ></textarea>
           </div>
           <div>
-            <label for="add-image" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="add-image" class="block text-sm font-medium text-text-secondary mb-2">
               Photo (Optional)
             </label>
             <div class="space-y-2">
@@ -434,17 +434,17 @@
                 type="file"
                 accept="image/*"
                 @change="handleAddImageSelect"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <div v-if="addImagePreview || uploadingAddImage" class="relative">
                 <img
                   v-if="addImagePreview"
                   :src="addImagePreview"
                   alt="Preview"
-                  class="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                  class="w-32 h-32 object-cover rounded-lg border border-border-subtle"
                 />
-                <div v-if="uploadingAddImage" class="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 rounded-lg">
-                  <span class="text-sm text-gray-600">Uploading...</span>
+                <div v-if="uploadingAddImage" class="absolute inset-0 flex items-center justify-center bg-elevated bg-opacity-75 rounded-lg">
+                  <span class="text-sm text-text-secondary">Uploading...</span>
                 </div>
                 <button
                   v-if="addImagePreview && !uploadingAddImage"
@@ -477,7 +477,7 @@
               <button
                 type="button"
                 @click="showAddForm = false"
-                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                class="px-4 py-2 bg-elevated text-text-secondary rounded-full hover:bg-hover transition-colors"
               >
                 Cancel
               </button>
@@ -487,7 +487,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
-        <p class="text-gray-600">Loading staff...</p>
+        <p class="text-text-secondary">Loading staff...</p>
       </div>
 
       <!-- Error State -->
@@ -501,15 +501,15 @@
         <div
           v-for="member in staff"
           :key="member.id"
-          class="bg-white rounded-lg shadow-md"
+          class="bg-surface rounded-lg shadow-md"
           style="overflow: visible;"
         >
           <!-- Staff Member Header -->
           <div 
-            class="p-4 border-b border-gray-200 transition-colors"
+            class="p-4 border-b border-border-subtle transition-colors"
             :class="{ 
               'bg-blue-50': editingMember && editingMember.id === member.id,
-              'cursor-pointer hover:bg-gray-50': isEventOwner && (!editingMember || editingMember.id !== member.id)
+              'cursor-pointer hover:bg-elevated': isEventOwner && (!editingMember || editingMember.id !== member.id)
             }"
             @click="handleCardClick(member)"
           >
@@ -519,12 +519,12 @@
                   <img
                     :src="member.image_url"
                     :alt="member.name"
-                    class="w-16 h-16 object-cover rounded-full border-2 border-gray-200"
+                    class="w-16 h-16 object-cover rounded-full border-2 border-border-subtle"
                   />
                 </div>
                 <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
-                  <h3 class="text-xl font-semibold text-gray-800">{{ member.name }}</h3>
+                  <h3 class="text-xl font-semibold text-text-primary">{{ member.name }}</h3>
                   <span
                     class="px-2 py-1 text-xs rounded-full"
                     :class="member.role === 'staff' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'"
@@ -535,13 +535,13 @@
                     <span
                       v-for="subcat in member.subcategories"
                       :key="subcat"
-                      class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700 capitalize"
+                      class="px-2 py-0.5 text-xs rounded-full bg-elevated text-text-secondary capitalize"
                     >
                       {{ subcat }}
                     </span>
                   </div>
                 </div>
-                <div class="text-sm text-gray-600 space-y-1">
+                <div class="text-sm text-text-secondary space-y-1">
                   <div v-if="member.email" class="flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -554,7 +554,7 @@
                     </svg>
                     {{ member.phone }}
                   </div>
-                  <div v-if="member.notes" class="text-gray-500 italic mt-2">{{ member.notes }}</div>
+                  <div v-if="member.notes" class="text-text-disabled italic mt-2">{{ member.notes }}</div>
                 </div>
                 </div>
               </div>
@@ -562,7 +562,7 @@
               <div class="relative group flex-shrink-0" @click.stop>
                 <button
                   @click.stop="memberMenuOpen = memberMenuOpen === member.id ? null : member.id"
-                  class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  class="p-2 text-text-disabled hover:text-text-secondary hover:bg-elevated rounded-full transition-colors"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -570,12 +570,12 @@
                 </button>
                 <div
                   v-if="memberMenuOpen === member.id"
-                  class="absolute right-0 top-10 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 min-w-[140px]"
+                  class="absolute right-0 top-10 bg-surface rounded-lg shadow-lg border border-border-subtle py-1 z-20 min-w-[140px]"
                   @click.stop
                 >
                   <button
                     @click="toggleEdit(member); memberMenuOpen = null"
-                    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    class="w-full px-4 py-2 text-left text-sm text-text-secondary hover:bg-elevated flex items-center gap-2"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -598,12 +598,12 @@
           </div>
 
           <!-- Edit Form -->
-          <div v-if="editingMember && editingMember.id === member.id && isEventOwner" class="p-4 bg-gray-50 border-b border-gray-200">
-            <h4 class="text-lg font-semibold text-gray-700 mb-4">Edit Information</h4>
+          <div v-if="editingMember && editingMember.id === member.id && isEventOwner" class="p-4 bg-elevated border-b border-border-subtle">
+            <h4 class="text-lg font-semibold text-text-secondary mb-4">Edit Information</h4>
             <form @submit.prevent="handleUpdateStaff(member)" class="space-y-4">
               <div class="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label :for="`edit-name-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-name-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Name <span class="text-red-500">*</span>
                   </label>
                   <input
@@ -611,18 +611,18 @@
                     v-model="editingMember.name"
                     type="text"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label :for="`edit-role-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-role-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Role <span class="text-red-500">*</span>
                   </label>
                   <select
                     :id="`edit-role-${member.id}`"
                     v-model="editingMember.role"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="staff">Staff</option>
                     <option value="artist">Artist</option>
@@ -631,37 +631,37 @@
               </div>
               <div class="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label :for="`edit-email-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-email-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Email
                   </label>
                   <input
                     :id="`edit-email-${member.id}`"
                     v-model="editingMember.email"
                     type="email"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="email@example.com"
                   />
                 </div>
                 <div>
-                  <label :for="`edit-phone-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`edit-phone-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Phone
                   </label>
                   <input
                     :id="`edit-phone-${member.id}`"
                     v-model="editingMember.phone"
                     type="tel"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="+1 234 567 8900"
                   />
                 </div>
               </div>
               <!-- Artist Subcategories -->
               <div v-if="editingMember.role === 'artist'">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-text-secondary mb-2">
                   Subcategories (Optional)
                 </label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                     <input
                       type="checkbox"
                       :value="'dj'"
@@ -669,9 +669,9 @@
                       @change="handleSubcategoryChange('dj', $event)"
                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-700">DJ</span>
+                    <span class="text-sm text-text-secondary">DJ</span>
                   </label>
-                  <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                     <input
                       type="checkbox"
                       :value="'media'"
@@ -679,9 +679,9 @@
                       @change="handleSubcategoryChange('media', $event)"
                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-700">Media</span>
+                    <span class="text-sm text-text-secondary">Media</span>
                   </label>
-                  <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                     <input
                       type="checkbox"
                       :value="'teacher'"
@@ -689,9 +689,9 @@
                       @change="handleSubcategoryChange('teacher', $event)"
                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-700">Teacher</span>
+                    <span class="text-sm text-text-secondary">Teacher</span>
                   </label>
-                  <label class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label class="flex items-center gap-2 p-2 border border-border-subtle rounded-lg hover:bg-elevated cursor-pointer">
                     <input
                       type="checkbox"
                       :value="'performer'"
@@ -699,35 +699,35 @@
                       @change="handleSubcategoryChange('performer', $event)"
                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-700">Performer</span>
+                    <span class="text-sm text-text-secondary">Performer</span>
                   </label>
                 </div>
               </div>
-              <div v-if="editingMember.role === 'artist'" class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div v-if="editingMember.role === 'artist'" class="flex items-center gap-2 p-3 bg-elevated rounded-lg border border-border-subtle">
                 <input
                   :id="`edit-is-public-${member.id}`"
                   type="checkbox"
                   v-model="editingMember.is_public"
                   class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
-                <label :for="`edit-is-public-${member.id}`" class="text-sm font-medium text-gray-700 cursor-pointer">
+                <label :for="`edit-is-public-${member.id}`" class="text-sm font-medium text-text-secondary cursor-pointer">
                   Show in public event view
                 </label>
               </div>
               <div>
-                <label :for="`edit-notes-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                <label :for="`edit-notes-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                   Notes
                 </label>
                 <textarea
                   :id="`edit-notes-${member.id}`"
                   v-model="editingMember.notes"
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Additional information..."
                 ></textarea>
               </div>
               <div>
-                <label :for="`edit-image-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                <label :for="`edit-image-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                   Photo (Optional)
                 </label>
                 <div class="space-y-2">
@@ -737,16 +737,16 @@
                     type="file"
                     accept="image/*"
                     @change="handleEditImageSelect"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <div v-if="editImagePreview || (editingMember.image_url && !editImagePreview) || uploadingEditImage" class="relative">
                     <img
                       :src="editImagePreview || editingMember.image_url"
                       alt="Preview"
-                      class="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                      class="w-32 h-32 object-cover rounded-lg border border-border-subtle"
                     />
-                    <div v-if="uploadingEditImage" class="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 rounded-lg">
-                      <span class="text-sm text-gray-600">Uploading...</span>
+                    <div v-if="uploadingEditImage" class="absolute inset-0 flex items-center justify-center bg-elevated bg-opacity-75 rounded-lg">
+                      <span class="text-sm text-text-secondary">Uploading...</span>
                     </div>
                     <button
                       v-if="!uploadingEditImage"
@@ -776,7 +776,7 @@
                 <button
                   type="button"
                   @click="editingMember = null"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+                  class="px-4 py-2 bg-hover text-text-secondary rounded-full hover:bg-gray-300 transition-colors"
                 >
                   Cancel
                 </button>
@@ -787,7 +787,7 @@
           <!-- Flights Section -->
           <div class="p-4">
             <div class="flex items-center justify-between mb-3">
-              <h4 class="text-lg font-semibold text-gray-700">Flights</h4>
+              <h4 class="text-lg font-semibold text-text-secondary">Flights</h4>
               <button
                 v-if="isEventOwner"
                 @click="toggleFlightsForm(member)"
@@ -801,11 +801,11 @@
             </div>
 
             <!-- Add Flight Form -->
-            <div v-if="showingFlightsForm === member.id && isEventOwner" class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div v-if="showingFlightsForm === member.id && isEventOwner" class="mb-4 p-4 bg-elevated rounded-lg border border-border-subtle">
               <form @submit.prevent="handleAddFlight(member)" class="space-y-4">
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label :for="`flight-number-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`flight-number-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Flight Number <span class="text-red-500">*</span>
                     </label>
                     <input
@@ -815,18 +815,18 @@
                       required
                       pattern="[A-Z]{2,3}\d+"
                       placeholder="e.g., AA123"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <label :for="`flight-type-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`flight-type-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Flight Type <span class="text-red-500">*</span>
                     </label>
                     <select
                       :id="`flight-type-${member.id}`"
                       v-model="flightFormData.flight_type"
                       required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="departure">Departure</option>
                       <option value="return">Return</option>
@@ -835,35 +835,35 @@
                 </div>
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label :for="`departure-date-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`departure-date-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Departure Date (optional)
                     </label>
                     <input
                       :id="`departure-date-${member.id}`"
                       v-model="flightFormData.departure_date"
                       type="date"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <label :for="`departure-time-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`departure-time-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Departure Time (optional)
                     </label>
                     <input
                       :id="`departure-time-${member.id}`"
                       v-model="flightFormData.departure_time"
                       type="time"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <!-- Departure Information -->
-                <div class="border-t border-gray-200 pt-4">
-                  <h4 class="text-sm font-semibold text-gray-700 mb-3">Departure Information (optional)</h4>
+                <div class="border-t border-border-subtle pt-4">
+                  <h4 class="text-sm font-semibold text-text-secondary mb-3">Departure Information (optional)</h4>
                   <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label :for="`departure-airport-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`departure-airport-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Departure Airport Code
                       </label>
                       <input
@@ -872,12 +872,12 @@
                         type="text"
                         maxlength="3"
                         placeholder="e.g., JFK"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                         style="text-transform: uppercase;"
                       />
                     </div>
                     <div>
-                      <label :for="`departure-city-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`departure-city-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Departure City/Country
                       </label>
                       <input
@@ -885,42 +885,42 @@
                         v-model="flightFormData.departure_city"
                         type="text"
                         placeholder="e.g., New York, USA"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
                 </div>
 
                 <!-- Arrival Information -->
-                <div class="border-t border-gray-200 pt-4">
-                  <h4 class="text-sm font-semibold text-gray-700 mb-3">Arrival Information (optional)</h4>
+                <div class="border-t border-border-subtle pt-4">
+                  <h4 class="text-sm font-semibold text-text-secondary mb-3">Arrival Information (optional)</h4>
                   <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label :for="`arrival-date-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`arrival-date-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Arrival Date (optional)
                       </label>
                       <input
                         :id="`arrival-date-${member.id}`"
                         v-model="flightFormData.arrival_date"
                         type="date"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
-                      <label :for="`arrival-time-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`arrival-time-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Arrival Time (optional)
                       </label>
                       <input
                         :id="`arrival-time-${member.id}`"
                         v-model="flightFormData.arrival_time"
                         type="time"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
                   <div class="grid md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label :for="`arrival-airport-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`arrival-airport-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Arrival Airport Code
                       </label>
                       <input
@@ -929,12 +929,12 @@
                         type="text"
                         maxlength="3"
                         placeholder="e.g., LAX"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                         style="text-transform: uppercase;"
                       />
                     </div>
                     <div>
-                      <label :for="`arrival-city-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`arrival-city-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Arrival City/Country
                       </label>
                       <input
@@ -942,7 +942,7 @@
                         v-model="flightFormData.arrival_city"
                         type="text"
                         placeholder="e.g., Los Angeles, USA"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -964,7 +964,7 @@
                   <button
                     type="button"
                     @click="showingFlightsForm = null"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+                    class="px-4 py-2 bg-hover text-text-secondary rounded-full hover:bg-gray-300 transition-colors"
                   >
                     Cancel
                   </button>
@@ -977,11 +977,11 @@
               <template v-for="flight in memberFlights[member.id]" :key="flight.id">
                 <!-- Edit Flight Form -->
                 <div v-if="editingFlight && editingFlight.id === flight.id && isEventOwner" class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h5 class="text-sm font-semibold text-gray-700 mb-3">Edit Flight</h5>
+                  <h5 class="text-sm font-semibold text-text-secondary mb-3">Edit Flight</h5>
                   <form @submit.prevent="handleUpdateFlight(member, flight)" class="space-y-4">
                     <div class="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label :for="`edit-flight-number-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-flight-number-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Flight Number <span class="text-red-500">*</span>
                         </label>
                         <input
@@ -991,18 +991,18 @@
                           required
                           pattern="[A-Z]{2,3}\d+"
                           placeholder="e.g., AA123"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-flight-type-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-flight-type-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Flight Type <span class="text-red-500">*</span>
                         </label>
                         <select
                           :id="`edit-flight-type-${flight.id}`"
                           v-model="editingFlight.flight_type"
                           required
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="departure">Departure</option>
                           <option value="return">Return</option>
@@ -1011,31 +1011,31 @@
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label :for="`edit-departure-date-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-departure-date-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Departure Date
                         </label>
                         <input
                           :id="`edit-departure-date-${flight.id}`"
                           v-model="editingFlight.departure_date"
                           type="date"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-departure-time-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-departure-time-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Departure Time
                         </label>
                         <input
                           :id="`edit-departure-time-${flight.id}`"
                           v-model="editingFlight.departure_time"
                           type="time"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label :for="`edit-departure-airport-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-departure-airport-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Departure Airport Code
                         </label>
                         <input
@@ -1044,12 +1044,12 @@
                           type="text"
                           maxlength="3"
                           placeholder="e.g., JFK"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                           style="text-transform: uppercase;"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-departure-city-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-departure-city-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Departure City/Country
                         </label>
                         <input
@@ -1057,37 +1057,37 @@
                           v-model="editingFlight.departure_city"
                           type="text"
                           placeholder="e.g., New York, USA"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label :for="`edit-arrival-date-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-arrival-date-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Arrival Date
                         </label>
                         <input
                           :id="`edit-arrival-date-${flight.id}`"
                           v-model="editingFlight.arrival_date"
                           type="date"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-arrival-time-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-arrival-time-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Arrival Time
                         </label>
                         <input
                           :id="`edit-arrival-time-${flight.id}`"
                           v-model="editingFlight.arrival_time"
                           type="time"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label :for="`edit-arrival-airport-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-arrival-airport-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Arrival Airport Code
                         </label>
                         <input
@@ -1096,12 +1096,12 @@
                           type="text"
                           maxlength="3"
                           placeholder="e.g., LAX"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                           style="text-transform: uppercase;"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-arrival-city-${flight.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-arrival-city-${flight.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Arrival City/Country
                         </label>
                         <input
@@ -1109,7 +1109,7 @@
                           v-model="editingFlight.arrival_city"
                           type="text"
                           placeholder="e.g., Los Angeles, USA"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -1131,7 +1131,7 @@
                       <button
                         type="button"
                         @click="editingFlight = null"
-                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                        class="px-4 py-2 bg-elevated text-text-secondary rounded-full hover:bg-hover transition-colors"
                       >
                         Cancel
                       </button>
@@ -1140,11 +1140,11 @@
                 </div>
                 
                 <!-- Flight Item -->
-                <div v-else class="p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors">
+                <div v-else class="p-3 bg-elevated rounded-xl border border-border-subtle hover:bg-elevated transition-colors">
                   <div class="flex items-start justify-between">
                     <div class="flex-1">
                       <div class="flex items-center gap-3 mb-2">
-                        <span class="font-semibold text-gray-800">{{ flight.flight_number }}</span>
+                        <span class="font-semibold text-text-primary">{{ flight.flight_number }}</span>
                         <span
                           class="px-2 py-1 text-xs rounded-full"
                           :class="flight.flight_type === 'departure' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'"
@@ -1152,22 +1152,22 @@
                           {{ flight.flight_type === 'departure' ? 'Departure' : 'Return' }}
                         </span>
                       </div>
-                      <div v-if="flight.departure_airport_code || flight.arrival_airport_code" class="text-sm text-gray-600">
+                      <div v-if="flight.departure_airport_code || flight.arrival_airport_code" class="text-sm text-text-secondary">
                         <span v-if="flight.departure_airport_code">{{ flight.departure_airport_code }}</span>
                         <span v-if="flight.departure_airport_code && flight.arrival_airport_code"> → </span>
                         <span v-if="flight.arrival_airport_code">{{ flight.arrival_airport_code }}</span>
-                        <span v-if="flight.departure_date" class="ml-2 text-gray-500">
+                        <span v-if="flight.departure_date" class="ml-2 text-text-disabled">
                           ({{ formatDate(flight.departure_date) }})
                         </span>
                       </div>
-                      <div v-else-if="flight.departure_date" class="text-sm text-gray-600">
+                      <div v-else-if="flight.departure_date" class="text-sm text-text-secondary">
                         Departure: {{ formatDate(flight.departure_date) }}
                       </div>
                     </div>
                     <div class="relative group" v-if="isEventOwner">
                       <button
                         @click.stop="flightMenuOpen = flightMenuOpen === flight.id ? null : flight.id"
-                        class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                        class="p-1.5 text-text-disabled hover:text-text-secondary hover:bg-elevated rounded-full transition-colors"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -1175,12 +1175,12 @@
                       </button>
                       <div
                         v-if="flightMenuOpen === flight.id"
-                        class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                        class="absolute right-0 top-8 bg-surface rounded-lg shadow-lg border border-border-subtle py-1 z-10 min-w-[120px]"
                         @click.stop
                       >
                         <button
                           @click="startEditFlight(flight); flightMenuOpen = null"
-                          class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                          class="w-full px-4 py-2 text-left text-sm text-text-secondary hover:bg-elevated flex items-center gap-2"
                         >
                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1202,15 +1202,15 @@
                 </div>
               </template>
             </div>
-            <div v-else class="text-sm text-gray-500 italic">
+            <div v-else class="text-sm text-text-disabled italic">
               No flights added yet.
             </div>
           </div>
 
           <!-- Accommodations Section -->
-          <div class="p-4 border-t border-gray-200">
+          <div class="p-4 border-t border-border-subtle">
             <div class="flex items-center justify-between mb-3">
-              <h4 class="text-lg font-semibold text-gray-700">Accommodations</h4>
+              <h4 class="text-lg font-semibold text-text-secondary">Accommodations</h4>
               <button
                 v-if="isEventOwner"
                 @click="toggleAccommodationsForm(member)"
@@ -1224,17 +1224,17 @@
             </div>
 
             <!-- Assign Accommodation Form -->
-            <div v-if="showingAccommodationsForm === member.id && isEventOwner && availableAccommodations.length > 0" class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div v-if="showingAccommodationsForm === member.id && isEventOwner && availableAccommodations.length > 0" class="mb-4 p-4 bg-elevated rounded-lg border border-border-subtle">
               <form @submit.prevent="handleAssignAccommodation(member)" class="space-y-4">
                 <div>
-                  <label :for="`accommodation-select-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label :for="`accommodation-select-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                     Select Accommodation <span class="text-red-500">*</span>
                   </label>
                   <select
                     :id="`accommodation-select-${member.id}`"
                     v-model="accommodationAssignFormData[member.id]"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     @change="onAccommodationSelected(member)"
                   >
                     <option value="">Choose an accommodation...</option>
@@ -1249,28 +1249,28 @@
                 </div>
                 
                 <!-- Person-specific details (shown when accommodation is selected) -->
-                <div v-if="accommodationAssignFormData[member.id]" class="space-y-4 pt-4 border-t border-gray-300">
+                <div v-if="accommodationAssignFormData[member.id]" class="space-y-4 pt-4 border-t border-border-subtle">
                   <div class="grid md:grid-cols-2 gap-4" v-if="selectedAccommodationType(member) === 'hotel'">
                     <div>
-                      <label :for="`room-number-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`room-number-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Room Number
                       </label>
                       <input
                         :id="`room-number-${member.id}`"
                         v-model="accommodationAssignDetails[member.id].room_number"
                         type="text"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., 205"
                       />
                     </div>
                     <div>
-                      <label :for="`board-type-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`board-type-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Board Type
                       </label>
                       <select
                         :id="`board-type-${member.id}`"
                         v-model="accommodationAssignDetails[member.id].board_type"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="none">None</option>
                         <option value="breakfast">Breakfast</option>
@@ -1282,37 +1282,37 @@
                   </div>
                   <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label :for="`check-in-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`check-in-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Check-in Date
                       </label>
                       <input
                         :id="`check-in-${member.id}`"
                         v-model="accommodationAssignDetails[member.id].check_in_date"
                         type="date"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
-                      <label :for="`check-out-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`check-out-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Check-out Date
                       </label>
                       <input
                         :id="`check-out-${member.id}`"
                         v-model="accommodationAssignDetails[member.id].check_out_date"
                         type="date"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
                   <div>
-                    <label :for="`assignment-notes-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label :for="`assignment-notes-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                       Notes
                     </label>
                     <textarea
                       :id="`assignment-notes-${member.id}`"
                       v-model="accommodationAssignDetails[member.id].notes"
                       rows="2"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Additional information for this assignment..."
                     ></textarea>
                   </div>
@@ -1336,7 +1336,7 @@
                   <button
                     type="button"
                     @click="showingAccommodationsForm = null"
-                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                    class="px-4 py-2 bg-elevated text-text-secondary rounded-full hover:bg-hover transition-colors"
                   >
                     Cancel
                   </button>
@@ -1349,25 +1349,25 @@
               <div
                 v-for="accommodation in memberAccommodations[member.id]"
                 :key="accommodation.id"
-                class="p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
+                class="p-3 bg-elevated rounded-xl border border-border-subtle hover:bg-elevated transition-colors"
               >
                 <div class="flex items-start justify-between">
                   <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
-                      <span class="font-semibold text-gray-800">{{ accommodation.name }}</span>
+                      <span class="font-semibold text-text-primary">{{ accommodation.name }}</span>
                       <span
                         class="px-2 py-1 text-xs rounded-full"
                         :class="{
                           'bg-blue-100 text-blue-800': accommodation.accommodation_type === 'hotel',
                           'bg-green-100 text-green-800': accommodation.accommodation_type === 'airbnb',
                           'bg-yellow-100 text-yellow-800': accommodation.accommodation_type === 'apartment',
-                          'bg-gray-100 text-gray-800': accommodation.accommodation_type === 'other'
+                          'bg-elevated text-text-primary': accommodation.accommodation_type === 'other'
                         }"
                       >
                         {{ accommodation.accommodation_type }}
                       </span>
                     </div>
-                    <div class="text-sm text-gray-600 space-y-1">
+                    <div class="text-sm text-text-secondary space-y-1">
                       <div v-if="accommodation.room_number" class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -1400,7 +1400,7 @@
                   <div class="relative group" v-if="isEventOwner">
                     <button
                       @click.stop="assignmentMenuOpen = assignmentMenuOpen === `${member.id}-${accommodation.id}` ? null : `${member.id}-${accommodation.id}`"
-                      class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                      class="p-1.5 text-text-disabled hover:text-text-secondary hover:bg-elevated rounded-full transition-colors"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -1408,12 +1408,12 @@
                     </button>
                     <div
                       v-if="assignmentMenuOpen === `${member.id}-${accommodation.id}`"
-                      class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                      class="absolute right-0 top-8 bg-surface rounded-lg shadow-lg border border-border-subtle py-1 z-10 min-w-[120px]"
                       @click.stop
                     >
                       <button
                         @click="toggleEditAccommodationAssignment(member, accommodation); assignmentMenuOpen = null"
-                        class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                        class="w-full px-4 py-2 text-left text-sm text-text-secondary hover:bg-elevated flex items-center gap-2"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1438,25 +1438,25 @@
                   <form @submit.prevent="handleUpdateAccommodationAssignment(member, accommodation)" class="space-y-4">
                     <div class="grid md:grid-cols-2 gap-4" v-if="accommodation.accommodation_type === 'hotel'">
                       <div>
-                        <label :for="`edit-assignment-room-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-assignment-room-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Room Number
                         </label>
                         <input
                           :id="`edit-assignment-room-${accommodation.id}-${member.id}`"
                           v-model="editingAccommodationAssignment.room_number"
                           type="text"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="e.g., 205"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-assignment-board-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-assignment-board-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Board Type
                         </label>
                         <select
                           :id="`edit-assignment-board-${accommodation.id}-${member.id}`"
                           v-model="editingAccommodationAssignment.board_type"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="none">None</option>
                           <option value="breakfast">Breakfast</option>
@@ -1468,37 +1468,37 @@
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label :for="`edit-assignment-checkin-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-assignment-checkin-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Check-in Date
                         </label>
                         <input
                           :id="`edit-assignment-checkin-${accommodation.id}-${member.id}`"
                           v-model="editingAccommodationAssignment.check_in_date"
                           type="date"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label :for="`edit-assignment-checkout-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label :for="`edit-assignment-checkout-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                           Check-out Date
                         </label>
                         <input
                           :id="`edit-assignment-checkout-${accommodation.id}-${member.id}`"
                           v-model="editingAccommodationAssignment.check_out_date"
                           type="date"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
                     <div>
-                      <label :for="`edit-assignment-notes-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-gray-700 mb-2">
+                      <label :for="`edit-assignment-notes-${accommodation.id}-${member.id}`" class="block text-sm font-medium text-text-secondary mb-2">
                         Notes
                       </label>
                       <textarea
                         :id="`edit-assignment-notes-${accommodation.id}-${member.id}`"
                         v-model="editingAccommodationAssignment.notes"
                         rows="2"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Additional information for this assignment..."
                       ></textarea>
                     </div>
@@ -1523,7 +1523,7 @@
                       <button
                         type="button"
                         @click="editingAccommodationAssignment = null"
-                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                        class="px-4 py-2 bg-elevated text-text-secondary rounded-full hover:bg-hover transition-colors"
                       >
                         Cancel
                       </button>
@@ -1532,10 +1532,10 @@
                 </div>
               </div>
             </div>
-            <div v-else-if="availableAccommodations.length === 0 && isEventOwner" class="text-sm text-gray-500 italic">
+            <div v-else-if="availableAccommodations.length === 0 && isEventOwner" class="text-sm text-text-disabled italic">
               No accommodations available. Add accommodations for this event first.
             </div>
-            <div v-else class="text-sm text-gray-500 italic">
+            <div v-else class="text-sm text-text-disabled italic">
               No accommodations assigned yet.
             </div>
           </div>
@@ -1543,9 +1543,9 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-12 bg-white rounded-lg shadow-md">
-        <p class="text-gray-500 text-lg mb-2">No staff or artists added yet.</p>
-        <p v-if="isEventOwner" class="text-sm text-gray-400">Click "+ Add Person" to get started.</p>
+      <div v-else class="text-center py-12 bg-surface rounded-lg shadow-md">
+        <p class="text-text-disabled text-lg mb-2">No staff or artists added yet.</p>
+        <p v-if="isEventOwner" class="text-sm text-text-disabled">Click "+ Add Person" to get started.</p>
       </div>
     </div>
   </div>

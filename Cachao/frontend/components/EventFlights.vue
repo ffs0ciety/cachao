@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
+  <div class="bg-surface rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Flights</h2>
+      <h2 class="text-2xl font-bold text-text-primary">Flights</h2>
       <button
         v-if="isEventOwner"
         @click="showAddForm = !showAddForm"
@@ -12,12 +12,12 @@
     </div>
 
     <!-- Add Flight Form -->
-    <div v-if="showAddForm && isEventOwner" class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Flight</h3>
+    <div v-if="showAddForm && isEventOwner" class="mb-6 p-4 bg-elevated rounded-lg border border-border-subtle">
+      <h3 class="text-lg font-semibold text-text-secondary mb-4">Add New Flight</h3>
       <form @submit.prevent="handleAddFlight" class="space-y-4">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label for="flight_number" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="flight_number" class="block text-sm font-medium text-text-secondary mb-2">
               Flight Number <span class="text-red-500">*</span>
             </label>
             <input
@@ -27,20 +27,20 @@
               required
               pattern="[A-Z]{2,3}\d+"
               placeholder="e.g., AA123"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <p class="text-xs text-gray-500 mt-1">Format: Airline code + number (e.g., AA123, BA456)</p>
+            <p class="text-xs text-text-disabled mt-1">Format: Airline code + number (e.g., AA123, BA456)</p>
           </div>
 
           <div>
-            <label for="flight_type" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="flight_type" class="block text-sm font-medium text-text-secondary mb-2">
               Flight Type <span class="text-red-500">*</span>
             </label>
             <select
               id="flight_type"
               v-model="formData.flight_type"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="departure">Departure</option>
               <option value="return">Return</option>
@@ -50,35 +50,35 @@
 
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label for="departure_date" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="departure_date" class="block text-sm font-medium text-text-secondary mb-2">
               Departure Date (optional)
             </label>
             <input
               id="departure_date"
               v-model="formData.departure_date"
               type="date"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label for="departure_time" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="departure_time" class="block text-sm font-medium text-text-secondary mb-2">
               Departure Time (optional)
             </label>
             <input
               id="departure_time"
               v-model="formData.departure_time"
               type="time"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         <!-- Departure Information -->
-        <div class="border-t border-gray-200 pt-4">
-          <h4 class="text-sm font-semibold text-gray-700 mb-3">Departure Information (optional)</h4>
+        <div class="border-t border-border-subtle pt-4">
+          <h4 class="text-sm font-semibold text-text-secondary mb-3">Departure Information (optional)</h4>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label for="departure_airport_code" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="departure_airport_code" class="block text-sm font-medium text-text-secondary mb-2">
                 Departure Airport Code
               </label>
               <input
@@ -87,12 +87,12 @@
                 type="text"
                 maxlength="3"
                 placeholder="e.g., JFK"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                 style="text-transform: uppercase;"
               />
             </div>
             <div>
-              <label for="departure_city" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="departure_city" class="block text-sm font-medium text-text-secondary mb-2">
                 Departure City/Country
               </label>
               <input
@@ -100,42 +100,42 @@
                 v-model="formData.departure_city"
                 type="text"
                 placeholder="e.g., New York, USA"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
         </div>
 
         <!-- Arrival Information -->
-        <div class="border-t border-gray-200 pt-4">
-          <h4 class="text-sm font-semibold text-gray-700 mb-3">Arrival Information (optional)</h4>
+        <div class="border-t border-border-subtle pt-4">
+          <h4 class="text-sm font-semibold text-text-secondary mb-3">Arrival Information (optional)</h4>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label for="arrival_date" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="arrival_date" class="block text-sm font-medium text-text-secondary mb-2">
                 Arrival Date (optional)
               </label>
               <input
                 id="arrival_date"
                 v-model="formData.arrival_date"
                 type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label for="arrival_time" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="arrival_time" class="block text-sm font-medium text-text-secondary mb-2">
                 Arrival Time (optional)
               </label>
               <input
                 id="arrival_time"
                 v-model="formData.arrival_time"
                 type="time"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
           <div class="grid md:grid-cols-2 gap-4 mt-4">
             <div>
-              <label for="arrival_airport_code" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="arrival_airport_code" class="block text-sm font-medium text-text-secondary mb-2">
                 Arrival Airport Code
               </label>
               <input
@@ -144,12 +144,12 @@
                 type="text"
                 maxlength="3"
                 placeholder="e.g., LAX"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                class="w-full px-3 py-2 border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
                 style="text-transform: uppercase;"
               />
             </div>
             <div>
-              <label for="arrival_city" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="arrival_city" class="block text-sm font-medium text-text-secondary mb-2">
                 Arrival City/Country
               </label>
               <input
@@ -157,7 +157,7 @@
                 v-model="formData.arrival_city"
                 type="text"
                 placeholder="e.g., Los Angeles, USA"
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -174,7 +174,7 @@
           <button
             type="button"
             @click="showAddForm = false"
-            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-colors"
+            class="px-4 py-2 bg-gray-300 text-text-secondary rounded-full hover:bg-gray-400 transition-colors"
           >
             Cancel
           </button>
@@ -187,7 +187,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="text-center py-8 text-gray-500">
+    <div v-if="loading" class="text-center py-8 text-text-disabled">
       <p>Loading flights...</p>
     </div>
 
@@ -201,46 +201,46 @@
       <div
         v-for="flight in flights"
         :key="flight.id"
-        class="p-4 bg-gray-50 rounded-lg border border-gray-200"
+        class="p-4 bg-elevated rounded-lg border border-border-subtle"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-2">
-              <span class="text-lg font-semibold text-gray-800">{{ flight.flight_number }}</span>
+              <span class="text-lg font-semibold text-text-primary">{{ flight.flight_number }}</span>
               <span class="px-2 py-1 text-xs rounded-full"
                     :class="flight.flight_type === 'departure' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
                 {{ flight.flight_type === 'departure' ? 'Departure' : 'Return' }}
               </span>
-              <span v-if="flight.status" class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
+              <span v-if="flight.status" class="px-2 py-1 text-xs rounded-full bg-elevated text-text-primary">
                 {{ flight.status }}
               </span>
             </div>
 
             <div v-if="flight.departure_airport_code || flight.arrival_airport_code" class="grid md:grid-cols-2 gap-4 mt-3">
               <div v-if="flight.departure_airport_code">
-                <div class="text-sm font-medium text-gray-700">Departure</div>
+                <div class="text-sm font-medium text-text-secondary">Departure</div>
                 <div class="text-lg font-semibold">{{ flight.departure_airport_code }}</div>
-                <div v-if="flight.departure_airport_name" class="text-sm text-gray-600">{{ flight.departure_airport_name }}</div>
-                <div v-if="flight.departure_city" class="text-sm text-gray-500">{{ flight.departure_city }}</div>
-                <div v-if="flight.departure_date || flight.departure_time" class="text-sm text-gray-600 mt-1">
+                <div v-if="flight.departure_airport_name" class="text-sm text-text-secondary">{{ flight.departure_airport_name }}</div>
+                <div v-if="flight.departure_city" class="text-sm text-text-disabled">{{ flight.departure_city }}</div>
+                <div v-if="flight.departure_date || flight.departure_time" class="text-sm text-text-secondary mt-1">
                   <span v-if="flight.departure_date">{{ formatDate(flight.departure_date) }}</span>
                   <span v-if="flight.departure_time"> {{ flight.departure_time }}</span>
                 </div>
               </div>
 
               <div v-if="flight.arrival_airport_code">
-                <div class="text-sm font-medium text-gray-700">Arrival</div>
+                <div class="text-sm font-medium text-text-secondary">Arrival</div>
                 <div class="text-lg font-semibold">{{ flight.arrival_airport_code }}</div>
-                <div v-if="flight.arrival_airport_name" class="text-sm text-gray-600">{{ flight.arrival_airport_name }}</div>
-                <div v-if="flight.arrival_city" class="text-sm text-gray-500">{{ flight.arrival_city }}</div>
-                <div v-if="flight.arrival_date || flight.arrival_time" class="text-sm text-gray-600 mt-1">
+                <div v-if="flight.arrival_airport_name" class="text-sm text-text-secondary">{{ flight.arrival_airport_name }}</div>
+                <div v-if="flight.arrival_city" class="text-sm text-text-disabled">{{ flight.arrival_city }}</div>
+                <div v-if="flight.arrival_date || flight.arrival_time" class="text-sm text-text-secondary mt-1">
                   <span v-if="flight.arrival_date">{{ formatDate(flight.arrival_date) }}</span>
                   <span v-if="flight.arrival_time"> {{ flight.arrival_time }}</span>
                 </div>
               </div>
             </div>
 
-            <div v-if="flight.aircraft_type" class="text-sm text-gray-500 mt-2">
+            <div v-if="flight.aircraft_type" class="text-sm text-text-disabled mt-2">
               Aircraft: {{ flight.aircraft_type }}
             </div>
           </div>
@@ -257,7 +257,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="text-center py-8 text-gray-500">
+    <div v-else class="text-center py-8 text-text-disabled">
       <p>No flights added yet.</p>
       <p v-if="isEventOwner" class="text-sm mt-2">Click "Add Flight" to get started.</p>
     </div>

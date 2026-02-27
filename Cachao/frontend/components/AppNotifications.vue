@@ -33,7 +33,7 @@
           class="flex-shrink-0 p-1 rounded-lg hover:bg-black/5 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/50"
           :aria-label="'Dismiss notification'"
         >
-          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -48,7 +48,7 @@ const { notifications, dismiss } = useNotifications();
 const typeClasses: Record<string, string> = {
   success: 'bg-green-50 border-green-200 text-green-900',
   error: 'bg-red-50 border-red-200 text-red-900',
-  info: 'bg-gray-50 border-gray-200 text-gray-900',
+  info: 'bg-elevated border-border-subtle text-text-primary',
 };
 </script>
 

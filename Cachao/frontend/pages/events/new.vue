@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-elevated">
     <div class="container mx-auto px-4 py-8 max-w-2xl">
       <!-- Back button -->
       <div class="mb-6">
@@ -15,13 +15,13 @@
       </div>
 
       <!-- Create Event Form -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Create New Event</h1>
+      <div class="bg-surface rounded-lg shadow-md p-6">
+        <h1 class="text-3xl font-bold text-text-primary mb-6">Create New Event</h1>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Event Name -->
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="name" class="block text-sm font-medium text-text-secondary mb-2">
               Event Name <span class="text-red-500">*</span>
             </label>
             <input
@@ -29,28 +29,28 @@
               v-model="formData.name"
               type="text"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter event name"
             />
           </div>
 
           <!-- Description -->
           <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="description" class="block text-sm font-medium text-text-secondary mb-2">
               Description
             </label>
             <textarea
               id="description"
               v-model="formData.description"
               rows="4"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter event description"
             ></textarea>
           </div>
 
           <!-- Image Upload -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-text-secondary mb-2">
               Event Image (Optional)
             </label>
             <div v-if="!imagePreview && !selectedImageFile" class="space-y-2">
@@ -59,9 +59,9 @@
                 type="file"
                 accept="image/*"
                 @change="handleImageSelect"
-                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                class="block w-full text-sm text-text-disabled file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p class="text-xs text-gray-500">Select an image for the event</p>
+              <p class="text-xs text-text-disabled">Select an image for the event</p>
             </div>
             
             <!-- Image Preview (before upload) -->
@@ -70,7 +70,7 @@
                 <img
                   :src="imagePreview"
                   alt="Event image preview"
-                  class="max-w-full h-64 object-contain border border-gray-300 rounded-md"
+                  class="max-w-full h-64 object-contain border border-border-subtle rounded-md"
                 />
                 <button
                   type="button"
@@ -90,7 +90,7 @@
                 <img
                   :src="imagePreview || imageUrl"
                   alt="Event image"
-                  class="max-w-full h-64 object-contain border border-gray-300 rounded-md"
+                  class="max-w-full h-64 object-contain border border-border-subtle rounded-md"
                 />
               </div>
               <p class="text-xs text-green-600">✓ Image uploaded successfully</p>
@@ -99,7 +99,7 @@
 
           <!-- Start Date -->
           <div>
-            <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="start_date" class="block text-sm font-medium text-text-secondary mb-2">
               Start Date <span class="text-red-500">*</span>
             </label>
             <input
@@ -107,20 +107,20 @@
               v-model="formData.start_date"
               type="datetime-local"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <!-- End Date -->
           <div>
-            <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="end_date" class="block text-sm font-medium text-text-secondary mb-2">
               End Date (Optional)
             </label>
             <input
               id="end_date"
               v-model="formData.end_date"
               type="datetime-local"
-              class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-border-subtle rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -165,7 +165,7 @@
             </button>
             <NuxtLink
               to="/"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+              class="px-4 py-2 bg-hover text-text-secondary rounded-full hover:bg-gray-300 transition-colors"
             >
               Cancel
             </NuxtLink>

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-elevated">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
       <!-- Back button -->
       <div class="mb-6">
@@ -16,7 +16,7 @@
 
       <!-- Loading state -->
       <div v-if="loading" class="text-center py-12">
-        <p class="text-gray-600">Loading your event information...</p>
+        <p class="text-text-secondary">Loading your event information...</p>
       </div>
 
       <!-- Error state -->
@@ -28,35 +28,35 @@
       <!-- Content -->
       <div v-else-if="staffInfo" class="space-y-6">
         <!-- Staff/Artist Info Card -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h1 class="text-3xl font-bold text-gray-800 mb-6">My Event Information</h1>
+        <div class="bg-surface rounded-lg shadow-md p-6">
+          <h1 class="text-3xl font-bold text-text-primary mb-6">My Event Information</h1>
           
           <div class="grid md:grid-cols-2 gap-6">
             <div>
-              <h2 class="text-xl font-semibold text-gray-700 mb-4">Personal Information</h2>
+              <h2 class="text-xl font-semibold text-text-secondary mb-4">Personal Information</h2>
               <div class="space-y-3">
                 <div>
-                  <span class="text-sm font-medium text-gray-500">Name:</span>
-                  <p class="text-gray-800">{{ staffInfo.staff.name }}</p>
+                  <span class="text-sm font-medium text-text-disabled">Name:</span>
+                  <p class="text-text-primary">{{ staffInfo.staff.name }}</p>
                 </div>
                 <div>
-                  <span class="text-sm font-medium text-gray-500">Role:</span>
-                  <p class="text-gray-800 capitalize">{{ staffInfo.staff.role }}</p>
+                  <span class="text-sm font-medium text-text-disabled">Role:</span>
+                  <p class="text-text-primary capitalize">{{ staffInfo.staff.role }}</p>
                 </div>
                 <div v-if="staffInfo.staff.email">
-                  <span class="text-sm font-medium text-gray-500">Email:</span>
-                  <p class="text-gray-800">{{ staffInfo.staff.email }}</p>
+                  <span class="text-sm font-medium text-text-disabled">Email:</span>
+                  <p class="text-text-primary">{{ staffInfo.staff.email }}</p>
                 </div>
                 <div v-if="staffInfo.staff.phone">
-                  <span class="text-sm font-medium text-gray-500">Phone:</span>
-                  <p class="text-gray-800">{{ staffInfo.staff.phone }}</p>
+                  <span class="text-sm font-medium text-text-disabled">Phone:</span>
+                  <p class="text-text-primary">{{ staffInfo.staff.phone }}</p>
                 </div>
                 <div v-if="staffInfo.staff.notes">
-                  <span class="text-sm font-medium text-gray-500">Notes:</span>
-                  <p class="text-gray-800">{{ staffInfo.staff.notes }}</p>
+                  <span class="text-sm font-medium text-text-disabled">Notes:</span>
+                  <p class="text-text-primary">{{ staffInfo.staff.notes }}</p>
                 </div>
                 <div v-if="staffInfo.staff.subcategories && staffInfo.staff.subcategories.length > 0">
-                  <span class="text-sm font-medium text-gray-500">Categories:</span>
+                  <span class="text-sm font-medium text-text-disabled">Categories:</span>
                   <div class="flex flex-wrap gap-2 mt-1">
                     <span
                       v-for="cat in staffInfo.staff.subcategories"
@@ -81,25 +81,25 @@
         </div>
 
         <!-- Flights Card -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Flights</h2>
+        <div class="bg-surface rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-semibold text-text-primary mb-4">Flights</h2>
           
           <div v-if="staffInfo.flights && staffInfo.flights.length > 0" class="space-y-4">
             <div
               v-for="flight in staffInfo.flights"
               :key="flight.id"
-              class="border border-gray-200 rounded-lg p-4"
+              class="border border-border-subtle rounded-lg p-4"
             >
               <div class="flex justify-between items-start mb-2">
                 <div>
-                  <h3 class="font-semibold text-gray-800">
+                  <h3 class="font-semibold text-text-primary">
                     {{ flight.flight_number }} ({{ flight.airline_code }})
                   </h3>
-                  <p class="text-sm text-gray-500 capitalize">{{ flight.flight_type }}</p>
+                  <p class="text-sm text-text-disabled capitalize">{{ flight.flight_type }}</p>
                 </div>
                 <span
                   v-if="flight.status"
-                  class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                  class="px-2 py-1 bg-elevated text-text-secondary rounded text-xs"
                 >
                   {{ flight.status }}
                 </span>
@@ -107,83 +107,83 @@
               
               <div class="grid md:grid-cols-2 gap-4 mt-4">
                 <div v-if="flight.departure_airport_code || flight.departure_city">
-                  <p class="text-sm font-medium text-gray-500">Departure</p>
-                  <p class="text-gray-800">
+                  <p class="text-sm font-medium text-text-disabled">Departure</p>
+                  <p class="text-text-primary">
                     {{ flight.departure_airport_code || flight.departure_city }}
                     <span v-if="flight.departure_airport_name"> - {{ flight.departure_airport_name }}</span>
                   </p>
-                  <p v-if="flight.departure_date" class="text-sm text-gray-600">
+                  <p v-if="flight.departure_date" class="text-sm text-text-secondary">
                     {{ formatDate(flight.departure_date) }}
                     <span v-if="flight.departure_time"> at {{ flight.departure_time }}</span>
                   </p>
                 </div>
                 
                 <div v-if="flight.arrival_airport_code || flight.arrival_city">
-                  <p class="text-sm font-medium text-gray-500">Arrival</p>
-                  <p class="text-gray-800">
+                  <p class="text-sm font-medium text-text-disabled">Arrival</p>
+                  <p class="text-text-primary">
                     {{ flight.arrival_airport_code || flight.arrival_city }}
                     <span v-if="flight.arrival_airport_name"> - {{ flight.arrival_airport_name }}</span>
                   </p>
-                  <p v-if="flight.arrival_date" class="text-sm text-gray-600">
+                  <p v-if="flight.arrival_date" class="text-sm text-text-secondary">
                     {{ formatDate(flight.arrival_date) }}
                     <span v-if="flight.arrival_time"> at {{ flight.arrival_time }}</span>
                   </p>
                 </div>
               </div>
               
-              <div v-if="flight.aircraft_type" class="mt-2 text-sm text-gray-600">
+              <div v-if="flight.aircraft_type" class="mt-2 text-sm text-text-secondary">
                 Aircraft: {{ flight.aircraft_type }}
               </div>
             </div>
           </div>
           
-          <div v-else class="text-center py-8 text-gray-500">
+          <div v-else class="text-center py-8 text-text-disabled">
             <p>No flights added yet.</p>
           </div>
         </div>
 
         <!-- Accommodations Card -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Accommodations</h2>
+        <div class="bg-surface rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-semibold text-text-primary mb-4">Accommodations</h2>
           
           <div v-if="staffInfo.accommodations && staffInfo.accommodations.length > 0" class="space-y-4">
             <div
               v-for="acc in staffInfo.accommodations"
               :key="acc.id"
-              class="border border-gray-200 rounded-lg p-4"
+              class="border border-border-subtle rounded-lg p-4"
             >
-              <h3 class="font-semibold text-gray-800 mb-2">{{ acc.name }}</h3>
+              <h3 class="font-semibold text-text-primary mb-2">{{ acc.name }}</h3>
               
               <div class="grid md:grid-cols-2 gap-4">
                 <div v-if="acc.address">
-                  <p class="text-sm font-medium text-gray-500">Address</p>
-                  <p class="text-gray-800">{{ acc.address }}</p>
+                  <p class="text-sm font-medium text-text-disabled">Address</p>
+                  <p class="text-text-primary">{{ acc.address }}</p>
                 </div>
                 
                 <div v-if="acc.city">
-                  <p class="text-sm font-medium text-gray-500">City</p>
-                  <p class="text-gray-800">{{ acc.city }}</p>
+                  <p class="text-sm font-medium text-text-disabled">City</p>
+                  <p class="text-text-primary">{{ acc.city }}</p>
                 </div>
                 
                 <div v-if="acc.check_in_date">
-                  <p class="text-sm font-medium text-gray-500">Check-in</p>
-                  <p class="text-gray-800">{{ formatDate(acc.check_in_date) }}</p>
+                  <p class="text-sm font-medium text-text-disabled">Check-in</p>
+                  <p class="text-text-primary">{{ formatDate(acc.check_in_date) }}</p>
                 </div>
                 
                 <div v-if="acc.check_out_date">
-                  <p class="text-sm font-medium text-gray-500">Check-out</p>
-                  <p class="text-gray-800">{{ formatDate(acc.check_out_date) }}</p>
+                  <p class="text-sm font-medium text-text-disabled">Check-out</p>
+                  <p class="text-text-primary">{{ formatDate(acc.check_out_date) }}</p>
                 </div>
                 
                 <div v-if="acc.assignment_notes">
-                  <p class="text-sm font-medium text-gray-500">Notes</p>
-                  <p class="text-gray-800">{{ acc.assignment_notes }}</p>
+                  <p class="text-sm font-medium text-text-disabled">Notes</p>
+                  <p class="text-text-primary">{{ acc.assignment_notes }}</p>
                 </div>
               </div>
             </div>
           </div>
           
-          <div v-else class="text-center py-8 text-gray-500">
+          <div v-else class="text-center py-8 text-text-disabled">
             <p>No accommodations assigned yet.</p>
           </div>
         </div>
