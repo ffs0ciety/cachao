@@ -1,50 +1,6 @@
 <template>
   <div class="min-h-screen py-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Header -->
-      <div class="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h1 class="text-4xl font-semibold text-text-primary mb-2">Profile</h1>
-          <p class="text-lg text-text-secondary">Manage your profile, events, and videos</p>
-        </div>
-        <button
-          v-if="!loading && !error"
-          type="button"
-          @click="handleLogout"
-          class="btn btn-secondary"
-        >
-          Sign out
-        </button>
-      </div>
-
-      <!-- Tab Navigation -->
-      <div v-if="!loading && !error" class="tabs mb-8">
-        <button
-          @click="activeTab = 'profile'"
-          :class="['tab', activeTab === 'profile' ? 'active' : '']"
-        >
-          Profile
-        </button>
-        <button
-          @click="activeTab = 'events'"
-          :class="['tab', activeTab === 'events' ? 'active' : '']"
-        >
-          Events
-        </button>
-        <button
-          @click="activeTab = 'tickets'"
-          :class="['tab', activeTab === 'tickets' ? 'active' : '']"
-        >
-          Tickets
-        </button>
-        <button
-          @click="activeTab = 'videos'"
-          :class="['tab', activeTab === 'videos' ? 'active' : '']"
-        >
-          Videos
-        </button>
-      </div>
-
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-16">
         <div class="spinner spinner-lg mx-auto"></div>
@@ -56,8 +12,115 @@
         <p>{{ error }}</p>
       </div>
 
-      <!-- Profile Content -->
-      <div v-else class="space-y-8">
+      <!-- MANDATORY NICKNAME SETUP - Show when profile exists but nickname is not set -->
+      <div v-else-if="profile && !profile.nickname" class="max-w-md mx-auto">
+        <div class="card text-center">
+          <div class="mb-6">
+            <div class="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-text-primary mb-2">Welcome to Cachao!</h1>
+            <p class="text-text-secondary">Choose a unique username for your profile. This will be your public identity and <strong class="text-text-primary">cannot be changed later</strong>.</p>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-text-secondary mb-2 text-left">
+                Choose your username
+              </label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-disabled">@</span>
+                <input
+                  v-model="setupNickname"
+                  type="text"
+                  class="form-input pl-8 w-full"
+                  :class="{
+                    'border-success': setupNicknameStatus === 'available',
+                    'border-error': setupNicknameStatus === 'taken' || setupNicknameStatus === 'invalid'
+                  }"
+                  placeholder="your_username"
+                  pattern="[a-zA-Z0-9_]+"
+                  @input="checkSetupNickname"
+                />
+              </div>
+              <div class="mt-2 text-sm text-left">
+                <span v-if="checkingSetupNickname" class="text-text-disabled">Checking availability...</span>
+                <span v-else-if="setupNicknameStatus === 'available'" class="text-success">✓ Username is available</span>
+                <span v-else-if="setupNicknameStatus === 'taken'" class="text-error">✗ Username is already taken</span>
+                <span v-else-if="setupNicknameStatus === 'invalid'" class="text-error">✗ Use 3-30 characters: letters, numbers, underscores only</span>
+                <span v-else class="text-text-disabled">3-30 characters: letters, numbers, underscores</span>
+              </div>
+            </div>
+
+            <div v-if="setupError" class="alert alert-error text-sm">
+              {{ setupError }}
+            </div>
+
+            <button
+              @click="confirmSetupNickname"
+              :disabled="savingSetupNickname || setupNicknameStatus !== 'available'"
+              class="btn btn-primary w-full"
+            >
+              <span v-if="savingSetupNickname">Setting up...</span>
+              <span v-else>Confirm Username</span>
+            </button>
+
+            <p class="text-xs text-text-disabled">
+              Your public profile will be: cachao.io/u/<span class="text-primary">{{ setupNickname || 'username' }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN PROFILE CONTENT - Only show when nickname is set -->
+      <template v-else-if="profile && profile.nickname">
+        <!-- Header -->
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            <h1 class="text-4xl font-semibold text-text-primary mb-2">Profile</h1>
+            <p class="text-lg text-text-secondary">Manage your profile, events, and videos</p>
+          </div>
+          <button
+            type="button"
+            @click="handleLogout"
+            class="btn btn-secondary"
+          >
+            Sign out
+          </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs mb-8">
+          <button
+            @click="activeTab = 'profile'"
+            :class="['tab', activeTab === 'profile' ? 'active' : '']"
+          >
+            Profile
+          </button>
+          <button
+            @click="activeTab = 'events'"
+            :class="['tab', activeTab === 'events' ? 'active' : '']"
+          >
+            Events
+          </button>
+          <button
+            @click="activeTab = 'tickets'"
+            :class="['tab', activeTab === 'tickets' ? 'active' : '']"
+          >
+            Tickets
+          </button>
+          <button
+            @click="activeTab = 'videos'"
+            :class="['tab', activeTab === 'videos' ? 'active' : '']"
+          >
+            Videos
+          </button>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="space-y-8">
         <!-- Profile Section -->
         <div v-if="activeTab === 'profile'" class="card">
           <h2 class="text-2xl font-semibold text-text-primary mb-6">Profile Information</h2>
@@ -122,48 +185,23 @@
                 </div>
               </div>
 
-              <!-- Nickname Section -->
+              <!-- Nickname Section (Read-only - cannot be changed after creation) -->
               <div>
                 <label class="block text-sm font-medium text-text-secondary mb-2">
-                  Username / Nickname
+                  Username
                 </label>
-                <div class="flex gap-2">
-                  <div class="relative flex-1">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-disabled">@</span>
-                    <input
-                      v-model="editingNickname"
-                      type="text"
-                      class="form-input pl-8 w-full"
-                      :class="{
-                        'border-success': nicknameStatus === 'available',
-                        'border-error': nicknameStatus === 'taken' || nicknameStatus === 'invalid'
-                      }"
-                      placeholder="your_username"
-                      pattern="[a-zA-Z0-9_]+"
-                      @input="checkNickname"
-                    />
+                <div class="relative">
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-disabled">@</span>
+                  <div class="form-input pl-8 bg-elevated border-border-subtle text-text-primary cursor-not-allowed">
+                    {{ profile.nickname }}
                   </div>
-                  <button
-                    @click="saveNickname"
-                    :disabled="savingNickname || !canSaveNickname"
-                    class="btn btn-primary"
-                  >
-                    <span v-if="savingNickname">Saving...</span>
-                    <span v-else>Save</span>
-                  </button>
                 </div>
-                <div class="mt-1 text-xs">
-                  <span v-if="checkingNickname" class="text-text-disabled">Checking availability...</span>
-                  <span v-else-if="nicknameStatus === 'available'" class="text-success">✓ Username is available</span>
-                  <span v-else-if="nicknameStatus === 'taken'" class="text-error">✗ Username is already taken</span>
-                  <span v-else-if="nicknameStatus === 'invalid'" class="text-error">✗ Only letters, numbers, and underscores allowed</span>
-                  <span v-else-if="profile.nickname" class="text-text-disabled">
-                    Your public profile: 
-                    <NuxtLink :to="`/u/${profile.nickname}`" class="text-primary hover:underline">
-                      cachao.io/u/{{ profile.nickname }}
-                    </NuxtLink>
-                  </span>
-                  <span v-else class="text-text-disabled">Choose a unique username for your public profile</span>
+                <div class="mt-1 text-xs text-text-disabled">
+                  <span>Your public profile: </span>
+                  <NuxtLink :to="`/u/${profile.nickname}`" class="text-primary hover:underline">
+                    cachao.io/u/{{ profile.nickname }}
+                  </NuxtLink>
+                  <span class="ml-2 text-text-disabled">(Username cannot be changed)</span>
                 </div>
               </div>
 
@@ -411,6 +449,7 @@
           </div>
         </div>
       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -439,18 +478,18 @@ const uploadingPhoto = ref(false);
 const photoInput = ref<HTMLInputElement | null>(null);
 const activeTab = ref<'profile' | 'events' | 'tickets' | 'videos'>('profile');
 
-// Nickname related state
-const editingNickname = ref('');
-const savingNickname = ref(false);
-const checkingNickname = ref(false);
-const nicknameStatus = ref<'available' | 'taken' | 'invalid' | 'unchanged' | null>(null);
-let nicknameCheckTimeout: ReturnType<typeof setTimeout> | null = null;
+// Setup nickname state (for new users without nickname)
+const setupNickname = ref('');
+const savingSetupNickname = ref(false);
+const checkingSetupNickname = ref(false);
+const setupNicknameStatus = ref<'available' | 'taken' | 'invalid' | null>(null);
+const setupError = ref<string | null>(null);
+let setupNicknameCheckTimeout: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(async () => {
   // Check authentication first
   const authResult = await checkAuth();
   if (!authResult) {
-    // Not authenticated, redirect to home
     navigateTo('/');
     return;
   }
@@ -458,9 +497,13 @@ onMounted(async () => {
   // Load profile data (backend will create profile if it doesn't exist)
   await loadProfile();
   await loadEmail();
-  await loadEvents();
-  await loadVideos();
-  await loadTickets();
+  
+  // Only load additional data if profile has nickname set
+  if (profile.value?.nickname) {
+    await loadEvents();
+    await loadVideos();
+    await loadTickets();
+  }
 });
 
 const handleLogout = async () => {
@@ -468,78 +511,63 @@ const handleLogout = async () => {
   await navigateTo('/');
 };
 
-// Computed property for nickname save button
-const canSaveNickname = computed(() => {
-  if (!editingNickname.value) return false;
-  if (editingNickname.value === profile.value?.nickname) return false;
-  if (nicknameStatus.value === 'taken' || nicknameStatus.value === 'invalid') return false;
-  if (checkingNickname.value) return false;
-  return nicknameStatus.value === 'available';
-});
-
-// Validate and check nickname availability
-const checkNickname = () => {
-  const nickname = editingNickname.value.trim().toLowerCase();
+// Validate and check setup nickname availability (for new users)
+const checkSetupNickname = () => {
+  const nickname = setupNickname.value.trim().toLowerCase();
   
-  // Clear any pending check
-  if (nicknameCheckTimeout) {
-    clearTimeout(nicknameCheckTimeout);
+  if (setupNicknameCheckTimeout) {
+    clearTimeout(setupNicknameCheckTimeout);
   }
   
-  // If empty or same as current, reset status
   if (!nickname) {
-    nicknameStatus.value = null;
+    setupNicknameStatus.value = null;
     return;
   }
   
-  if (nickname === profile.value?.nickname) {
-    nicknameStatus.value = 'unchanged';
-    return;
-  }
-  
-  // Validate format: only letters, numbers, underscores, 3-30 chars
   const validPattern = /^[a-zA-Z0-9_]{3,30}$/;
   if (!validPattern.test(nickname)) {
-    nicknameStatus.value = 'invalid';
+    setupNicknameStatus.value = 'invalid';
     return;
   }
   
-  // Debounce the API call
-  checkingNickname.value = true;
-  nicknameStatus.value = null;
+  checkingSetupNickname.value = true;
+  setupNicknameStatus.value = null;
   
-  nicknameCheckTimeout = setTimeout(async () => {
+  setupNicknameCheckTimeout = setTimeout(async () => {
     try {
       const available = await checkNicknameAvailability(nickname);
-      nicknameStatus.value = available ? 'available' : 'taken';
+      setupNicknameStatus.value = available ? 'available' : 'taken';
     } catch (err) {
       console.error('Error checking nickname:', err);
-      nicknameStatus.value = null;
+      setupNicknameStatus.value = null;
     } finally {
-      checkingNickname.value = false;
+      checkingSetupNickname.value = false;
     }
   }, 500);
 };
 
-// Save nickname
-const saveNickname = async () => {
-  if (!canSaveNickname.value) return;
+// Confirm and save setup nickname (one-time only)
+const confirmSetupNickname = async () => {
+  if (setupNicknameStatus.value !== 'available') return;
   
   try {
-    savingNickname.value = true;
-    const result = await updateNickname(editingNickname.value.trim().toLowerCase());
+    savingSetupNickname.value = true;
+    setupError.value = null;
+    
+    const result = await updateNickname(setupNickname.value.trim().toLowerCase());
     
     if (result.success) {
-      // Reload profile to get updated data
       await loadProfile();
-      nicknameStatus.value = null;
+      await loadEvents();
+      await loadVideos();
+      await loadTickets();
     } else {
-      error.value = result.error || 'Failed to update nickname';
+      setupError.value = result.error || 'Failed to set username';
     }
   } catch (err: any) {
-    error.value = err.message || 'Failed to update nickname';
+    setupError.value = err.message || 'Failed to set username';
   } finally {
-    savingNickname.value = false;
+    savingSetupNickname.value = false;
   }
 };
 
@@ -551,7 +579,6 @@ const loadProfile = async () => {
     if (data) {
       profile.value = data;
       editingName.value = data.name || '';
-      editingNickname.value = data.nickname || '';
     } else {
       error.value = 'Profile not found. Please try refreshing the page.';
     }

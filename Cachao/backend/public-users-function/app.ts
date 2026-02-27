@@ -168,10 +168,24 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     // PATCH /user/nickname (requires auth - cognitoSub from authorizer)
+    // IMPORTANT: Nickname can only be set ONCE. Cannot be modified after initial creation.
     if (path === '/user/nickname' && event.httpMethod === 'PATCH') {
       const cognitoSub = event.requestContext?.authorizer?.claims?.sub;
       if (!cognitoSub) {
         return jsonResponse(401, { success: false, error: 'Authentication required' });
+      }
+
+      // Check if user already has a nickname set
+      const [currentUser] = await connection.query(
+        'SELECT nickname FROM users WHERE cognito_sub = ?',
+        [cognitoSub]
+      ) as any[];
+
+      if (currentUser && currentUser.nickname) {
+        return jsonResponse(403, { 
+          success: false, 
+          error: 'Nickname cannot be changed once set. Please contact support if you need assistance.' 
+        });
       }
 
       const bodyString = event.isBase64Encoded
@@ -186,7 +200,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       const cleanNickname = nickname.toLowerCase().trim();
       const validPattern = /^[a-zA-Z0-9_]{3,30}$/;
       if (!validPattern.test(cleanNickname)) {
-        return jsonResponse(400, { success: false, error: 'Invalid nickname format' });
+        return jsonResponse(400, { success: false, error: 'Invalid nickname format. Use 3-30 characters: letters, numbers, underscores only.' });
       }
 
       const [existing] = await connection.query(
