@@ -131,14 +131,14 @@ async function addEventStaff(event: APIGatewayProxyEvent, connection: mariadb.Po
   if (!verify.ok) return verify.error!;
 
   const body = parseBody(event);
-  const { name, email, role, photo_url, bio, instagram_url, tiktok_url, youtube_url, website_url, country, city, partner_name, partner_id, styles } = body;
+  const { name, email, role, image_url, bio, instagram_url, tiktok_url, youtube_url, website_url, country, city, partner_name, partner_id, styles } = body;
 
   if (!name || !email || !role) return jsonResponse(400, { success: false, error: 'name, email, and role are required' });
 
   const result = await connection.query(
-    `INSERT INTO event_staff (event_id, name, email, role, photo_url, bio, instagram_url, tiktok_url, youtube_url, website_url, country, city, partner_name, partner_id, styles, created_at)
+    `INSERT INTO event_staff (event_id, name, email, role, image_url, bio, instagram_url, tiktok_url, youtube_url, website_url, country, city, partner_name, partner_id, styles, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-    [eventId, name, email, role, photo_url || null, bio || null, instagram_url || null, tiktok_url || null, youtube_url || null, website_url || null, country || null, city || null, partner_name || null, partner_id || null, styles ? JSON.stringify(styles) : null]
+    [eventId, name, email, role, image_url || null, bio || null, instagram_url || null, tiktok_url || null, youtube_url || null, website_url || null, country || null, city || null, partner_name || null, partner_id || null, styles ? JSON.stringify(styles) : null]
   ) as any;
 
   const rows = await connection.query('SELECT * FROM event_staff WHERE id = ?', [result.insertId]) as any[];
@@ -153,7 +153,7 @@ async function updateEventStaff(event: APIGatewayProxyEvent, connection: mariadb
   const updates: string[] = [];
   const values: any[] = [];
 
-  const fields = ['name', 'email', 'role', 'photo_url', 'bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id'];
+  const fields = ['name', 'email', 'role', 'image_url', 'bio', 'instagram_url', 'tiktok_url', 'youtube_url', 'website_url', 'country', 'city', 'partner_name', 'partner_id'];
   for (const field of fields) {
     if (body[field] !== undefined) { updates.push(`${field} = ?`); values.push(body[field]); }
   }
